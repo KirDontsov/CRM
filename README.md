@@ -1,1 +1,1 @@
-# CRM
+# OTUS JavaScript Developer. Professional

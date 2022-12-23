@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "dist",
+    "rootDir": ".",
+    "esModuleInterop": true,
+    "target": "esNext",
+    "module": "commonjs",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": false,
+    "lib": [
+      "dom",
+      "esNext.asynciterable"
+    ]
+  },
+  "include": [
+    "src"
+  ]
+}
