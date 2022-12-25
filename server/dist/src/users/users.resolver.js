@@ -19,6 +19,7 @@ const user_entity_1 = require("./entities/user.entity");
 const common_1 = require("@nestjs/common");
 const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
 let UsersResolver = class UsersResolver {
+    usersService;
     constructor(usersService) {
         this.usersService = usersService;
     }
@@ -30,7 +31,9 @@ let UsersResolver = class UsersResolver {
     }
 };
 __decorate([
-    (0, graphql_1.Query)(() => [user_entity_1.User], { name: 'users' }),
+    (0, graphql_1.Query)(() => [user_entity_1.User], { name: 'users' })
+    // мидлвар проверяющий jwt токен
+    ,
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, graphql_1.Context)()),
     __metadata("design:type", Function),
@@ -49,4 +52,3 @@ UsersResolver = __decorate([
     __metadata("design:paramtypes", [users_service_1.UsersService])
 ], UsersResolver);
 exports.UsersResolver = UsersResolver;
-//# sourceMappingURL=users.resolver.js.map
