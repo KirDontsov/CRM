@@ -1,8 +1,10 @@
-import { Resolver, Query, Args, Context } from '@nestjs/graphql';
+import { Resolver, Query, Args } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
+
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
-import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -11,7 +13,7 @@ export class UsersResolver {
   @Query(() => [User], { name: 'users' })
   // мидлвар проверяющий jwt токен
   @UseGuards(JwtAuthGuard)
-  findAll(@Context() context) {
+  findAll() {
     return this.usersService.findAll();
   }
 

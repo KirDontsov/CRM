@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { hash, compare } from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+
 import { UsersService } from '../users/users.service';
 import { User } from '../users/entities/user.entity';
-import { JwtService } from '@nestjs/jwt';
+
 import { LoginUserInput } from './dto/login-user.input';
-import { hash, compare } from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +19,7 @@ export class AuthService {
     // декодируем и проверяем хэшированный пароль
     const valid = await compare(password, user.password);
     if (user && valid) {
-      const { password, ...result } = user;
+      const { password: userPassword, ...result } = user;
       return result;
     }
     return null;

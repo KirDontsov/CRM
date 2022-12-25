@@ -14,6 +14,9 @@ module.exports = {
     'plugin:react-hooks/recommended',
     'plugin:jest/recommended',
     'prettier',
+    'prettier/@typescript-eslint',
+    'plugin:prettier/recommended',
+    'plugin:jsx-a11y/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -49,6 +52,8 @@ module.exports = {
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/no-useless-constructor': 'off',
+    'class-methods-use-this': 'off',
     // These rules don't add much value, are better covered by TypeScript and good definition files
     'react/no-deprecated': 'off',
     'react/no-string-refs': 'off',
