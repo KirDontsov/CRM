@@ -1,38 +1,39 @@
 import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 
+import { UsersRepository } from './mongo/users.repository';
+import { UpdateUserInput } from './dto/update-user.input';
+import { User } from './mongo/user.schema';
 import { CreateUserInput } from './dto/create-user.input';
 
 @Injectable()
 export class UsersService {
-  // TODO: переписать на mongodb
-  private readonly users = [
-    {
-      id: 1,
-      username: 'admin',
-      password: 'admin',
-    },
-    {
-      id: 2,
-      username: 'demo',
-      password: 'demo',
-    },
-  ];
+  constructor(private readonly usersRepository: UsersRepository) {}
 
-  create(createUserInput: CreateUserInput) {
+  async getUserById(userId: string): Promise<User> {
+    return this.usersRepository.findOne({ userId });
+  }
+
+  async getUserByName(username: string): Promise<User> {
+    return this.usersRepository.findOne({ username });
+  }
+
+  async getUsers(): Promise<User[]> {
+    return this.usersRepository.find({});
+  }
+
+  async createUser(createUserInput: CreateUserInput): Promise<User> {
     const user = {
       ...createUserInput,
-      id: this.users.length + 1,
+      userId: uuidv4(),
     };
-    this.users.push(user);
-
-    return user;
+    return this.usersRepository.create(user);
   }
 
-  findAll() {
-    return this.users;
-  }
-
-  findOne(username: string) {
-    return this.users.find((user) => user.username === username);
+  async updateUser(
+    userId: string,
+    userUpdates: UpdateUserInput,
+  ): Promise<User> {
+    return this.usersRepository.findOneAndUpdate({ userId }, userUpdates);
   }
 }
