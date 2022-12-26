@@ -3,9 +3,8 @@ import { hash, compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 
 import { UsersService } from '../users/users.service';
+import { CreateUserInput } from '../users/dto/create-user.input';
 import { User } from '../users/entities/user.entity';
-
-import { LoginUserInput } from './dto/login-user.input';
 
 @Injectable()
 export class AuthService {
@@ -14,37 +13,46 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, password: string): Promise<any> {
-    const user = await this.usersService.findOne(username);
+  async validateUser(username: string, password: string) {
+    const user = await this.usersService.getUserByName(username);
     // декодируем и проверяем хэшированный пароль
     const valid = await compare(password, user.password);
+
     if (user && valid) {
-      const { password: userPassword, ...result } = user;
-      return result;
+      const { userId, username: userName, email } = user;
+      return { userId, username: userName, email };
     }
     return null;
   }
 
   async login(user: User) {
+    const { userId, username, email } = user;
+
     return {
       access_token: this.jwtService.sign({
-        username: user.username,
-        sub: user.id,
+        username,
+        sub: userId,
       }),
-      user,
+      user: {
+        userId,
+        username,
+        email,
+      },
     };
   }
 
-  async signup(signupUserInput: LoginUserInput) {
-    const user = await this.usersService.findOne(signupUserInput.username);
+  async signup(createUserInput: CreateUserInput) {
+    const user = await this.usersService.getUserByName(
+      createUserInput.username,
+    );
     // TODO: unique constraint
     if (user) {
       throw new Error('User already exists');
     }
     // хэшируем пароль
-    const password = await hash(signupUserInput.password, 10);
-    return this.usersService.create({
-      ...signupUserInput,
+    const password = await hash(createUserInput.password, 10);
+    return this.usersService.createUser({
+      ...createUserInput,
       password,
     });
   }

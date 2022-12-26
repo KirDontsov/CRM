@@ -2,6 +2,7 @@ import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 
 import { User } from '../users/entities/user.entity';
+import { CreateUserInput } from '../users/dto/create-user.input';
 
 import { AuthService } from './auth.service';
 import { LoginResponse } from './dto/login-response';
@@ -14,7 +15,7 @@ export class AuthResolver {
 
   @Mutation(() => LoginResponse)
   // мидлвар проверяющий loginUserInput
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(GqlAuthGuard) // после подключения к базе отваливается
   login(
     @Args('loginUserInput') loginUserInput: LoginUserInput,
     @Context() context,
@@ -23,7 +24,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => User)
-  signup(@Args('loginUserInput') signupUserInput: LoginUserInput) {
-    return this.authService.signup(signupUserInput);
+  signup(@Args('createUserInput') createUserInput: CreateUserInput) {
+    return this.authService.signup(createUserInput);
   }
 }

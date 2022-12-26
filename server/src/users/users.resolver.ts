@@ -14,11 +14,11 @@ export class UsersResolver {
   // мидлвар проверяющий jwt токен
   @UseGuards(JwtAuthGuard)
   findAll() {
-    return this.usersService.findAll();
+    return this.usersService.getUsers();
   }
 
   @Query(() => User, { name: 'user' })
-  findOne(@Args('username') username: string) {
-    return this.usersService.findOne(username);
+  findOne(@Args('id') id: string) {
+    return this.usersService.getUserById(id);
   }
 }
