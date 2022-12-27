@@ -1,0 +1,15 @@
+.link {
+	text-decoration: none;
+	color: #109CF1;
+	width: fit-content;
+	&:hover {
+		color: #34AFF9;
+	}
+	&:active {
+		color: #098EDF;
+	}
+}
+
+.loginLink {
+	margin-right: 10px;
+}
