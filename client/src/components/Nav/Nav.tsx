@@ -1,29 +1,37 @@
-import { Box, AppBar, Toolbar, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
+
+import { ContactsIcon } from '../Icons/ContactsIcon';
 
 import styles from './styles.module.scss';
 
 export const Nav = () => {
-  return (
-    <Box sx={{ flexGrow: 1 }} className={styles.nav}>
-      <AppBar position="static" color="transparent">
-        <Toolbar>
-          <Link to="/" className={styles.link}>
-            <Typography variant="h5" component="div">
-              CRM
-            </Typography>
-          </Link>
+  const [active, setActive] = useState(false);
 
-          <Box alignItems="right" sx={{ flexGrow: 1, textAlign: 'right' }}>
-            <Link to="/login" className={`${styles.loginLink} ${styles.link}`}>
-              <Typography component="span">Login</Typography>
-            </Link>
-            <Link to="/register" className={styles.link}>
-              <Typography component="span">Register</Typography>
-            </Link>
-          </Box>
-        </Toolbar>
-      </AppBar>
-    </Box>
+  const handleEnter = () => {
+    setActive(true);
+  };
+
+  const handleLeave = () => setActive(false);
+  return (
+    <div className={styles.nav}>
+      <div className={styles.navContent}>
+        <Link to="/" className={styles.link}>
+          <Typography variant="h5" component="div">
+            CRM
+          </Typography>
+        </Link>
+
+        <div className={styles.navRight}>
+          <Link to="/login" className={`${styles.loginLink} ${styles.link}`}>
+            <ContactsIcon active={active} onEnter={handleEnter} onLeave={handleLeave} />
+          </Link>
+          <Link to="/register" className={styles.link}>
+            <Typography component="span">Регистрация</Typography>
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 };

@@ -1,3 +1,23 @@
+@import '../../styles/global.module';
+
+.nav {
+	height: 60px;
+	border-bottom: 1px solid $divider;
+	background: $bg-main;
+}
+
+.navContent {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 15px 24px;
+	.navRight {
+		display: flex;
+		width: fit-content;
+	}
+}
+
+
 .link {
 	text-decoration: none;
 	color: #109CF1;

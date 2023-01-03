@@ -1,0 +1,17 @@
+@import '../../styles/global.module';
+
+.sideBar {
+	display: flex;
+	flex-direction: column;
+	padding: 40px;
+	width: 256px;
+	height: 100vh;
+	box-shadow: 6px 0 18px rgba(0, 0, 0, 0.06);
+	background: $bg-main;
+	gap: 40px;
+	.menuUl {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
+}

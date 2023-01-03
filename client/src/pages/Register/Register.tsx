@@ -1,11 +1,12 @@
-import { useCallback } from 'react';
+import { useCallback, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { gql, useMutation } from '@apollo/client';
-import { Button, Container, Stack, TextField } from '@mui/material';
+import { Button, Container, Stack, TextField, Typography } from '@mui/material';
 
-import styles from '../styles.module.scss';
-import { Layout } from '../../components/Layout';
+import { LogoutLayout } from '../../components/LogoutLayout';
+
+import styles from './styles.module.scss';
 
 const REGISTER_USER = gql`
   mutation RegisterUser($input: CreateUserInput!) {
@@ -52,22 +53,27 @@ export const Register = () => {
   );
 
   return (
-    <Layout>
-      <Container maxWidth="sm">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack spacing={2} paddingBottom={2}>
-            <TextField variant="outlined" label="Name" {...register('username', { required: true })} />
-            <TextField variant="outlined" label="Email" {...register('email', { required: true })} />
-            <TextField variant="outlined" label="Password" {...register('password', { required: true })} />
-            {(errors.username || errors.email || errors.password) && (
-              <span className={styles.error}>This field is required</span>
-            )}
-            <Button type="submit" variant="contained">
-              Register
-            </Button>
-          </Stack>
-        </form>
-      </Container>
-    </Layout>
+    <Suspense fallback={<div>Загрузка...</div>}>
+      <LogoutLayout>
+        <Container maxWidth="sm">
+          <Typography component="h1" className={styles.heading}>
+            Регистрация
+          </Typography>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Stack spacing={2} paddingBottom={2}>
+              <TextField variant="outlined" label="Name" {...register('username', { required: true })} />
+              <TextField variant="outlined" label="Email" {...register('email', { required: true })} />
+              <TextField variant="outlined" label="Password" {...register('password', { required: true })} />
+              {(errors.username || errors.email || errors.password) && (
+                <span className={styles.error}>Все поля обязательны к заполнению</span>
+              )}
+              <Button type="submit" variant="contained">
+                Зарегестрироваться
+              </Button>
+            </Stack>
+          </form>
+        </Container>
+      </LogoutLayout>
+    </Suspense>
   );
 };

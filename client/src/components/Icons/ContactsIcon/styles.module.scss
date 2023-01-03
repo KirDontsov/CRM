@@ -1,0 +1,8 @@
+@import '../../../styles/global.module';
+
+.contactsIcon {
+	stroke: $icon-gray;
+	&:hover {
+		stroke: $active;
+	}
+}

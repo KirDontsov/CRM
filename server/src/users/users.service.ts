@@ -6,6 +6,7 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './mongo/user.schema';
 import { CreateUserInput } from './dto/create-user.input';
 
+// запросы из gql в монго
 @Injectable()
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
@@ -26,6 +27,8 @@ export class UsersService {
     const user = {
       ...createUserInput,
       userId: uuidv4(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
     return this.usersRepository.create(user);
   }

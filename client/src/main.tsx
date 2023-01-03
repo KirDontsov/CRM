@@ -1,22 +1,33 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 import { ApolloProvider } from '@apollo/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 
-import { App } from './App';
 import { client } from './apollo-client';
+import { AppContextProvider } from './context';
+import { Layout } from './components/Layout';
+import { THEME } from './constants';
 import { Register } from './pages/Register';
 import { Login } from './pages/Login';
-import { AppContextProvider } from './context';
-import { THEME } from './constants';
+import { Dashboard } from './pages/Dashboard';
 
-import './styles.module.scss';
+import './styles/styles.module.scss';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />,
+    element: <Layout />,
+    children: [
+      {
+        path: '/dashboard',
+        element: <Dashboard />,
+      },
+      {
+        path: '/test',
+        element: <div>test</div>,
+      },
+    ],
   },
   {
     path: '/register',
@@ -28,7 +39,7 @@ const router = createBrowserRouter([
   },
 ]);
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <ThemeProvider theme={THEME}>
       <ApolloProvider client={client}>

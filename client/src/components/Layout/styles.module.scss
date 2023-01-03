@@ -1,3 +1,16 @@
-.layoutContainer {
-	padding: 40px;
+@import '../../styles/global.module';
+
+.layoutMainContainer {
+	height: 100vh;
+	overflow: hidden;
+}
+
+.layoutContentContainer {
+	display: flex;
+	background: $bg-gray;
+}
+
+.layoutContent {
+	width: 100%;
+	padding: 36px;
 }

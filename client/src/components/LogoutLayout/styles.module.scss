@@ -1,0 +1,9 @@
+@import '../../styles/global.module';
+
+.layoutContainer {
+	height: calc(100vh - 62px);
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
