@@ -59,6 +59,7 @@ module.exports = {
     'react/no-string-refs': 'off',
     'react/require-render-return': 'off',
     'react/jsx-props-no-spreading': 'off',
+    'react/require-default-props': 'off',
     'react/jsx-filename-extension': [
       'warn',
       {

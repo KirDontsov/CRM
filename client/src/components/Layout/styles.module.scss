@@ -13,4 +13,6 @@
 .layoutContent {
 	width: 100%;
 	padding: 36px;
+	overflow-y: auto;
+	height: calc(100vh - 96px - 36px);
 }

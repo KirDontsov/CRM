@@ -11,6 +11,8 @@ import { THEME } from './constants';
 import { Register } from './pages/Register';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
+import { Users } from './pages/Users';
+import { Settings } from './pages/Settings';
 
 import './styles/styles.module.scss';
 
@@ -24,8 +26,12 @@ const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
-        path: '/test',
-        element: <div>test</div>,
+        path: '/users',
+        element: <Users />,
+      },
+      {
+        path: '/settings',
+        element: <Settings />,
       },
     ],
   },

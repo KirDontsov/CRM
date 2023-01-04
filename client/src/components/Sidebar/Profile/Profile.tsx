@@ -1,3 +1,4 @@
+import { FC } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { useContextSelector } from 'use-context-selector';
 import { Typography } from '@mui/material';
@@ -6,6 +7,10 @@ import { AppContext } from '../../../context';
 
 import { Avatar } from './Avatar';
 import styles from './styles.module.scss';
+
+export interface ProfileProps {
+  collapsed: boolean;
+}
 
 const GET_USER = gql`
   query getUser($id: String!) {
@@ -17,7 +22,7 @@ const GET_USER = gql`
   }
 `;
 
-export const Profile = () => {
+export const Profile: FC<ProfileProps> = ({ collapsed }) => {
   const userId = useContextSelector(AppContext, (ctx) => ctx.state.userId);
 
   const { data } = useQuery(GET_USER, {
@@ -31,16 +36,18 @@ export const Profile = () => {
   return (
     <div className={styles.profileContainer}>
       <Avatar name={username} />
-      <div className={styles.contactsContainer}>
-        <Typography component="span" className={styles.name}>
-          {username}
-        </Typography>
-        <a href={`mailto:${email}`} className={styles.link}>
-          <Typography component="span" className={styles.email}>
-            {email}
+      {!collapsed && (
+        <div className={styles.contactsContainer}>
+          <Typography component="span" className={styles.name}>
+            {username}
           </Typography>
-        </a>
-      </div>
+          <a href={`mailto:${email}`} className={styles.link}>
+            <Typography component="span" className={styles.email}>
+              {email}
+            </Typography>
+          </a>
+        </div>
+      )}
     </div>
   );
 };

@@ -10,4 +10,7 @@ Client:
 - Форма авторизации
 - Форма логина
 - единый layout
-- Дашборд
+- collapsed sidebar
+- dashboard
+- users
+- settings

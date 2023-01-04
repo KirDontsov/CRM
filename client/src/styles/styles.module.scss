@@ -9,14 +9,11 @@ body {
 	color: #334D6E;
 	width: fit-content;
 	display: flex;
+	cursor: pointer;
 	&:hover {
 		color: #34AFF9;
 	}
 	&:active {
 		color: #098EDF;
-	}
-
-	& > svg {
-		margin-right: 14px;
 	}
 }

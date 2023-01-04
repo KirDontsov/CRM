@@ -4,7 +4,11 @@ export const ROUTES = [
     link: '/dashboard',
   },
   {
-    name: 'Test',
-    link: '/test',
+    name: 'Пользователи',
+    link: '/users',
+  },
+  {
+    name: 'Настройки',
+    link: '/settings',
   },
 ];

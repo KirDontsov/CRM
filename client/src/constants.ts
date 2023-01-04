@@ -7,4 +7,27 @@ export const THEME = createTheme({
       contrastText: '#fff',
     },
   },
+  components: {
+    MuiTableCell: {
+      styleOverrides: {
+        root: {
+          padding: '20px 24px',
+        },
+      },
+    },
+    MuiToolbar: {
+      styleOverrides: {
+        root: {
+          padding: '9.25px 34px',
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          boxShadow: 'none',
+        },
+      },
+    },
+  },
 });
