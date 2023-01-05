@@ -9,16 +9,19 @@ export interface AuthToken {
 
 export type State = {
   userId: string | null;
+  userRoles: string | null;
   exp?: number;
 };
 
 export interface UserData {
   userId: string;
+  userRoles: string;
   access_token: string;
 }
 
 export interface Action {
   type: string;
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   payload?: any;
 }
 
@@ -29,6 +32,7 @@ export interface AppContextProviderProps {
 export interface AppState {
   state: {
     userId: Maybe<string>;
+    userRoles: Maybe<string>;
   };
   handlers: {
     login: (userData: UserData) => Promise<boolean>;

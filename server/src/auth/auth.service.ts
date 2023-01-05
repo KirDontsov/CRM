@@ -19,25 +19,21 @@ export class AuthService {
     const valid = await compare(password, user.password);
 
     if (user && valid) {
-      const { userId, username: userName, email } = user;
-      return { userId, username: userName, email };
+      const { id, username: userName, email, roles } = user;
+      return { id, username: userName, email, roles };
     }
     return null;
   }
 
   async login(user: User) {
-    const { userId, username, email } = user;
+    const { id } = user;
 
     return {
       access_token: this.jwtService.sign({
-        username,
-        sub: userId,
+        ...user,
+        sub: id,
       }),
-      user: {
-        userId,
-        username,
-        email,
-      },
+      user,
     };
   }
 

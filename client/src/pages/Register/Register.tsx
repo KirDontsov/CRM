@@ -11,9 +11,10 @@ import styles from './styles.module.scss';
 const REGISTER_USER = gql`
   mutation RegisterUser($input: CreateUserInput!) {
     signup(createUserInput: $input) {
-      userId
+      id
       username
       email
+      roles
     }
   }
 `;
@@ -22,6 +23,7 @@ type Inputs = {
   username: string;
   email: string;
   password: string;
+  roles: string;
 };
 
 export const Register = () => {
@@ -42,10 +44,10 @@ export const Register = () => {
 
   const onSubmit: SubmitHandler<Inputs> = useCallback(
     async (data) => {
-      const { username, email, password } = data;
+      const { username, email, password, roles } = data;
       await registerUser({
         variables: {
-          input: { username, email, password },
+          input: { username, email, password, roles },
         },
       });
     },
@@ -56,14 +58,15 @@ export const Register = () => {
     <Suspense fallback={<div>Загрузка...</div>}>
       <LogoutLayout>
         <Container maxWidth="sm">
-          <Typography component="h1" className={styles.heading}>
+          <Typography variant="h1" className={styles.heading}>
             Регистрация
           </Typography>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={2} paddingBottom={2}>
-              <TextField variant="outlined" label="Name" {...register('username', { required: true })} />
+              <TextField variant="outlined" label="Имя" {...register('username', { required: true })} />
               <TextField variant="outlined" label="Email" {...register('email', { required: true })} />
-              <TextField variant="outlined" label="Password" {...register('password', { required: true })} />
+              <TextField variant="outlined" label="Пароль" {...register('password', { required: true })} />
+              <TextField variant="outlined" label="Роль" {...register('roles', { required: true })} />
               {(errors.username || errors.email || errors.password) && (
                 <span className={styles.error}>Все поля обязательны к заполнению</span>
               )}

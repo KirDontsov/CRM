@@ -1,13 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
+import { UserRoles } from '../../auth/dto/user-roles';
+
 export type UserDocument = User & Document;
 
 // схема в монго
 @Schema()
 export class User {
   @Prop()
-  userId: string;
+  id: string;
+
+  @Prop({ type: String, enum: UserRoles, default: UserRoles.Reader })
+  roles: UserRoles;
 
   @Prop()
   username: string;

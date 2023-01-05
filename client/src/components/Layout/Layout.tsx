@@ -15,15 +15,15 @@ export const Layout: FC = () => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (!userId) {
-        window.location.href = `${window.location.origin}/login`;
+        navigate('/login', { replace: true });
       }
     }, 100);
     return () => clearTimeout(timeout);
-  }, [userId]);
+  }, [navigate, userId]);
 
   useEffect(() => {
     if (window.location.pathname === '/') {
-      navigate('/dashboard');
+      navigate('/dashboard', { replace: true });
     }
   }, [navigate]);
 

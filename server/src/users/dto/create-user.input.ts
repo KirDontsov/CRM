@@ -1,5 +1,7 @@
 import { InputType, Field } from '@nestjs/graphql';
 
+import { UserRoles } from '../../auth/dto/user-roles';
+
 @InputType()
 export class CreateUserInput {
   @Field()
@@ -10,4 +12,7 @@ export class CreateUserInput {
 
   @Field()
   password: string;
+
+  @Field()
+  roles: UserRoles;
 }

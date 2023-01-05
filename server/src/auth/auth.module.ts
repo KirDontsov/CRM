@@ -9,6 +9,7 @@ import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
 import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
+import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [
@@ -20,6 +21,12 @@ import { JwtStrategy } from './jwt.strategy';
       secret: process.env.JWT_KEY,
     }),
   ],
-  providers: [AuthService, AuthResolver, LocalStrategy, JwtStrategy],
+  providers: [
+    AuthService,
+    AuthResolver,
+    LocalStrategy,
+    JwtStrategy,
+    RolesGuard,
+  ],
 })
 export class AuthModule {}

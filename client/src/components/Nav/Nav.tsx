@@ -1,12 +1,15 @@
+import { FC, ReactNode, useState } from 'react';
 import { Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
 
 import { ContactsIcon } from '../Icons/ContactsIcon';
 
 import styles from './styles.module.scss';
 
-export const Nav = () => {
+export interface NavProps {
+  children?: ReactNode | ReactNode[];
+}
+export const Nav: FC<NavProps> = ({ children }) => {
   const [active, setActive] = useState(false);
 
   const handleEnter = () => {
@@ -17,12 +20,7 @@ export const Nav = () => {
   return (
     <div className={styles.nav}>
       <div className={styles.navContent}>
-        <Link to="/" className={styles.link}>
-          <Typography variant="h5" component="div">
-            CRM
-          </Typography>
-        </Link>
-
+        <div>{children || null}</div>
         <div className={styles.navRight}>
           <Link to="/login" className={`${styles.loginLink} ${styles.link}`}>
             <ContactsIcon active={active} onEnter={handleEnter} onLeave={handleLeave} />

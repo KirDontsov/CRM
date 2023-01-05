@@ -17,6 +17,7 @@ input CreateOrderInput {
 input CreateUserInput {
   email: String!
   password: String!
+  roles: String!
   username: String!
 }
 
@@ -42,16 +43,18 @@ type Mutation {
 }
 
 type Order {
+  createdAt: DateTime!
+  id: String!
   initialComment: String!
   initialCost: String!
   initialPhotos: String!
   leftHeadlamp: Boolean!
-  orderId: String!
   orderName: String!
   releaseDate: DateTime!
   rightHeadlamp: Boolean!
   spareParts: String!
   totalCost: String!
+  updatedAt: DateTime!
 }
 
 type Query {
@@ -63,6 +66,7 @@ type Query {
 
 type User {
   email: String!
-  userId: String!
+  id: String!
+  roles: String!
   username: String!
 }

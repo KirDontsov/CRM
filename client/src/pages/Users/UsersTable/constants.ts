@@ -1,6 +1,18 @@
+import { gql } from '@apollo/client';
+
 import { HeadCell } from './interfaces';
 
-export const HEAD_CELLS: readonly HeadCell[] = [
+export const GET_USERS = gql`
+  query getUsers {
+    users {
+      id
+      username
+      email
+    }
+  }
+`;
+
+export const HEAD_CELLS: HeadCell[] = [
   {
     id: 'username',
     numeric: false,

@@ -11,8 +11,8 @@ import { CreateUserInput } from './dto/create-user.input';
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  async getUserById(userId: string): Promise<User> {
-    return this.usersRepository.findOne({ userId });
+  async getUserById(id: string): Promise<User> {
+    return this.usersRepository.findOne({ id });
   }
 
   async getUserByName(username: string): Promise<User> {
@@ -26,17 +26,14 @@ export class UsersService {
   async createUser(createUserInput: CreateUserInput): Promise<User> {
     const user = {
       ...createUserInput,
-      userId: uuidv4(),
+      id: uuidv4(),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
     return this.usersRepository.create(user);
   }
 
-  async updateUser(
-    userId: string,
-    userUpdates: UpdateUserInput,
-  ): Promise<User> {
-    return this.usersRepository.findOneAndUpdate({ userId }, userUpdates);
+  async updateUser(id: string, userUpdates: UpdateUserInput): Promise<User> {
+    return this.usersRepository.findOneAndUpdate({ id }, userUpdates);
   }
 }

@@ -2,16 +2,16 @@
 
 .sideBarCollapsed {
 	width: 68px !important;
-	padding: 40px 2px !important;
+	padding: 18px 2px 40px !important;
 	align-items: center;
 }
 
 .sideBar {
 	display: flex;
 	flex-direction: column;
-	padding: 40px;
+	padding: 18px 40px 40px;
 	width: 256px;
-	height: calc(100vh - 140px);
+	height: calc(100vh - 60px);
 	box-shadow: 6px 0 18px rgba(0, 0, 0, 0.06);
 	background: $bg-main;
 	gap: 40px;
@@ -31,7 +31,6 @@
 		}
 	}
 	.divider {
-		padding-top: 20px;
 		border-top: 1px solid $icon-gray
 	}
 	.bottomMenuUl {
@@ -42,6 +41,6 @@
 	}
 	.bottomMenuLink {
 		position: absolute;
-		bottom: 20px;
+		bottom: 22px;
 	}
 }

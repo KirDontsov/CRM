@@ -1,4 +1,6 @@
 import { FC, ReactNode } from 'react';
+import { Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 import { Nav } from '../Nav';
 
@@ -11,7 +13,13 @@ export interface LayoutProps {
 export const LogoutLayout: FC<LayoutProps> = ({ children }) => {
   return (
     <>
-      <Nav />
+      <Nav>
+        <Link to="/" className={styles.link}>
+          <Typography variant="h5" component="div">
+            CRM
+          </Typography>
+        </Link>
+      </Nav>
       <div className={styles.layoutContainer}>{children}</div>
     </>
   );

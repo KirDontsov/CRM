@@ -13,6 +13,8 @@ import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { Users } from './pages/Users';
 import { Settings } from './pages/Settings';
+import { Orders } from './pages/Orders';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 import './styles/styles.module.scss';
 
@@ -26,8 +28,16 @@ const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
+        path: '/orders',
+        element: <Orders />,
+      },
+      {
         path: '/users',
-        element: <Users />,
+        element: (
+          <ProtectedRoute>
+            <Users />
+          </ProtectedRoute>
+        ),
       },
       {
         path: '/settings',

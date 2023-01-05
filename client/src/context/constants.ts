@@ -4,4 +4,5 @@ export const localStorageAppPrefix = 'CRM';
 
 export const initialState: State = {
   userId: null,
+  userRoles: null,
 };

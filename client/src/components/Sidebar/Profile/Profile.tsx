@@ -15,7 +15,7 @@ export interface ProfileProps {
 const GET_USER = gql`
   query getUser($id: String!) {
     user(id: $id) {
-      userId
+      id
       username
       email
     }

@@ -13,8 +13,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   async validate(payload: any) {
     // декодируем JWT
-    return { userId: payload.sub, username: payload.username };
+    return {
+      id: payload.sub,
+      username: payload.username,
+      roles: payload.roles,
+    };
   }
 }

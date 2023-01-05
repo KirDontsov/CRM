@@ -1,6 +1,17 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme, responsiveFontSizes } from '@mui/material/styles';
+
+let theme = createTheme();
+theme = responsiveFontSizes(theme);
+
+theme.typography.h1 = {
+  [theme.breakpoints.up('md')]: {
+    fontSize: '1.4rem',
+    fontWeight: '300',
+  },
+};
 
 export const THEME = createTheme({
+  ...theme,
   palette: {
     primary: {
       main: '#109CF1',

@@ -9,12 +9,13 @@ const authReducer = (state: State, action: Action) => {
     case 'LOGIN':
       return {
         ...state,
-        userId: action.payload,
+        ...action.payload,
       };
     case 'LOGOUT':
       return {
         ...state,
         userId: null,
+        userRoles: null,
       };
     default:
       return state;
@@ -31,10 +32,11 @@ const checkAuthToken = () => {
     }
     return {
       userId: localStorage.getItem(`${localStorageAppPrefix}.userId` ?? null),
+      userRoles: localStorage.getItem(`${localStorageAppPrefix}.userRoles` ?? null),
       accessToken: token,
     };
   }
-  return { userId: null, accessToken: null };
+  return { userId: null, userRoles: null, accessToken: null };
 };
 
 export function useAppState(): AppState {
@@ -42,29 +44,32 @@ export function useAppState(): AppState {
 
   const login = async (userData: UserData) => {
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const { access_token, userId } = userData;
+    const { access_token, userId, userRoles } = userData;
     localStorage.setItem(`${localStorageAppPrefix}.token`, access_token);
+    localStorage.setItem(`${localStorageAppPrefix}.userRoles`, userRoles);
     localStorage.setItem(`${localStorageAppPrefix}.userId`, userId);
     dispatch({
       type: 'LOGIN',
-      payload: userId,
+      payload: { userId, userRoles },
     });
     return !!state.userId;
   };
 
   const logout = () => {
     localStorage.removeItem(`${localStorageAppPrefix}.token`);
+    localStorage.removeItem(`${localStorageAppPrefix}.userRoles`);
+    localStorage.removeItem(`${localStorageAppPrefix}.userId`);
     dispatch({
       type: 'LOGOUT',
     });
   };
 
   useEffect(() => {
-    const { userId, accessToken } = checkAuthToken();
+    const { userId, userRoles, accessToken } = checkAuthToken();
     if (accessToken && userId) {
       dispatch({
         type: 'LOGIN',
-        payload: userId,
+        payload: { userId, userRoles },
       });
     } else if ((!accessToken || !userId) && window.location.href !== `${window.location.origin}/login`) {
       logout();

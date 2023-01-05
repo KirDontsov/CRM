@@ -1,0 +1,18 @@
+import { FC, ReactNode } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useContextSelector } from 'use-context-selector';
+
+import { AppContext } from '../../context';
+
+export interface ProtectedRouteProps {
+  children: ReactNode;
+}
+export const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }) => {
+  const userRoles = useContextSelector(AppContext, (ctx) => ctx.state.userRoles);
+
+  if (userRoles !== 'Admin') {
+    // user is not authenticated
+    return <Navigate to="/" />;
+  }
+  return <>{children}</>;
+};

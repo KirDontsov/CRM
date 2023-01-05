@@ -10,8 +10,8 @@ import { Order } from './mongo/order.schema';
 export class OrdersService {
   constructor(private readonly ordersRepository: OrdersRepository) {}
 
-  async getOrderById(orderId: string): Promise<Order> {
-    return this.ordersRepository.findOne({ orderId });
+  async getOrderById(id: string): Promise<Order> {
+    return this.ordersRepository.findOne({ id });
   }
 
   async getOrders(): Promise<Order[]> {
@@ -21,7 +21,7 @@ export class OrdersService {
   async create(createOrderInput: CreateOrderInput) {
     const order = {
       ...createOrderInput,
-      orderId: uuidv4(),
+      id: uuidv4(),
       createdAt: new Date(),
       updatedAt: new Date(),
     };

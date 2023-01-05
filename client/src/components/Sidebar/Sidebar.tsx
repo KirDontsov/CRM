@@ -1,11 +1,13 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useCallback, useEffect, MouseEvent, useRef, RefObject, useLayoutEffect } from 'react';
 import { Typography } from '@mui/material';
+import { useContextSelector } from 'use-context-selector';
 
 import { DashboardIcon } from '../Icons/DashboardIcon';
 import { ContactsIcon } from '../Icons/ContactsIcon';
 import { SettingsIcon } from '../Icons/SettingsIcon';
 import { ToggleIcon } from '../Icons/ToggleIcon';
+import { AppContext } from '../../context';
 
 import { SidebarLink } from './SidebarLink';
 import { Profile } from './Profile';
@@ -71,6 +73,7 @@ export const Sidebar = () => {
   const { pathname } = useLocation();
   const hoverRef = useRef(null);
   const isHovered = useHover(hoverRef);
+  const userRoles = useContextSelector(AppContext, (ctx) => ctx.state.userRoles);
 
   useEffect(() => {
     if (!isHovered) {
@@ -106,9 +109,14 @@ export const Sidebar = () => {
 
   return (
     <div className={`${styles.sideBar} ${collapsed ? styles.sideBarCollapsed : ''}`}>
+      <Link to="/" className={styles.link}>
+        <Typography variant="h5" component="div">
+          CRM
+        </Typography>
+      </Link>
       <Profile collapsed={collapsed} />
       <div className={`${styles.menuUl} ${collapsed ? styles.menuUlCollapsed : ''}`} ref={hoverRef}>
-        {ROUTES.filter(({ link }) => link !== '/settings').map((route) => (
+        {ROUTES.filter(({ link, access }) => link !== '/settings' && access.includes(userRoles ?? '')).map((route) => (
           <Link
             id={route.link}
             key={route.link}

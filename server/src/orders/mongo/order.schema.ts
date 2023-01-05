@@ -6,7 +6,7 @@ export type OrderDocument = Order & Document;
 @Schema()
 export class Order {
   @Prop()
-  orderId: string;
+  id: string;
 
   @Prop()
   orderName: string;
@@ -43,7 +43,7 @@ export class Order {
   @Prop()
   totalCost: string;
 
-  @Prop({ required: true, default: () => new Date() })
+  @Prop()
   createdAt: Date;
 
   @Prop({ required: false, default: null })

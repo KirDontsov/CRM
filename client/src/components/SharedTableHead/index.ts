@@ -1,0 +1,1 @@
+export { SharedTableHead } from './SharedTableHead';

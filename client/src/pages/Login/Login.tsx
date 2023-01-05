@@ -15,7 +15,8 @@ const LOGIN_USER = gql`
   mutation login($input: LoginUserInput!) {
     login(loginUserInput: $input) {
       user {
-        userId
+        id
+        roles
       }
       access_token
     }
@@ -35,8 +36,12 @@ export const Login = () => {
 
   const [loginUser] = useMutation(LOGIN_USER, {
     onCompleted: (data) => {
-      login({ userId: data?.login?.user?.userId ?? '', access_token: data?.login?.access_token ?? '' }).then(() => {
-        if (!data?.login?.user?.userId) {
+      login({
+        userId: data?.login?.user?.id ?? '',
+        userRoles: data?.login?.user?.roles ?? '',
+        access_token: data?.login?.access_token ?? '',
+      }).then(() => {
+        if (!data?.login?.user?.id) {
           navigate('/login');
         }
         navigate('/');
@@ -70,18 +75,26 @@ export const Login = () => {
     <LogoutLayout>
       <Container maxWidth="sm">
         {!userId ? (
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Stack spacing={2} paddingBottom={2}>
-              <TextField placeholder="name" {...register('username', { required: true })} />
-              <TextField placeholder="password" {...register('password', { required: true })} />
-              {(errors.username || errors.password) && (
-                <span className={styles.error}>Все поля обязательны к заполнению</span>
-              )}
-              <Button type="submit" variant="contained">
-                Войти в систему
-              </Button>
-            </Stack>
-          </form>
+          <>
+            <div className={styles.heading}>
+              <Typography variant="h1" className={styles.typo}>
+                Вход в систему
+              </Typography>
+            </div>
+
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Stack spacing={2} paddingBottom={2}>
+                <TextField label="Имя" {...register('username', { required: true })} />
+                <TextField label="Пароль" {...register('password', { required: true })} />
+                {(errors.username || errors.password) && (
+                  <span className={styles.error}>Все поля обязательны к заполнению</span>
+                )}
+                <Button type="submit" variant="contained">
+                  Войти в систему
+                </Button>
+              </Stack>
+            </form>
+          </>
         ) : (
           <div className={styles.heading}>
             <Typography component="h2" className={styles.typo}>
