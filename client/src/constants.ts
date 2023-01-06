@@ -37,6 +37,7 @@ export const THEME = createTheme({
       styleOverrides: {
         root: {
           boxShadow: 'none',
+          height: '56px',
         },
       },
     },

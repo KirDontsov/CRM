@@ -24,6 +24,11 @@ export class OrdersService {
       id: uuidv4(),
       createdAt: new Date(),
       updatedAt: new Date(),
+      releaseDate: null,
+      totalCost: `${
+        Number(createOrderInput.initialCost) -
+        Number(createOrderInput.sparePartsCost)
+      }`,
     };
     return this.ordersRepository.create(order);
   }

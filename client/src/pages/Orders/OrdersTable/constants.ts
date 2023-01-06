@@ -10,7 +10,7 @@ export const GET_ORDERS = gql`
       createdAt
       orderName
       initialComment
-      spareParts
+      sparePartsCost
       totalCost
       initialPhotos
       initialCost
@@ -62,6 +62,18 @@ export const HEAD_CELLS: HeadCell[] = [
     numeric: false,
     disablePadding: false,
     label: 'Дата завершения заказа',
+  },
+  {
+    id: 'sparePartsCost',
+    numeric: false,
+    disablePadding: false,
+    label: 'Стоимость запчастей',
+  },
+  {
+    id: 'totalCost',
+    numeric: false,
+    disablePadding: false,
+    label: 'Итоговая сумма',
   },
   {
     id: 'initialComment',

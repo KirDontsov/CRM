@@ -8,6 +8,7 @@ export const GET_USERS = gql`
       id
       username
       email
+      roles
     }
   }
 `;
@@ -26,7 +27,7 @@ export const HEAD_CELLS: HeadCell[] = [
     label: 'Email',
   },
   {
-    id: 'role',
+    id: 'roles',
     numeric: false,
     disablePadding: false,
     label: 'Роль',

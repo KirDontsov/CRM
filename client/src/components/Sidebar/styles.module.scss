@@ -16,6 +16,7 @@
 	background: $bg-main;
 	gap: 40px;
 	position: relative;
+	z-index: 3;
 	.menuUlCollapsed {
 		align-items: center;
 	}

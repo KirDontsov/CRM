@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useState, useCallback, useEffect, MouseEvent, useRef, RefObject, useLayoutEffect } from 'react';
+import { useState, useCallback, useEffect, MouseEvent, useRef } from 'react';
 import { Typography } from '@mui/material';
 import { useContextSelector } from 'use-context-selector';
 
@@ -8,64 +8,13 @@ import { ContactsIcon } from '../Icons/ContactsIcon';
 import { SettingsIcon } from '../Icons/SettingsIcon';
 import { ToggleIcon } from '../Icons/ToggleIcon';
 import { AppContext } from '../../context';
+import { UserRoles } from '../../apollo-client';
 
 import { SidebarLink } from './SidebarLink';
 import { Profile } from './Profile';
 import { ROUTES } from './constants';
+import { useHover } from './hooks';
 import styles from './styles.module.scss';
-
-const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
-
-// Element Event based useEventListener interface
-function useEventListener<K extends keyof HTMLElementEventMap, T extends HTMLElement = HTMLDivElement>(
-  eventName: K,
-  handler: (event: HTMLElementEventMap[K]) => void,
-  element: RefObject<T>,
-  options?: boolean | AddEventListenerOptions,
-): void;
-
-function useEventListener<
-  KW extends keyof WindowEventMap,
-  KH extends keyof HTMLElementEventMap,
-  KM extends keyof MediaQueryListEventMap,
-  T extends HTMLElement | MediaQueryList | void = void,
->(
-  eventName: KW | KH | KM,
-  handler: (event: WindowEventMap[KW] | HTMLElementEventMap[KH] | MediaQueryListEventMap[KM] | Event) => void,
-  element?: RefObject<T>,
-  options?: boolean | AddEventListenerOptions,
-) {
-  // Create a ref that stores handler
-  const savedHandler = useRef(handler);
-
-  useIsomorphicLayoutEffect(() => {
-    savedHandler.current = handler;
-  }, [handler]);
-
-  useEffect(() => {
-    const targetElement: T | Window = element?.current ?? window;
-
-    if (!(targetElement && targetElement.addEventListener)) return;
-
-    const listener: typeof handler = (event) => savedHandler.current(event);
-
-    targetElement.addEventListener(eventName, listener, options);
-    // eslint-disable-next-line consistent-return
-    return () => targetElement.removeEventListener(eventName, listener, options);
-  }, [eventName, element, options]);
-}
-
-function useHover<T extends HTMLElement = HTMLElement>(elementRef: RefObject<T>): boolean {
-  const [value, setValue] = useState<boolean>(false);
-
-  const handleMouseEnter = () => setValue(true);
-  const handleMouseLeave = () => setValue(false);
-
-  useEventListener('mouseenter', handleMouseEnter, elementRef);
-  useEventListener('mouseleave', handleMouseLeave, elementRef);
-
-  return value;
-}
 
 export const Sidebar = () => {
   const [active, setActive] = useState('');
@@ -116,7 +65,9 @@ export const Sidebar = () => {
       </Link>
       <Profile collapsed={collapsed} />
       <div className={`${styles.menuUl} ${collapsed ? styles.menuUlCollapsed : ''}`} ref={hoverRef}>
-        {ROUTES.filter(({ link, access }) => link !== '/settings' && access.includes(userRoles ?? '')).map((route) => (
+        {ROUTES.filter(
+          ({ link, access }) => link !== '/settings' && access.includes((userRoles ?? '') as UserRoles),
+        ).map((route) => (
           <Link
             id={route.link}
             key={route.link}

@@ -5,30 +5,21 @@ export class CreateOrderInput {
   @Field()
   orderName: string;
 
-  // @Field()
-  // workType: [string];
-
-  @Field()
-  releaseDate: Date;
-
-  @Field()
+  @Field({ nullable: true })
   initialComment: string;
 
-  @Field()
-  spareParts: string;
+  @Field({ nullable: true })
+  sparePartsCost: string;
 
-  @Field()
-  totalCost: string;
-
-  @Field()
+  @Field({ nullable: true })
   initialPhotos: string;
 
   @Field()
   initialCost: string;
 
-  @Field()
-  leftHeadlamp: boolean;
+  @Field(() => [String], { nullable: true })
+  leftHeadlamp: string[];
 
-  @Field()
-  rightHeadlamp: boolean;
+  @Field(() => [String], { nullable: true })
+  rightHeadlamp: string[];
 }

@@ -11,13 +11,13 @@ export interface Data {
 
   rightHeadlamp: string;
 
-  // workType: [string];
+  workType: [string];
 
   releaseDate: string;
 
   initialComment: string;
 
-  spareParts: string;
+  sparePartsCost: string;
 
   totalCost: string;
 

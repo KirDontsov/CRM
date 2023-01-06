@@ -22,3 +22,5 @@ export const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
+
+export { WorkTypes, UserRoles } from './types';

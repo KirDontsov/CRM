@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
+import { WorkTypes } from '../dto/work-types';
+
 export type OrderDocument = Order & Document;
 
 @Schema()
@@ -17,28 +19,17 @@ export class Order {
   @Prop()
   initialCost: string;
 
-  @Prop()
-  leftHeadlamp: boolean;
+  @Prop({ type: [String], enum: WorkTypes })
+  leftHeadlamp: string[];
 
-  @Prop()
-  rightHeadlamp: boolean;
-
-  // соотнести с таблицей типов работ
-  // inside the class definition
-  // @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Owner' })
-  // owner: Owner;
-  // https://docs.nestjs.com/techniques/mongodb#model-injection
-  // @Prop()
-  // workType: [string];
-
-  @Prop()
-  releaseDate: Date;
+  @Prop({ type: [String], enum: WorkTypes })
+  rightHeadlamp: string[];
 
   @Prop()
   initialComment: string;
 
   @Prop()
-  spareParts: string;
+  sparePartsCost: string;
 
   @Prop()
   totalCost: string;
@@ -48,6 +39,9 @@ export class Order {
 
   @Prop({ required: false, default: null })
   updatedAt: Date;
+
+  @Prop({ required: false, default: null })
+  releaseDate: Date;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

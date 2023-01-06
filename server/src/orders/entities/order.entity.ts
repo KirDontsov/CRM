@@ -8,34 +8,23 @@ export class Order {
   @Field()
   orderName: string;
 
-  @Field()
+  @Field({ nullable: true })
   initialPhotos: string;
 
   @Field()
   initialCost: string;
 
-  @Field()
-  leftHeadlamp: boolean;
+  @Field(() => [String])
+  leftHeadlamp: string[];
 
-  @Field()
-  rightHeadlamp: boolean;
+  @Field(() => [String])
+  rightHeadlamp: string[];
 
-  // соотнести с таблицей типов работ
-  // inside the class definition
-  // @Field({ type: mongoose.Schema.Types.ObjectId, ref: 'Owner' })
-  // owner: Owner;
-  // https://docs.nestjs.com/techniques/mongodb#model-injection
-  // @Field()
-  // workType: [string];
-
-  @Field()
-  releaseDate: Date;
-
-  @Field()
+  @Field({ nullable: true })
   initialComment: string;
 
   @Field()
-  spareParts: string;
+  sparePartsCost: string;
 
   @Field()
   totalCost: string;
@@ -45,4 +34,7 @@ export class Order {
 
   @Field()
   updatedAt: Date;
+
+  @Field({ nullable: true })
+  releaseDate: Date;
 }

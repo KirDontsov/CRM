@@ -3,15 +3,13 @@
 # ------------------------------------------------------
 
 input CreateOrderInput {
-  initialComment: String!
+  initialComment: String
   initialCost: String!
-  initialPhotos: String!
-  leftHeadlamp: Boolean!
+  initialPhotos: String
+  leftHeadlamp: [String!]
   orderName: String!
-  releaseDate: DateTime!
-  rightHeadlamp: Boolean!
-  spareParts: String!
-  totalCost: String!
+  rightHeadlamp: [String!]
+  sparePartsCost: String
 }
 
 input CreateUserInput {
@@ -45,14 +43,14 @@ type Mutation {
 type Order {
   createdAt: DateTime!
   id: String!
-  initialComment: String!
+  initialComment: String
   initialCost: String!
-  initialPhotos: String!
-  leftHeadlamp: Boolean!
+  initialPhotos: String
+  leftHeadlamp: [String!]!
   orderName: String!
-  releaseDate: DateTime!
-  rightHeadlamp: Boolean!
-  spareParts: String!
+  releaseDate: DateTime
+  rightHeadlamp: [String!]!
+  sparePartsCost: String!
   totalCost: String!
   updatedAt: DateTime!
 }

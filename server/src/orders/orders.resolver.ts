@@ -24,6 +24,7 @@ export class OrdersResolver {
     return this.ordersService.getOrders();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Mutation(() => Order)
   createOrder(@Args('createOrderInput') createOrderInput: CreateOrderInput) {
     return this.ordersService.create(createOrderInput);

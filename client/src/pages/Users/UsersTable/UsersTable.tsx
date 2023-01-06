@@ -10,6 +10,7 @@ import { TableToolbar } from '../../../components/TableToolbar';
 import { SharedTableHead } from '../../../components/SharedTableHead';
 import { getComparator } from '../../../utils';
 import { useTableControls } from '../../../shared';
+import { UserRoles } from '../../../apollo-client';
 
 import { GET_USERS, HEAD_CELLS } from './constants';
 import { Data } from './interfaces';
@@ -69,7 +70,7 @@ export const UsersTable = () => {
                       {row.username}
                     </TableCell>
                     <TableCell>{row.email}</TableCell>
-                    <TableCell>{row.role}</TableCell>
+                    <TableCell>{row.roles === UserRoles.Admin ? 'Админ' : 'Менеджер'}</TableCell>
                   </TableRow>
                 );
               })}
