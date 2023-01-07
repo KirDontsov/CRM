@@ -38,12 +38,40 @@ export const MuiThemeProvider: FC<MuiThemeProviderProps> = ({ children }) => {
               root: {
                 padding: '20px 24px',
               },
+              sizeMedium: {
+                padding: '20px 24px',
+              },
+              sizeSmall: {
+                padding: '2px',
+                height: '100px',
+                border: 'none',
+              },
             },
           },
           MuiToolbar: {
             styleOverrides: {
               root: {
                 padding: '9.25px 34px',
+              },
+            },
+          },
+          MuiCardContent: {
+            styleOverrides: {
+              root: {
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '100%',
+              },
+            },
+          },
+          MuiCard: {
+            styleOverrides: {
+              root: {
+                display: 'flex',
+                flexDirection: 'column',
+                cursor: 'pointer',
               },
             },
           },

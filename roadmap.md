@@ -6,6 +6,7 @@ Back:
 - Сущности orders
 - Сущности statuses
 - role based access control
+- events
 
 Client:
 - Форма авторизации
@@ -17,3 +18,4 @@ Client:
 - users
 - settings
 - dark mode
+- calendar

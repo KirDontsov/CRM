@@ -6,8 +6,9 @@ export interface FromInputProps {
   name: string;
   label: string;
   required?: boolean;
+  multi?: boolean;
 }
-export const FormInput: FC<FromInputProps> = ({ name, label, required = false }) => {
+export const FormInput: FC<FromInputProps> = ({ name, label, required = false, multi = false }) => {
   const {
     field: { onChange },
     fieldState: { error },
@@ -18,7 +19,11 @@ export const FormInput: FC<FromInputProps> = ({ name, label, required = false })
 
   return (
     <>
-      <TextField variant="standard" label={label} onChange={onChange} />
+      <TextField
+        {...(multi ? { multiline: true, rows: 3, variant: 'filled' } : { variant: 'standard' })}
+        label={label}
+        onChange={onChange}
+      />
       {!!error && <Typography color="#F7685B">{error.message}</Typography>}
     </>
   );

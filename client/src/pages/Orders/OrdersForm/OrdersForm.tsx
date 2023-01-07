@@ -69,10 +69,11 @@ export const OrdersForm: FC<OrdersFormProps> = ({ onClose }) => {
             <FormInput name="initialCost" label="Стоимость" required />
             <FormInput name="sparePartsCost" label="Стоимость запчастей" required />
             <FormInput name="initialPhotos" label="Ссылка на фото" />
-            <FormInput name="initialComment" label="Комментарий" />
 
             <FormComboBox multi name="leftHeadlamp" label="Работы по левой фаре" options={OPTIONS} />
             <FormComboBox multi name="rightHeadlamp" label="Работы по правой фаре" options={OPTIONS} />
+
+            <FormInput name="initialComment" label="Комментарий" multi />
           </Stack>
           <div className={styles.bottom}>
             <Button type="submit" variant="contained">
