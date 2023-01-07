@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Box, Button, Paper } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useState } from 'react';
 
@@ -16,21 +16,21 @@ export const Users = () => {
   };
 
   return (
-    <div className={styles.usersContainer}>
+    <Box className={styles.usersContainer}>
       <div>
         <Button type="submit" variant="contained" startIcon={<Add />} onClick={toggleDrawer}>
           Новый пользователь
         </Button>
       </div>
 
-      <div className={styles.usersContentContainer}>
+      <Paper elevation={2} className={styles.usersContentContainer}>
         <UsersTable />
-      </div>
+      </Paper>
       {open && (
         <Curtain onClose={toggleDrawer}>
           <UsersForm onClose={toggleDrawer} />
         </Curtain>
       )}
-    </div>
+    </Box>
   );
 };

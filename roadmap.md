@@ -16,3 +16,4 @@ Client:
 - dashboard
 - users
 - settings
+- dark mode

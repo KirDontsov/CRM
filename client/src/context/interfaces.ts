@@ -33,9 +33,11 @@ export interface AppState {
   state: {
     userId: Maybe<string>;
     userRoles: Maybe<string>;
+    darkMode: boolean;
   };
   handlers: {
     login: (userData: UserData) => Promise<boolean>;
     logout: () => void;
+    toggleDarkMode: () => void;
   };
 }

@@ -1,6 +1,7 @@
 import { FC, useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useContextSelector } from 'use-context-selector';
+import { Paper } from '@mui/material';
 
 import { Nav } from '../Nav';
 import { Sidebar } from '../Sidebar';
@@ -10,6 +11,7 @@ import styles from './styles.module.scss';
 
 export const Layout: FC = () => {
   const userId = useContextSelector(AppContext, (ctx) => ctx.state.userId);
+  const darkMode = useContextSelector(AppContext, (ctx) => ctx.state.darkMode);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,12 +33,16 @@ export const Layout: FC = () => {
     <div className={styles.layoutMainContainer}>
       <Nav />
       {userId && (
-        <div className={styles.layoutContentContainer}>
+        <Paper
+          elevation={0}
+          className={styles.layoutContentContainer}
+          style={{ backgroundColor: `${darkMode ? '#121212' : '#F5F6F8'}` }}
+        >
           <Sidebar />
           <div className={styles.layoutContent}>
             <Outlet />
           </div>
-        </div>
+        </Paper>
       )}
     </div>
   );

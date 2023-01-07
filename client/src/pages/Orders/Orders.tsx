@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Box, Button, Paper } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useState } from 'react';
 
@@ -15,21 +15,21 @@ export const Orders = () => {
     setOpen((prev) => !prev);
   };
   return (
-    <div className={styles.ordersContainer}>
+    <Box className={styles.ordersContainer}>
       <div>
         <Button type="submit" variant="contained" startIcon={<Add />} onClick={toggleDrawer}>
           Новый заказ
         </Button>
       </div>
 
-      <div className={styles.ordersContentContainer}>
+      <Paper elevation={2} className={styles.ordersContentContainer}>
         <OrdersTable />
-      </div>
+      </Paper>
       {open && (
         <Curtain onClose={toggleDrawer}>
           <OrdersForm onClose={toggleDrawer} />
         </Curtain>
       )}
-    </div>
+    </Box>
   );
 };

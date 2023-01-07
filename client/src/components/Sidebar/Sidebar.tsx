@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useCallback, useEffect, MouseEvent, useRef } from 'react';
-import { Typography } from '@mui/material';
+import { Paper, Typography } from '@mui/material';
 import { useContextSelector } from 'use-context-selector';
 
 import { DashboardIcon } from '../Icons/DashboardIcon';
@@ -23,6 +23,7 @@ export const Sidebar = () => {
   const hoverRef = useRef(null);
   const isHovered = useHover(hoverRef);
   const userRoles = useContextSelector(AppContext, (ctx) => ctx.state.userRoles);
+  const darkMode = useContextSelector(AppContext, (ctx) => ctx.state.darkMode);
 
   useEffect(() => {
     if (!isHovered) {
@@ -41,26 +42,26 @@ export const Sidebar = () => {
   };
 
   const renderIcon = useCallback(
-    (name: string) => {
-      switch (name) {
+    (link: string) => {
+      switch (link) {
         case '/dashboard':
-          return <DashboardIcon name={name} active={active} />;
+          return <DashboardIcon link={link} active={active} />;
         case '/users':
-          return <ContactsIcon name={name} active={active} />;
+          return <ContactsIcon link={link} active={active} />;
         case '/settings':
-          return <SettingsIcon name={name} active={active} />;
+          return <SettingsIcon link={link} active={active} />;
         default:
-          return <DashboardIcon name={name} active={active} />;
+          return <DashboardIcon link={link} active={active} />;
       }
     },
     [active],
   );
 
   return (
-    <div className={`${styles.sideBar} ${collapsed ? styles.sideBarCollapsed : ''}`}>
+    <Paper elevation={2} className={`${styles.sideBar} ${collapsed ? styles.sideBarCollapsed : ''}`}>
       <Link to="/" className={styles.link}>
-        <Typography variant="h5" component="div">
-          CRM
+        <Typography variant="h5" component="div" color={darkMode ? '#fff' : '#6A707E'}>
+          {collapsed ? `BL` : `Best Light`}
         </Typography>
       </Link>
       <Profile collapsed={collapsed} />
@@ -104,13 +105,17 @@ export const Sidebar = () => {
           >
             <ToggleIcon active={collapsed} />
             {!collapsed && (
-              <Typography component="span" className={`${styles.link} ${!collapsed ? styles.sidebarLink : ''}`}>
+              <Typography
+                component="span"
+                className={`${styles.link} ${!collapsed ? styles.sidebarLink : ''}`}
+                color={darkMode ? '#fff' : '#6A707E'}
+              >
                 Свернуть
               </Typography>
             )}
           </div>
         </div>
       </div>
-    </div>
+    </Paper>
   );
 };

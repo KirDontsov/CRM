@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react';
+import { useCallback, useEffect, useReducer, useState } from 'react';
 import jwtDecode from 'jwt-decode';
 
 import { initialState, localStorageAppPrefix } from './constants';
@@ -41,6 +41,16 @@ const checkAuthToken = () => {
 
 export function useAppState(): AppState {
   const [state, dispatch] = useReducer(authReducer, initialState);
+  const [darkMode, setDarkMode] = useState(() => !!localStorage.getItem(`${localStorageAppPrefix}.darkMode`));
+
+  const handleDarkMode = useCallback(() => {
+    setDarkMode((prev) => !prev);
+    if (darkMode) {
+      localStorage.removeItem(`${localStorageAppPrefix}.darkMode`);
+    } else {
+      localStorage.setItem(`${localStorageAppPrefix}.darkMode`, `true`);
+    }
+  }, [darkMode]);
 
   const login = async (userData: UserData) => {
     // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -78,10 +88,14 @@ export function useAppState(): AppState {
   }, []);
 
   return {
-    state,
+    state: {
+      ...state,
+      darkMode,
+    },
     handlers: {
       login,
       logout,
+      toggleDarkMode: handleDarkMode,
     },
   };
 }

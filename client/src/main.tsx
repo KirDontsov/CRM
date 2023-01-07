@@ -2,12 +2,10 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { ApolloProvider } from '@apollo/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { ThemeProvider } from '@mui/material/styles';
 
 import { client } from './apollo-client';
 import { AppContextProvider } from './context';
 import { Layout } from './components/Layout';
-import { THEME } from './constants';
 import { Register } from './pages/Register';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
@@ -15,6 +13,7 @@ import { Users } from './pages/Users';
 import { Settings } from './pages/Settings';
 import { Orders } from './pages/Orders';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { MuiThemeProvider } from './components/MuiThemeProvider';
 
 import './styles/styles.module.scss';
 
@@ -57,12 +56,12 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <ThemeProvider theme={THEME}>
-      <ApolloProvider client={client}>
-        <AppContextProvider>
+    <ApolloProvider client={client}>
+      <AppContextProvider>
+        <MuiThemeProvider>
           <RouterProvider router={router} />
-        </AppContextProvider>
-      </ApolloProvider>
-    </ThemeProvider>
+        </MuiThemeProvider>
+      </AppContextProvider>
+    </ApolloProvider>
   </React.StrictMode>,
 );

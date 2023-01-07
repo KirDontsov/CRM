@@ -2,12 +2,12 @@
 
 .nav {
 	height: 60px;
-	border-bottom: 1px solid $divider;
 	background: $bg-main;
 	position: absolute;
 	top: 0;
 	width: 100%;
 	z-index: 2;
+	border-radius: 0 !important;
 }
 
 .navContent {
@@ -24,7 +24,6 @@
 
 .link {
 	text-decoration: none;
-	color: #109CF1;
 	width: fit-content;
 	&:hover {
 		color: #34AFF9;

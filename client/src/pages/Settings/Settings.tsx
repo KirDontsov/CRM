@@ -1,11 +1,26 @@
-import { Typography } from '@mui/material';
+import { Typography, Switch, FormControlLabel, Paper } from '@mui/material';
+import { useContextSelector } from 'use-context-selector';
+import { useCallback } from 'react';
+
+import { AppContext } from '../../context';
 
 import styles from './styles.module.scss';
 
 export const Settings = () => {
+  const toggleDarkMode = useContextSelector(AppContext, (ctx) => ctx.handlers.toggleDarkMode);
+  const darkMode = useContextSelector(AppContext, (ctx) => ctx.state.darkMode);
+
+  const handleDarkMode = useCallback(() => {
+    toggleDarkMode();
+  }, [toggleDarkMode]);
+
   return (
-    <div className={styles.settingsContainer}>
+    <Paper elevation={2} className={styles.settingsContainer}>
       <Typography variant="h1">Settings</Typography>
-    </div>
+      <FormControlLabel
+        control={<Switch checked={darkMode} onChange={handleDarkMode} inputProps={{ 'aria-label': 'controlled' }} />}
+        label="Темная тема"
+      />
+    </Paper>
   );
 };

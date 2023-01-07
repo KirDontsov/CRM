@@ -24,6 +24,7 @@ const GET_USER = gql`
 
 export const Profile: FC<ProfileProps> = ({ collapsed }) => {
   const userId = useContextSelector(AppContext, (ctx) => ctx.state.userId);
+  const darkMode = useContextSelector(AppContext, (ctx) => ctx.state.darkMode);
 
   const { data } = useQuery(GET_USER, {
     variables: { id: userId },
@@ -42,7 +43,7 @@ export const Profile: FC<ProfileProps> = ({ collapsed }) => {
             {username}
           </Typography>
           <a href={`mailto:${email}`} className={styles.link}>
-            <Typography component="span" className={styles.email}>
+            <Typography component="span" className={styles.email} color={darkMode ? '#885AF8' : '#C2CFE0'}>
               {email}
             </Typography>
           </a>
