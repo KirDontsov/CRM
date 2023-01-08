@@ -7,6 +7,11 @@ export const ROUTES = [
     access: [UserRoles.Admin, UserRoles.Reader],
   },
   {
+    name: 'События',
+    link: '/events',
+    access: [UserRoles.Admin, UserRoles.Reader],
+  },
+  {
     name: 'Пользователи',
     link: '/users',
     access: [UserRoles.Admin],

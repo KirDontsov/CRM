@@ -4,6 +4,8 @@ import { ChevronLeftRounded, ChevronRightRounded } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 
+import { EventsData } from '../../pages/Dashboard/interfaces';
+
 import { DisplayDailyCalendar } from './DisplayDailyCalendar';
 
 dayjs.locale('ru');
@@ -11,10 +13,12 @@ dayjs.locale('ru');
 const DATE_FORMAT = 'MMMM - YYYY';
 
 export interface CalendarProps {
+  loading: boolean;
+  events: EventsData[];
   onDateSelect: (date: Date) => void;
 }
 
-export const Calendar: FC<CalendarProps> = ({ onDateSelect }) => {
+export const Calendar: FC<CalendarProps> = ({ events, loading, onDateSelect }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedMonth, setSelectedMonth] = useState(new Date());
 
@@ -52,7 +56,13 @@ export const Calendar: FC<CalendarProps> = ({ onDateSelect }) => {
           <ChevronRightRounded />
         </IconButton>
       </Paper>
-      <DisplayDailyCalendar selectedDate={selectedDate} selectedMonth={selectedMonth} onDateClick={onDateClick} />
+      <DisplayDailyCalendar
+        selectedDate={selectedDate}
+        selectedMonth={selectedMonth}
+        onDateClick={onDateClick}
+        events={events}
+        loading={loading}
+      />
     </div>
   );
 };

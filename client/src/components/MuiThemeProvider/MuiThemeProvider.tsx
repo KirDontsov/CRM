@@ -55,6 +55,15 @@ export const MuiThemeProvider: FC<MuiThemeProviderProps> = ({ children }) => {
               },
             },
           },
+          MuiCard: {
+            styleOverrides: {
+              root: {
+                display: 'flex',
+                flexDirection: 'column',
+                cursor: 'pointer',
+              },
+            },
+          },
           MuiCardContent: {
             styleOverrides: {
               root: {
@@ -63,15 +72,6 @@ export const MuiThemeProvider: FC<MuiThemeProviderProps> = ({ children }) => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 height: '100%',
-              },
-            },
-          },
-          MuiCard: {
-            styleOverrides: {
-              root: {
-                display: 'flex',
-                flexDirection: 'column',
-                cursor: 'pointer',
               },
             },
           },

@@ -12,6 +12,7 @@ import { Dashboard } from './pages/Dashboard';
 import { Users } from './pages/Users';
 import { Settings } from './pages/Settings';
 import { Orders } from './pages/Orders';
+import { Events } from './pages/Events';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { MuiThemeProvider } from './components/MuiThemeProvider';
 
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
       {
         path: '/dashboard',
         element: <Dashboard />,
+      },
+      {
+        path: '/events',
+        element: <Events />,
       },
       {
         path: '/orders',

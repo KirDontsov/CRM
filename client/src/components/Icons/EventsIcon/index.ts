@@ -1,0 +1,1 @@
+export { EventsIcon } from './EventsIcon';

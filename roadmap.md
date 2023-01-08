@@ -18,4 +18,5 @@ Client:
 - users
 - settings
 - dark mode
+- events
 - calendar

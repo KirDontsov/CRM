@@ -11,31 +11,46 @@ import {
   CardContent,
 } from '@mui/material';
 import dayjs from 'dayjs';
+import { useContextSelector } from 'use-context-selector';
+
+import { EventsData } from '../../pages/Dashboard/interfaces';
+import { AppContext } from '../../context';
+
+import styles from './styles.module.scss';
 
 const today = new Date();
 const DAY_FORMAT = 'D';
+const weekdays = [
+  { id: 0, day: 'Пн' },
+  { id: 1, day: 'Вт' },
+  { id: 2, day: 'Ср' },
+  { id: 3, day: 'Чт' },
+  { id: 4, day: 'Пт' },
+  { id: 5, day: 'Сб' },
+  { id: 6, day: 'Вс' },
+];
 
 export interface DisplayDailyCalendarProps {
+  loading: boolean;
+  events: EventsData[];
   selectedMonth: Date;
   selectedDate: Date;
   onDateClick: (day: Date) => void;
 }
 
-export const DisplayDailyCalendar: FC<DisplayDailyCalendarProps> = ({ selectedMonth, selectedDate, onDateClick }) => {
+export const DisplayDailyCalendar: FC<DisplayDailyCalendarProps> = ({
+  selectedMonth,
+  selectedDate,
+  onDateClick,
+  events,
+  loading,
+}) => {
+  const darkMode = useContextSelector(AppContext, (ctx) => ctx.state.darkMode);
+
   const monthStart = dayjs(selectedMonth).startOf('month').toDate();
   const monthEnd = dayjs(selectedMonth).endOf('month').toDate();
   const startDate = dayjs(monthStart).startOf('week').toDate();
   const endDate = dayjs(monthEnd).endOf('week').toDate();
-
-  const weekdays = [
-    { id: 0, day: 'Пн' },
-    { id: 1, day: 'Вт' },
-    { id: 2, day: 'Ср' },
-    { id: 3, day: 'Чт' },
-    { id: 4, day: 'Пт' },
-    { id: 5, day: 'Сб' },
-    { id: 6, day: 'Вс' },
-  ];
 
   const eachWeek = [];
   let daysOfWeek = [];
@@ -49,6 +64,7 @@ export const DisplayDailyCalendar: FC<DisplayDailyCalendarProps> = ({ selectedMo
     for (let i = 0; i < 7; i += 1) {
       formattedDate = dayjs(day).format(DAY_FORMAT);
       const cloneDay = day;
+      const eventsThatDay = events.filter((event) => dayjs(event.targetDate.split('T')[0]).isSame(cloneDay), 'd');
 
       daysOfWeek.push(
         <TableCell key={formattedDate} padding="none" size="small">
@@ -66,16 +82,30 @@ export const DisplayDailyCalendar: FC<DisplayDailyCalendarProps> = ({ selectedMo
                     }
               }
             >
-              <CardContent>
-                {dayjs(day).isSame(today, 'd') ? (
-                  <Typography color="primary" style={{ fontSize: '22px', fontWeight: '500' }}>
-                    {formattedDate}
-                  </Typography>
-                ) : (
-                  <Typography style={!dayjs(day).isSame(today, 'm') ? { color: 'rgba(128,128,128,1)' } : {}}>
-                    {formattedDate}
-                  </Typography>
-                )}
+              <CardContent style={{ height: '100%' }}>
+                <div className={styles.cardContent}>
+                  <div className={styles.eventsContainer}>
+                    {!loading &&
+                      eventsThatDay.map((ev) => (
+                        <div
+                          key={ev.id}
+                          className={styles.event}
+                          style={{ backgroundColor: `${darkMode ? '#885AF8' : '#109CF1'}` }}
+                        />
+                      ))}
+                  </div>
+                  <div className={styles.textContainer}>
+                    {dayjs(day).isSame(today, 'd') ? (
+                      <Typography color="primary" style={{ fontSize: '22px', fontWeight: '500' }}>
+                        {formattedDate}
+                      </Typography>
+                    ) : (
+                      <Typography style={!dayjs(day).isSame(today, 'm') ? { color: 'rgba(128,128,128,1)' } : {}}>
+                        {formattedDate}
+                      </Typography>
+                    )}
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </CardActionArea>

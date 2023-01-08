@@ -7,6 +7,7 @@ import { DashboardIcon } from '../Icons/DashboardIcon';
 import { ContactsIcon } from '../Icons/ContactsIcon';
 import { SettingsIcon } from '../Icons/SettingsIcon';
 import { ToggleIcon } from '../Icons/ToggleIcon';
+import { EventsIcon } from '../Icons/EventsIcon';
 import { AppContext } from '../../context';
 import { UserRoles } from '../../apollo-client';
 
@@ -46,6 +47,8 @@ export const Sidebar = () => {
       switch (link) {
         case '/dashboard':
           return <DashboardIcon link={link} active={active} />;
+        case '/events':
+          return <EventsIcon link={link} active={active} />;
         case '/users':
           return <ContactsIcon link={link} active={active} />;
         case '/settings':
