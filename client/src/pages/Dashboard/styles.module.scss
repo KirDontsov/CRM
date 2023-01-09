@@ -2,7 +2,8 @@
 
 .dashboardContainer {
 	display: flex;
-	gap: 24px;
+	gap: 30px;
+	margin-bottom: 60px;
 	.dashboardLeftPart {
 		display: flex;
 		flex-direction: column;
@@ -38,13 +39,27 @@
 	.dashboardRightPart {
 		display: flex;
 		flex-direction: column;
-		padding: 24px;
-		min-width: 600px;
-		height: fit-content;
-		.earningsWidget {
+		gap: 30px;
+		.widget {
+			min-width: 600px;
+			height: fit-content;
+			padding: 24px;
 			display: flex;
 			flex-direction: column;
 			gap: 40px;
+			font-family: 'Roboto', sans-serif !important;
+		}
+		.pieContainer {
+			display: flex;
+			.pieStat {
+				display: flex;
+				flex-direction: column;
+				gap: 4px;
+				.pieStatItem {
+					display: flex;
+					gap: 12px;
+				}
+			}
 		}
 	}
 }

@@ -5,6 +5,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import { useQuery } from '@apollo/client';
+import dayjs from 'dayjs';
 
 import { TableToolbar } from '../../../components/TableToolbar';
 import { SharedTableHead } from '../../../components/SharedTableHead';
@@ -14,6 +15,7 @@ import { useTableControls } from '../../../shared';
 import { GET_ORDERS, HEAD_CELLS } from './constants';
 import { Data } from './interfaces';
 import styles from './styles.module.scss';
+import { mapWorkTypes } from './utils';
 
 export const OrdersTable = () => {
   const { data, loading } = useQuery(GET_ORDERS);
@@ -27,7 +29,7 @@ export const OrdersTable = () => {
       <TableToolbar numSelected={selected.length} title="Заказы" />
       <TableContainer>
         {!loading && (
-          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
+          <Table sx={{ minWidth: 1765 }} aria-labelledby="tableTitle" size="medium">
             <SharedTableHead<Data>
               data={HEAD_CELLS}
               numSelected={selected.length}
@@ -68,7 +70,7 @@ export const OrdersTable = () => {
                           }}
                         />
                       </TableCell>
-                      <TableCell>{row?.createdAt?.split('T')[0]}</TableCell>
+                      <TableCell>{dayjs(row?.createdAt).format('DD.MM.YYYY')}</TableCell>
                       <TableCell>
                         {row?.initialPhotos && (
                           <div
@@ -83,10 +85,10 @@ export const OrdersTable = () => {
                       </TableCell>
                       <TableCell>{row.orderName}</TableCell>
                       <TableCell>{row.initialCost}</TableCell>
-                      <TableCell>{row.leftHeadlamp ? 'Да' : ''}</TableCell>
-                      <TableCell>{row.rightHeadlamp ? 'Да' : ''}</TableCell>
-                      <TableCell>{row.releaseDate?.split('T')[0]}</TableCell>
-                      <TableCell>{row.sparePartsCost}</TableCell>
+                      <TableCell>{mapWorkTypes(row.leftHeadlamp)}</TableCell>
+                      <TableCell>{mapWorkTypes(row.rightHeadlamp)}</TableCell>
+                      <TableCell>{row?.releaseDate ? dayjs(row?.releaseDate).format('DD.MM.YYYY') : ''}</TableCell>
+                      <TableCell>{row.sparePartsCost === '0' ? '' : row.sparePartsCost}</TableCell>
                       <TableCell>{row.totalCost}</TableCell>
                       <TableCell>{row.initialComment}</TableCell>
                     </TableRow>

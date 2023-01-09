@@ -1,3 +1,5 @@
+import { WorkTypes } from '../../../apollo-client';
+
 export interface Data {
   id: string;
 
@@ -7,9 +9,9 @@ export interface Data {
 
   initialCost: string;
 
-  leftHeadlamp: string;
+  leftHeadlamp: WorkTypes[];
 
-  rightHeadlamp: string;
+  rightHeadlamp: WorkTypes[];
 
   workType: [string];
 
