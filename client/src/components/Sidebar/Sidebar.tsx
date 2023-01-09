@@ -19,12 +19,13 @@ import styles from './styles.module.scss';
 
 export const Sidebar = () => {
   const [active, setActive] = useState('');
-  const [collapsed, setCollapsed] = useState(false);
   const { pathname } = useLocation();
   const hoverRef = useRef(null);
   const isHovered = useHover(hoverRef);
   const userRoles = useContextSelector(AppContext, (ctx) => ctx.state.userRoles);
   const darkMode = useContextSelector(AppContext, (ctx) => ctx.state.darkMode);
+  const collapsed = useContextSelector(AppContext, (ctx) => ctx.state.collapsed);
+  const toggleCollapsed = useContextSelector(AppContext, (ctx) => ctx.handlers.toggleCollapsed);
 
   useEffect(() => {
     if (!isHovered) {
@@ -104,7 +105,7 @@ export const Sidebar = () => {
           <div
             role="presentation"
             className={`${styles.link} ${!collapsed ? styles.sidebarLink : ''} ${styles.bottomMenuLink}`}
-            onClick={() => setCollapsed((prev) => !prev)}
+            onClick={toggleCollapsed}
           >
             <ToggleIcon active={collapsed} />
             {!collapsed && (

@@ -42,6 +42,7 @@ const checkAuthToken = () => {
 export function useAppState(): AppState {
   const [state, dispatch] = useReducer(authReducer, initialState);
   const [darkMode, setDarkMode] = useState(() => !!localStorage.getItem(`${localStorageAppPrefix}.darkMode`));
+  const [collapsed, setCollapsed] = useState(false);
 
   const handleDarkMode = useCallback(() => {
     setDarkMode((prev) => !prev);
@@ -51,6 +52,10 @@ export function useAppState(): AppState {
       localStorage.setItem(`${localStorageAppPrefix}.darkMode`, `true`);
     }
   }, [darkMode]);
+
+  const handleCollapsed = () => {
+    setCollapsed((prev) => !prev);
+  };
 
   const login = async (userData: UserData) => {
     // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -91,11 +96,13 @@ export function useAppState(): AppState {
     state: {
       ...state,
       darkMode,
+      collapsed,
     },
     handlers: {
       login,
       logout,
       toggleDarkMode: handleDarkMode,
+      toggleCollapsed: handleCollapsed,
     },
   };
 }

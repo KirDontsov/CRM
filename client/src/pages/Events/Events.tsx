@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Paper, Typography } from '@mui/material';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
 import { Calendar } from '../../components/Calendar';
 import { Curtain } from '../../components/Curtain';
@@ -8,22 +8,11 @@ import { Curtain } from '../../components/Curtain';
 import styles from './styles.module.scss';
 import { EventForm } from './EventForm';
 import { EventsData } from './interfaces';
+import { GET_EVENTS } from './constants';
 
 export function isEvent(date: Date): date is Date {
   return !Object.prototype.hasOwnProperty.call(date, 'type');
 }
-
-export const GET_EVENTS = gql`
-  query getEvents {
-    events {
-      id
-      eventName
-      eventType
-      eventComment
-      targetDate
-    }
-  }
-`;
 
 export const Events = () => {
   const [open, setOpen] = useState(false);

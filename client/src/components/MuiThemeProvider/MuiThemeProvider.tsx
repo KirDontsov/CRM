@@ -81,6 +81,16 @@ export const MuiThemeProvider: FC<MuiThemeProviderProps> = ({ children }) => {
                 boxShadow: 'none',
                 height: '56px',
               },
+              sizeSmall: {
+                height: '24px',
+              },
+              containedSuccess: {
+                backgroundColor: '#2ED47A',
+                color: '#fff',
+              },
+              containedError: {
+                backgroundColor: '#F7685B',
+              },
             },
           },
           MuiPaper: {

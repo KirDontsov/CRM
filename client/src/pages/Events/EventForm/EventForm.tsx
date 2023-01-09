@@ -1,4 +1,5 @@
 import { FC, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button, Card, CardActionArea, CardContent, Stack, Typography } from '@mui/material';
 import { useMutation } from '@apollo/client';
 import { SubmitHandler, useForm, FormProvider } from 'react-hook-form';
@@ -24,6 +25,7 @@ export interface EventFormProps {
 }
 
 export const EventForm: FC<EventFormProps> = ({ date, events, onClose }) => {
+  const navigate = useNavigate();
   const [createEvent] = useMutation(CREATE_EVENT, {
     onCompleted: () => {
       // TODO: показать тост успех
@@ -49,6 +51,13 @@ export const EventForm: FC<EventFormProps> = ({ date, events, onClose }) => {
 
   const eventsThatDay = events.filter((event) => dayjs(event.targetDate.split('T')[0]).isSame(date), 'd');
 
+  const handleEventClick = useCallback(
+    (eventId: string) => {
+      navigate(`/events/${eventId}`);
+    },
+    [navigate],
+  );
+
   return (
     <div className={styles.eventFormContent}>
       {Boolean(eventsThatDay?.length) && (
@@ -62,7 +71,7 @@ export const EventForm: FC<EventFormProps> = ({ date, events, onClose }) => {
           <div className={styles.eventsList}>
             {eventsThatDay.map((ev) => (
               <div key={ev.id} className={styles.eventCard}>
-                <CardActionArea>
+                <CardActionArea onClick={() => handleEventClick(ev.id)}>
                   <Card elevation={24}>
                     <CardContent>
                       <div className={styles.eventCardContent}>

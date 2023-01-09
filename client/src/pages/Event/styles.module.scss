@@ -1,0 +1,15 @@
+@import '../../styles/global.module';
+
+.eventContainer {
+	background: $white;
+	padding: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	.eventHeader {
+		display: flex;
+		gap: 24px;
+		justify-content: space-between;
+		width: 100%;
+	}
+}

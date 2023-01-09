@@ -13,6 +13,7 @@ import { Users } from './pages/Users';
 import { Settings } from './pages/Settings';
 import { Orders } from './pages/Orders';
 import { Events } from './pages/Events';
+import { Event } from './pages/Event';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { MuiThemeProvider } from './components/MuiThemeProvider';
 
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: '/events',
         element: <Events />,
+      },
+      {
+        path: 'events/:eventId',
+        element: <Event />,
       },
       {
         path: '/orders',
