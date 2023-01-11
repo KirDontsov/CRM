@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 
@@ -29,8 +29,21 @@ export class EventsRepository {
     eventFilterQuery: FilterQuery<Event>,
     event: Partial<Event>,
   ): Promise<Event> {
-    return this.eventModel.findOneAndUpdate(eventFilterQuery, event, {
-      new: true,
-    });
+    const existingEvent = await this.eventModel
+      .findOneAndUpdate({ id: eventFilterQuery.id }, event, {
+        new: true,
+      })
+      .exec();
+
+    if (!existingEvent) {
+      throw new NotFoundException(`Event #${event.id} not found`);
+    }
+    return existingEvent;
+  }
+
+  async findOneAndRemove(eventFilterQuery: FilterQuery<Event>): Promise<Event> {
+    const event = await this.eventModel.findOne(eventFilterQuery);
+    await this.eventModel.deleteOne(eventFilterQuery);
+    return event;
   }
 }

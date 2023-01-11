@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 
@@ -29,8 +29,21 @@ export class OrdersRepository {
     orderFilterQuery: FilterQuery<Order>,
     order: Partial<Order>,
   ): Promise<Order> {
-    return this.orderModel.findOneAndUpdate(orderFilterQuery, order, {
-      new: true,
-    });
+    const existingOrder = await this.orderModel
+      .findOneAndUpdate({ id: orderFilterQuery.id }, order, {
+        new: true,
+      })
+      .exec();
+
+    if (!existingOrder) {
+      throw new NotFoundException(`Order #${order.id} not found`);
+    }
+    return existingOrder;
+  }
+
+  async findOneAndRemove(orderFilterQuery: FilterQuery<Order>): Promise<Order> {
+    const order = await this.orderModel.findOne(orderFilterQuery);
+    await this.orderModel.deleteOne(orderFilterQuery);
+    return order;
   }
 }

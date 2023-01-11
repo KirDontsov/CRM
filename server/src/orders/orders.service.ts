@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 
 import { CreateOrderInput } from './dto/create-order.input';
-// import { UpdateOrderInput } from './dto/update-order.input';
+import { UpdateOrderInput } from './dto/update-order.input';
 import { OrdersRepository } from './mongo/orders.repository';
 import { Order } from './mongo/order.schema';
 
@@ -33,23 +33,11 @@ export class OrdersService {
     return this.ordersRepository.create(order);
   }
 
-  // create(createOrderInput: CreateOrderInput) {
-  //   return 'This action adds a new order';
-  // }
-  //
-  // findAll() {
-  //   return `This action returns all orders`;
-  // }
-  //
-  // findOne(id: number) {
-  //   return `This action returns a #${id} order`;
-  // }
-  //
-  // update(id: number, updateOrderInput: UpdateOrderInput) {
-  //   return `This action updates a #${id} order`;
-  // }
-  //
-  // remove(id: number) {
-  //   return `This action removes a #${id} order`;
-  // }
+  async update(id: string, orderUpdates: UpdateOrderInput): Promise<Order> {
+    return this.ordersRepository.findOneAndUpdate({ id }, orderUpdates);
+  }
+
+  async remove(id: string): Promise<Order> {
+    return this.ordersRepository.findOneAndRemove({ id });
+  }
 }

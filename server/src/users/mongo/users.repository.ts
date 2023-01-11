@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 
@@ -18,7 +18,7 @@ export class UsersRepository {
 
   async create(user: User): Promise<User> {
     // eslint-disable-next-line new-cap
-    const newUser = new this.userModel(user);
+    const newUser = await new this.userModel(user);
     return newUser.save();
   }
 
@@ -26,8 +26,21 @@ export class UsersRepository {
     userFilterQuery: FilterQuery<User>,
     user: Partial<User>,
   ): Promise<User> {
-    return this.userModel.findOneAndUpdate(userFilterQuery, user, {
-      new: true,
-    });
+    const existingUser = await this.userModel
+      .findOneAndUpdate({ id: userFilterQuery.id }, user, {
+        new: true,
+      })
+      .exec();
+
+    if (!existingUser) {
+      throw new NotFoundException(`User #${user.id} not found`);
+    }
+    return existingUser;
+  }
+
+  async findOneAndRemove(userFilterQuery: FilterQuery<User>): Promise<User> {
+    const user = await this.userModel.findOne(userFilterQuery);
+    await this.userModel.deleteOne(userFilterQuery);
+    return user;
   }
 }

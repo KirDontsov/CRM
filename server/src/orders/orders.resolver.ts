@@ -6,7 +6,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { OrdersService } from './orders.service';
 import { Order } from './entities/order.entity';
 import { CreateOrderInput } from './dto/create-order.input';
-// import { UpdateOrderInput } from './dto/update-order.input';
+import { UpdateOrderInput } from './dto/update-order.input';
 
 @Resolver(() => Order)
 export class OrdersResolver {
@@ -29,14 +29,16 @@ export class OrdersResolver {
   createOrder(@Args('createOrderInput') createOrderInput: CreateOrderInput) {
     return this.ordersService.create(createOrderInput);
   }
-  //
-  // @Mutation(() => Order)
-  // updateOrder(@Args('updateOrderInput') updateOrderInput: UpdateOrderInput) {
-  //   return this.ordersService.update(updateOrderInput.id, updateOrderInput);
-  // }
-  //
-  // @Mutation(() => Order)
-  // removeOrder(@Args('id', { type: () => Int }) id: number) {
-  //   return this.ordersService.remove(id);
-  // }
+
+  @UseGuards(JwtAuthGuard)
+  @Mutation(() => Order)
+  updateOrder(@Args('updateOrderInput') updateOrderInput: UpdateOrderInput) {
+    return this.ordersService.update(updateOrderInput.id, updateOrderInput);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Mutation(() => Order)
+  removeOrder(@Args('id') id: string) {
+    return this.ordersService.remove(id);
+  }
 }

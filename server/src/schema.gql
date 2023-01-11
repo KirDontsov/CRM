@@ -55,7 +55,13 @@ type Mutation {
   createEvent(createEventInput: CreateEventInput!): Event!
   createOrder(createOrderInput: CreateOrderInput!): Order!
   login(loginUserInput: LoginUserInput!): LoginResponse!
+  removeEvent(id: String!): Event!
+  removeOrder(id: String!): Order!
+  removeUser(id: String!): User!
   signup(createUserInput: CreateUserInput!): User!
+  updateEvent(updateEventInput: UpdateEventInput!): Event!
+  updateOrder(updateOrderInput: UpdateOrderInput!): Order!
+  updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
 type Order {
@@ -80,6 +86,33 @@ type Query {
   orders: [Order!]!
   user(id: String!): User!
   users: [User!]!
+}
+
+input UpdateEventInput {
+  eventComment: String
+  eventName: String
+  eventType: String
+  id: String!
+  targetDate: DateTime
+}
+
+input UpdateOrderInput {
+  id: String!
+  initialComment: String
+  initialCost: String
+  initialPhotos: String
+  leftHeadlamp: [String!]
+  orderName: String
+  rightHeadlamp: [String!]
+  sparePartsCost: String
+}
+
+input UpdateUserInput {
+  email: String
+  id: String!
+  password: String
+  roles: String
+  username: String
 }
 
 type User {

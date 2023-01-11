@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 
 import { CreateEventInput } from './dto/create-event.input';
-// import { UpdateEventInput } from './dto/update-event.input';
+import { UpdateEventInput } from './dto/update-event.input';
 import { EventsRepository } from './mongo/events.repository';
 import { Event } from './mongo/event.schema';
 
@@ -26,5 +26,13 @@ export class EventsService {
       updatedAt: new Date(),
     };
     return this.eventsRepository.create(event);
+  }
+
+  async update(id: string, eventUpdates: UpdateEventInput): Promise<Event> {
+    return this.eventsRepository.findOneAndUpdate({ id }, eventUpdates);
+  }
+
+  async remove(id: string): Promise<Event> {
+    return this.eventsRepository.findOneAndRemove({ id });
   }
 }

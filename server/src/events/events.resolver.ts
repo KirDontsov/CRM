@@ -6,7 +6,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { EventsService } from './events.service';
 import { Event } from './entities/event.entity';
 import { CreateEventInput } from './dto/create-event.input';
-// import { UpdateEventInput } from './dto/update-event.input';
+import { UpdateEventInput } from './dto/update-event.input';
 
 @Resolver(() => Event)
 export class EventsResolver {
@@ -28,5 +28,17 @@ export class EventsResolver {
   @Mutation(() => Event)
   createEvent(@Args('createEventInput') createEventInput: CreateEventInput) {
     return this.eventsService.create(createEventInput);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Mutation(() => Event)
+  updateEvent(@Args('updateEventInput') updateEventInput: UpdateEventInput) {
+    return this.eventsService.update(updateEventInput.id, updateEventInput);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Mutation(() => Event)
+  removeEvent(@Args('id') id: string) {
+    return this.eventsService.remove(id);
   }
 }
