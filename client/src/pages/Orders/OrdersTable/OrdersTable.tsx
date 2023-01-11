@@ -12,7 +12,7 @@ import { SharedTableHead } from '../../../components/SharedTableHead';
 import { getComparator } from '../../../utils';
 import { useTableControls } from '../../../shared';
 
-import { GET_ORDERS, HEAD_CELLS } from './constants';
+import { DELETE_ORDERS, GET_ORDERS, HEAD_CELLS } from './constants';
 import { Data } from './interfaces';
 import styles from './styles.module.scss';
 import { mapWorkTypes } from './utils';
@@ -21,12 +21,20 @@ export const OrdersTable = () => {
   const { data, loading } = useQuery(GET_ORDERS);
   const orders: Data[] = data?.orders ?? [];
 
-  const { selected, order, orderBy, isSelected, handleClick, handleSelectAllClick, handleRequestSort } =
-    useTableControls<Data>(orders, 'orderName');
+  const {
+    selected,
+    order,
+    orderBy,
+    isSelected,
+    handleClick,
+    handleSelectAllClick,
+    handleRequestSort,
+    handleDeleteItems,
+  } = useTableControls<Data>(orders, 'orderName', DELETE_ORDERS, 'getOrders');
 
   return (
     <>
-      <TableToolbar numSelected={selected.length} title="Заказы" />
+      <TableToolbar numSelected={selected.length} title="Заказы" deleteItems={handleDeleteItems} />
       <TableContainer>
         {!loading && (
           <Table sx={{ minWidth: 1765 }} aria-labelledby="tableTitle" size="medium">

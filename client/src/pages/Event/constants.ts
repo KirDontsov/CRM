@@ -11,3 +11,12 @@ export const GET_EVENT = gql`
     }
   }
 `;
+
+export const DELETE_EVENT = gql`
+  mutation removeEvent($id: String!) {
+    removeEvent(id: $id) {
+      id
+      eventName
+    }
+  }
+`;

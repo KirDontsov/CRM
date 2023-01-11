@@ -1,11 +1,33 @@
-import { ChangeEvent, MouseEvent, useState } from 'react';
+import { ChangeEvent, MouseEvent, useCallback, useState } from 'react';
+import { DocumentNode, useMutation } from '@apollo/client';
 
 export type Order = 'asc' | 'desc';
 
-export function useTableControls<V extends { id: string }>(data: V[], initialOrderBy: keyof V) {
+export function useTableControls<V extends { id: string }>(
+  data: V[],
+  initialOrderBy: keyof V,
+  mutation: DocumentNode,
+  queryToRefetch: string,
+) {
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<keyof V>(initialOrderBy);
-  const [selected, setSelected] = useState<readonly string[]>([]);
+  const [selected, setSelected] = useState<string[]>([]);
+
+  const [deleteItems] = useMutation(mutation, {
+    onCompleted: () => {
+      // TODO: показать тост успех
+      setSelected([]);
+    },
+    refetchQueries: [queryToRefetch],
+  });
+
+  const handleDeleteItems = useCallback(async () => {
+    await deleteItems({
+      variables: {
+        ids: selected,
+      },
+    });
+  }, [deleteItems, selected]);
 
   const handleRequestSort = (event: MouseEvent<unknown>, property: keyof V) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -15,16 +37,15 @@ export function useTableControls<V extends { id: string }>(data: V[], initialOrd
 
   const handleSelectAllClick = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = data.map((n) => n.id);
-      setSelected(newSelected);
-      return;
+      setSelected(data.map(({ id }) => id));
+    } else {
+      setSelected([]);
     }
-    setSelected([]);
   };
 
   const handleClick = (event: MouseEvent<unknown>, name: string) => {
     const selectedIndex = selected.indexOf(name);
-    let newSelected: readonly string[] = [];
+    let newSelected: string[] = [];
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, name);
@@ -49,5 +70,6 @@ export function useTableControls<V extends { id: string }>(data: V[], initialOrd
     handleRequestSort,
     handleSelectAllClick,
     handleClick,
+    handleDeleteItems,
   };
 }

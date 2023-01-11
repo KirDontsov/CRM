@@ -22,8 +22,8 @@ export class UsersResolver {
     return this.usersService.getUsers();
   }
 
-  @Roles(UserRoles.Admin)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // получение данных пользователя нужно при авторизации для всех ролей
+  @UseGuards(JwtAuthGuard)
   @Query(() => User, { name: 'user' })
   findOne(@Args('id') id: string) {
     return this.usersService.getUserById(id);

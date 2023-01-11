@@ -12,19 +12,27 @@ import { getComparator } from '../../../utils';
 import { useTableControls } from '../../../shared';
 import { UserRoles } from '../../../apollo-client';
 
-import { GET_USERS, HEAD_CELLS } from './constants';
+import { DELETE_USERS, GET_USERS, HEAD_CELLS } from './constants';
 import { Data } from './interfaces';
 
 export const UsersTable = () => {
   const { data } = useQuery(GET_USERS);
   const users: Data[] = data?.users ?? [];
 
-  const { selected, order, orderBy, isSelected, handleClick, handleSelectAllClick, handleRequestSort } =
-    useTableControls<Data>(users, 'username');
+  const {
+    selected,
+    order,
+    orderBy,
+    isSelected,
+    handleClick,
+    handleSelectAllClick,
+    handleRequestSort,
+    handleDeleteItems,
+  } = useTableControls<Data>(users, 'username', DELETE_USERS, 'getUsers');
 
   return (
     <>
-      <TableToolbar numSelected={selected.length} title="Пользователи" />
+      <TableToolbar numSelected={selected.length} title="Пользователи" deleteItems={handleDeleteItems} />
       <TableContainer>
         <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
           <SharedTableHead<Data>
@@ -41,17 +49,17 @@ export const UsersTable = () => {
               .slice()
               .sort(getComparator(order, orderBy))
               .map((row, index) => {
-                const isItemSelected = isSelected(row.username);
+                const isItemSelected = isSelected(row.id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
                   <TableRow
                     hover
-                    onClick={(event) => handleClick(event, row.username)}
+                    onClick={(event) => handleClick(event, row.id)}
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.username}
+                    key={row.id}
                     selected={isItemSelected}
                     sx={{
                       pl: { sm: 2 },

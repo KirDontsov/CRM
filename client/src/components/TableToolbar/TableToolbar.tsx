@@ -6,13 +6,19 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import { useContextSelector } from 'use-context-selector';
+
+import { AppContext } from '../../context';
+import { UserRoles } from '../../apollo-client';
 
 export interface EnhancedTableToolbarProps {
   title: string;
   numSelected: number;
+  deleteItems: () => void;
 }
 
-export const TableToolbar = memo(({ numSelected, title }: EnhancedTableToolbarProps) => {
+export const TableToolbar = memo(({ numSelected, title, deleteItems }: EnhancedTableToolbarProps) => {
+  const userRoles = useContextSelector(AppContext, (ctx) => ctx.state.userRoles);
   return (
     <Toolbar
       sx={{
@@ -30,10 +36,10 @@ export const TableToolbar = memo(({ numSelected, title }: EnhancedTableToolbarPr
           {title}
         </Typography>
       )}
-      {numSelected > 0 ? (
+      {numSelected > 0 && userRoles === UserRoles.Admin ? (
         <Tooltip title="Delete">
           <IconButton>
-            <DeleteIcon />
+            <DeleteIcon onClick={deleteItems} />
           </IconButton>
         </Tooltip>
       ) : (

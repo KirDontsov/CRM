@@ -90,7 +90,13 @@ export const DisplayDailyCalendar: FC<DisplayDailyCalendarProps> = ({
                         <div
                           key={ev.id}
                           className={styles.event}
-                          style={{ backgroundColor: `${darkMode ? '#885AF8' : '#109CF1'}` }}
+                          style={{
+                            backgroundColor: `${
+                              darkMode
+                                ? `${dayjs().isAfter(cloneDay) ? '#C2CFE0' : '#885AF8'}`
+                                : `${dayjs().isAfter(cloneDay) ? '#C2CFE0' : '#109CF1'}`
+                            }`,
+                          }}
                         />
                       ))}
                   </div>

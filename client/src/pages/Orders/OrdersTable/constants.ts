@@ -20,6 +20,15 @@ export const GET_ORDERS = gql`
   }
 `;
 
+export const DELETE_ORDERS = gql`
+  mutation removeOrders($ids: [String!]!) {
+    removeOrders(ids: $ids) {
+      id
+      orderName
+    }
+  }
+`;
+
 export const HEAD_CELLS: HeadCell[] = [
   {
     id: 'createdAt',

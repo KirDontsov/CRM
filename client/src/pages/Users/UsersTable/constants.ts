@@ -13,6 +13,15 @@ export const GET_USERS = gql`
   }
 `;
 
+export const DELETE_USERS = gql`
+  mutation removeUsers($ids: [String!]!) {
+    removeUsers(ids: $ids) {
+      id
+      username
+    }
+  }
+`;
+
 export const HEAD_CELLS: HeadCell[] = [
   {
     id: 'username',
