@@ -35,4 +35,8 @@ export class EventsService {
   async remove(id: string): Promise<Event> {
     return this.eventsRepository.findOneAndRemove({ id });
   }
+
+  async removeEvents(ids: string[]): Promise<Event[]> {
+    return this.eventsRepository.findAndRemove({ ids });
+  }
 }

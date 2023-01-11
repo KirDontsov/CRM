@@ -42,4 +42,11 @@ export class UsersResolver {
   removeUser(@Args('id') id: string) {
     return this.usersService.remove(id);
   }
+
+  @Roles(UserRoles.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Mutation(() => [User], { name: 'removeUsers' })
+  removeUsers(@Args({ name: 'ids', type: () => [String] }) ids: string[]) {
+    return this.usersService.removeUsers(ids);
+  }
 }

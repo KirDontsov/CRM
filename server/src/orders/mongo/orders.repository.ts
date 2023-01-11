@@ -46,4 +46,16 @@ export class OrdersRepository {
     await this.orderModel.deleteOne(orderFilterQuery);
     return order;
   }
+
+  async findAndRemove(ordersFilterQuery: FilterQuery<Order>): Promise<Order[]> {
+    const orders = await this.orderModel
+      .find()
+      .where('id')
+      .in(ordersFilterQuery.ids)
+      .exec();
+
+    const ids = orders.map(({ id }) => id);
+    await this.orderModel.deleteMany({ id: { $in: ids } });
+    return orders;
+  }
 }

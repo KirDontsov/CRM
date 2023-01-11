@@ -40,4 +40,8 @@ export class OrdersService {
   async remove(id: string): Promise<Order> {
     return this.ordersRepository.findOneAndRemove({ id });
   }
+
+  async removeOrders(ids: string[]): Promise<Order[]> {
+    return this.ordersRepository.findAndRemove({ ids });
+  }
 }

@@ -40,4 +40,8 @@ export class UsersService {
   async remove(id: string): Promise<User> {
     return this.usersRepository.findOneAndRemove({ id });
   }
+
+  async removeUsers(ids: string[]): Promise<User[]> {
+    return this.usersRepository.findAndRemove({ ids });
+  }
 }

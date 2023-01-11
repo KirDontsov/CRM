@@ -2,6 +2,9 @@ import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRoles } from '../auth/dto/user-roles';
+import { RolesGuard } from '../auth/guards/roles.guard';
 
 import { EventsService } from './events.service';
 import { Event } from './entities/event.entity';
@@ -36,9 +39,17 @@ export class EventsResolver {
     return this.eventsService.update(updateEventInput.id, updateEventInput);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Mutation(() => Event)
   removeEvent(@Args('id') id: string) {
     return this.eventsService.remove(id);
+  }
+
+  @Roles(UserRoles.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Mutation(() => [Event], { name: 'removeEvents' })
+  removeEvents(@Args({ name: 'ids', type: () => [String] }) ids: string[]) {
+    return this.eventsService.removeEvents(ids);
   }
 }

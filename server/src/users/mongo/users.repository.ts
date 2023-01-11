@@ -43,4 +43,16 @@ export class UsersRepository {
     await this.userModel.deleteOne(userFilterQuery);
     return user;
   }
+
+  async findAndRemove(usersFilterQuery: FilterQuery<User>): Promise<User[]> {
+    const users = await this.userModel
+      .find()
+      .where('id')
+      .in(usersFilterQuery.ids)
+      .exec();
+
+    const ids = users.map(({ id }) => id);
+    await this.userModel.deleteMany({ id: { $in: ids } });
+    return users;
+  }
 }

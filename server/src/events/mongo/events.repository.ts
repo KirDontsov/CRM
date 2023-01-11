@@ -46,4 +46,16 @@ export class EventsRepository {
     await this.eventModel.deleteOne(eventFilterQuery);
     return event;
   }
+
+  async findAndRemove(eventsFilterQuery: FilterQuery<Event>): Promise<Event[]> {
+    const events = await this.eventModel
+      .find()
+      .where('id')
+      .in(eventsFilterQuery.ids)
+      .exec();
+
+    const ids = events.map(({ id }) => id);
+    await this.eventModel.deleteMany({ id: { $in: ids } });
+    return events;
+  }
 }

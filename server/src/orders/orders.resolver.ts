@@ -2,6 +2,9 @@ import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRoles } from '../auth/dto/user-roles';
+import { RolesGuard } from '../auth/guards/roles.guard';
 
 import { OrdersService } from './orders.service';
 import { Order } from './entities/order.entity';
@@ -36,9 +39,17 @@ export class OrdersResolver {
     return this.ordersService.update(updateOrderInput.id, updateOrderInput);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Mutation(() => Order)
   removeOrder(@Args('id') id: string) {
     return this.ordersService.remove(id);
+  }
+
+  @Roles(UserRoles.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Mutation(() => [Order], { name: 'removeOrders' })
+  removeOrders(@Args({ name: 'ids', type: () => [String] }) ids: string[]) {
+    return this.ordersService.removeOrders(ids);
   }
 }

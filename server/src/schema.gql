@@ -56,8 +56,11 @@ type Mutation {
   createOrder(createOrderInput: CreateOrderInput!): Order!
   login(loginUserInput: LoginUserInput!): LoginResponse!
   removeEvent(id: String!): Event!
+  removeEvents(ids: [String!]!): [Event!]!
   removeOrder(id: String!): Order!
+  removeOrders(ids: [String!]!): [Order!]!
   removeUser(id: String!): User!
+  removeUsers(ids: [String!]!): [User!]!
   signup(createUserInput: CreateUserInput!): User!
   updateEvent(updateEventInput: UpdateEventInput!): Event!
   updateOrder(updateOrderInput: UpdateOrderInput!): Order!
