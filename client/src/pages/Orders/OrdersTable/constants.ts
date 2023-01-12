@@ -4,7 +4,7 @@ import { HeadCell } from './interfaces';
 
 export const GET_ORDERS = gql`
   query getOrders {
-    orders {
+    getOrders {
       id
       releaseDate
       createdAt
@@ -21,8 +21,8 @@ export const GET_ORDERS = gql`
 `;
 
 export const DELETE_ORDERS = gql`
-  mutation removeOrders($ids: [String!]!) {
-    removeOrders(ids: $ids) {
+  mutation deleteOrders($ids: [String!]!) {
+    deleteOrders(ids: $ids) {
       id
       orderName
     }

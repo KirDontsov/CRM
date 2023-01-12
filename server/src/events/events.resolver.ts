@@ -40,7 +40,7 @@ export class EventsResolver {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Mutation(() => Event)
+  @Mutation(() => Event, { name: 'saveEvent' })
   updateEvent(@Args('updateEventInput') updateEventInput: UpdateEventInput) {
     return this.eventsService.update(updateEventInput.id, updateEventInput);
   }
@@ -48,14 +48,14 @@ export class EventsResolver {
   @Roles(UserRoles.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Mutation(() => Event)
-  removeEvent(@Args('id') id: string) {
+  deleteEvent(@Args('id') id: string) {
     return this.eventsService.remove(id);
   }
 
   @Roles(UserRoles.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Mutation(() => [Event], { name: 'removeEvents' })
-  removeEvents(@Args({ name: 'ids', type: () => [String] }) ids: string[]) {
+  @Mutation(() => [Event])
+  deleteEvents(@Args({ name: 'ids', type: () => [String] }) ids: string[]) {
     return this.eventsService.removeEvents(ids);
   }
 }

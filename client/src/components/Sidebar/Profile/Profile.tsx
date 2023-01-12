@@ -14,7 +14,7 @@ export interface ProfileProps {
 
 const GET_USER = gql`
   query getUser($id: String!) {
-    user(id: $id) {
+    getUser(id: $id) {
       id
       username
       email
@@ -31,8 +31,8 @@ export const Profile: FC<ProfileProps> = ({ collapsed }) => {
     skip: !userId,
   });
 
-  const username = data?.user?.username ?? '';
-  const email = data?.user?.email ?? '';
+  const username = data?.getUser?.username ?? '';
+  const email = data?.getUser?.email ?? '';
 
   return (
     <div className={styles.profileContainer}>

@@ -56,17 +56,17 @@ input LoginUserInput {
 type Mutation {
   createEvent(createEventInput: CreateEventInput!): Event!
   createOrder(createOrderInput: CreateOrderInput!): Order!
+  createUser(createUserInput: CreateUserInput!): User!
+  deleteEvent(id: String!): Event!
+  deleteEvents(ids: [String!]!): [Event!]!
+  deleteOrder(id: String!): Order!
+  deleteOrders(ids: [String!]!): [Order!]!
+  deleteUser(id: String!): User!
+  deleteUsers(ids: [String!]!): [User!]!
   login(loginUserInput: LoginUserInput!): LoginResponse!
-  removeEvent(id: String!): Event!
-  removeEvents(ids: [String!]!): [Event!]!
-  removeOrder(id: String!): Order!
-  removeOrders(ids: [String!]!): [Order!]!
-  removeUser(id: String!): User!
-  removeUsers(ids: [String!]!): [User!]!
-  signup(createUserInput: CreateUserInput!): User!
-  updateEvent(updateEventInput: UpdateEventInput!): Event!
-  updateOrder(updateOrderInput: UpdateOrderInput!): Order!
-  updateUser(updateUserInput: UpdateUserInput!): User!
+  saveEvent(updateEventInput: UpdateEventInput!): Event!
+  saveOrder(updateOrderInput: UpdateOrderInput!): Order!
+  saveUser(updateUserInput: UpdateUserInput!): User!
 }
 
 type Order {
@@ -88,10 +88,10 @@ type Query {
   getEvent(id: String!): Event!
   getEvents: [Event!]!
   getEventsByUserId(userId: String!): [Event!]!
-  order(id: String!): Order!
-  orders: [Order!]!
-  user(id: String!): User!
-  users: [User!]!
+  getOrder(id: String!): Order!
+  getOrders: [Order!]!
+  getUser(id: String!): User!
+  getUsers: [User!]!
 }
 
 input UpdateEventInput {

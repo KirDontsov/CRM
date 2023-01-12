@@ -19,7 +19,7 @@ import { mapWorkTypes } from './utils';
 
 export const OrdersTable = () => {
   const { data, loading } = useQuery(GET_ORDERS);
-  const orders: Data[] = data?.orders ?? [];
+  const orders: Data[] = data?.getOrders ?? [];
 
   const {
     selected,

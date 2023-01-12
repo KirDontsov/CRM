@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 
 export const GET_EVENT = gql`
   query getEventById($id: String!) {
-    event(id: $id) {
+    getEvent(id: $id) {
       id
       eventName
       eventType
@@ -13,8 +13,8 @@ export const GET_EVENT = gql`
 `;
 
 export const DELETE_EVENT = gql`
-  mutation removeEvent($id: String!) {
-    removeEvent(id: $id) {
+  mutation deleteEvent($id: String!) {
+    deleteEvent(id: $id) {
       id
       eventName
     }

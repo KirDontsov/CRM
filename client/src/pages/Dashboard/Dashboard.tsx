@@ -27,9 +27,14 @@ export const Dashboard = () => {
   const navigate = useNavigate();
   const collapsed = useContextSelector(AppContext, (ctx) => ctx.state.collapsed);
   const darkMode = useContextSelector(AppContext, (ctx) => ctx.state.darkMode);
+  const userId = useContextSelector(AppContext, (ctx) => ctx.state.userId);
 
-  const { data, loading } = useQuery(GET_EVENTS);
-  const events: EventsData[] = data?.events ?? [];
+  const { data, loading } = useQuery(GET_EVENTS, {
+    variables: {
+      userId,
+    },
+  });
+  const events: EventsData[] = data?.getEventsByUserId ?? [];
 
   const handleFormatLabel = (value: string, name: string) => {
     if (name === 'pv') {

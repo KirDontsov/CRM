@@ -15,23 +15,23 @@ import { UpdateUserInput } from './dto/update-user.input';
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
-  @Roles(UserRoles.Admin)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Query(() => [User], { name: 'users' })
-  findAll() {
-    return this.usersService.getUsers();
-  }
-
   // получение данных пользователя нужно при авторизации для всех ролей
   @UseGuards(JwtAuthGuard)
-  @Query(() => User, { name: 'user' })
+  @Query(() => User, { name: 'getUser' })
   findOne(@Args('id') id: string) {
     return this.usersService.getUserById(id);
   }
 
   @Roles(UserRoles.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Mutation(() => User)
+  @Query(() => [User], { name: 'getUsers' })
+  findAll() {
+    return this.usersService.getUsers();
+  }
+
+  @Roles(UserRoles.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Mutation(() => User, { name: 'saveUser' })
   updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
     return this.usersService.update(updateUserInput.id, updateUserInput);
   }
@@ -39,14 +39,14 @@ export class UsersResolver {
   @Roles(UserRoles.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Mutation(() => User)
-  removeUser(@Args('id') id: string) {
+  deleteUser(@Args('id') id: string) {
     return this.usersService.remove(id);
   }
 
   @Roles(UserRoles.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Mutation(() => [User], { name: 'removeUsers' })
-  removeUsers(@Args({ name: 'ids', type: () => [String] }) ids: string[]) {
+  @Mutation(() => [User])
+  deleteUsers(@Args({ name: 'ids', type: () => [String] }) ids: string[]) {
     return this.usersService.removeUsers(ids);
   }
 }

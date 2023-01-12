@@ -16,25 +16,25 @@ export class OrdersResolver {
   constructor(private readonly ordersService: OrdersService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Query(() => Order, { name: 'order' })
+  @Query(() => Order, { name: 'getOrder' })
   findOne(@Args('id') id: string) {
     return this.ordersService.getOrderById(id);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Query(() => [Order], { name: 'orders' })
+  @Query(() => [Order], { name: 'getOrders' })
   findAll() {
     return this.ordersService.getOrders();
   }
 
   @UseGuards(JwtAuthGuard)
-  @Mutation(() => Order)
+  @Mutation(() => Order, { name: 'createOrder' })
   createOrder(@Args('createOrderInput') createOrderInput: CreateOrderInput) {
     return this.ordersService.create(createOrderInput);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Mutation(() => Order)
+  @Mutation(() => Order, { name: 'saveOrder' })
   updateOrder(@Args('updateOrderInput') updateOrderInput: UpdateOrderInput) {
     return this.ordersService.update(updateOrderInput.id, updateOrderInput);
   }
@@ -42,14 +42,14 @@ export class OrdersResolver {
   @Roles(UserRoles.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Mutation(() => Order)
-  removeOrder(@Args('id') id: string) {
+  deleteOrder(@Args('id') id: string) {
     return this.ordersService.remove(id);
   }
 
   @Roles(UserRoles.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Mutation(() => [Order], { name: 'removeOrders' })
-  removeOrders(@Args({ name: 'ids', type: () => [String] }) ids: string[]) {
+  @Mutation(() => [Order])
+  deleteOrders(@Args({ name: 'ids', type: () => [String] }) ids: string[]) {
     return this.ordersService.removeOrders(ids);
   }
 }

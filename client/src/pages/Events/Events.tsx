@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Paper, Typography } from '@mui/material';
 import { useQuery } from '@apollo/client';
+import { useContextSelector } from 'use-context-selector';
 
 import { Calendar } from '../../components/Calendar';
 import { Curtain } from '../../components/Curtain';
+import { AppContext } from '../../context';
 
 import styles from './styles.module.scss';
 import { EventForm } from './EventForm';
@@ -17,9 +19,14 @@ export function isEvent(date: Date): date is Date {
 export const Events = () => {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | null>(null);
+  const userId = useContextSelector(AppContext, (ctx) => ctx.state.userId);
 
-  const { data, loading } = useQuery(GET_EVENTS);
-  const events: EventsData[] = data?.events ?? [];
+  const { data, loading } = useQuery(GET_EVENTS, {
+    variables: {
+      userId,
+    },
+  });
+  const events: EventsData[] = data?.getEventsByUserId ?? [];
 
   const toggleDrawer = (newDate?: Date) => {
     if (newDate && isEvent(newDate)) {

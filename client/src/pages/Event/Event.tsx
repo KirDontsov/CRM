@@ -21,7 +21,7 @@ export const Event = () => {
     },
     skip: !eventId,
   });
-  const event = data?.event ?? {};
+  const event = data?.getEvent ?? {};
 
   const [deleteEvent] = useMutation(DELETE_EVENT, {
     onCompleted: () => {

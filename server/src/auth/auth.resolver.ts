@@ -29,7 +29,7 @@ export class AuthResolver {
 
   @Roles(UserRoles.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Mutation(() => User)
+  @Mutation(() => User, { name: 'createUser' })
   signup(@Args('createUserInput') createUserInput: CreateUserInput) {
     return this.authService.signup(createUserInput);
   }

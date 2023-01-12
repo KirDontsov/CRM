@@ -15,7 +15,7 @@ export const OPTIONS: ComboBoxOption[] = [
 ];
 
 export const CREATE_ORDER = gql`
-  mutation CreateOrder($input: CreateOrderInput!) {
+  mutation createOrder($input: CreateOrderInput!) {
     createOrder(createOrderInput: $input) {
       id
       orderName

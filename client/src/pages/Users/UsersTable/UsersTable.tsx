@@ -17,7 +17,7 @@ import { Data } from './interfaces';
 
 export const UsersTable = () => {
   const { data } = useQuery(GET_USERS);
-  const users: Data[] = data?.users ?? [];
+  const users: Data[] = data?.getUsers ?? [];
 
   const {
     selected,

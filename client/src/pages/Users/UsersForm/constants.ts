@@ -9,8 +9,8 @@ export const OPTIONS: ComboBoxOption[] = [
 ];
 
 export const REGISTER_USER = gql`
-  mutation RegisterUser($input: CreateUserInput!) {
-    signup(createUserInput: $input) {
+  mutation createUser($input: CreateUserInput!) {
+    createUser(createUserInput: $input) {
       id
       username
       email

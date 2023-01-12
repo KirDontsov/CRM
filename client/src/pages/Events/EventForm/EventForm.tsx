@@ -4,9 +4,11 @@ import { Button, Card, CardActionArea, CardContent, Stack, Typography } from '@m
 import { useMutation } from '@apollo/client';
 import { SubmitHandler, useForm, FormProvider } from 'react-hook-form';
 import dayjs from 'dayjs';
+import { useContextSelector } from 'use-context-selector';
 
 import { FormInput } from '../../../components/FormInput';
 import { EventsData } from '../interfaces';
+import { AppContext } from '../../../context';
 
 import { CREATE_EVENT } from './constants';
 import styles from './styles.module.scss';
@@ -25,6 +27,7 @@ export interface EventFormProps {
 }
 
 export const EventForm: FC<EventFormProps> = ({ date, events, onClose }) => {
+  const userId = useContextSelector(AppContext, (ctx) => ctx.state.userId);
   const navigate = useNavigate();
   const [createEvent] = useMutation(CREATE_EVENT, {
     onCompleted: () => {
@@ -42,11 +45,17 @@ export const EventForm: FC<EventFormProps> = ({ date, events, onClose }) => {
     async ({ eventName, eventType, eventComment }) => {
       await createEvent({
         variables: {
-          input: { eventName, eventType, eventComment, targetDate: date ? dayjs(date).add(3, 'h').toISOString() : '' },
+          input: {
+            userId,
+            eventName,
+            eventType,
+            eventComment,
+            targetDate: date ? dayjs(date).add(3, 'h').toISOString() : '',
+          },
         },
       });
     },
-    [createEvent, date],
+    [createEvent, date, userId],
   );
 
   const eventsThatDay = events.filter((event) => dayjs(event.targetDate.split('T')[0]).isSame(date), 'd');

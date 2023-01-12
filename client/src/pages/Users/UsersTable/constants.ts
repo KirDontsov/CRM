@@ -4,7 +4,7 @@ import { HeadCell } from './interfaces';
 
 export const GET_USERS = gql`
   query getUsers {
-    users {
+    getUsers {
       id
       username
       email
@@ -14,8 +14,8 @@ export const GET_USERS = gql`
 `;
 
 export const DELETE_USERS = gql`
-  mutation removeUsers($ids: [String!]!) {
-    removeUsers(ids: $ids) {
+  mutation deleteUsers($ids: [String!]!) {
+    deleteUsers(ids: $ids) {
       id
       username
     }
