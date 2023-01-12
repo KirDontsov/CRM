@@ -6,6 +6,9 @@ export class Event {
   id: string;
 
   @Field()
+  userId: string;
+
+  @Field()
   eventName: string;
 
   @Field()

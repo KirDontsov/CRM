@@ -9,6 +9,9 @@ export class Event {
   id: string;
 
   @Prop()
+  userId: string;
+
+  @Prop()
   eventName: string;
 
   @Prop()

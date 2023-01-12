@@ -15,6 +15,12 @@ export class EventsRepository {
     return this.eventModel.findOne(eventFilterQuery);
   }
 
+  async findAllByUserId(
+    eventFilterQuery: FilterQuery<Event>,
+  ): Promise<Event[]> {
+    return this.eventModel.find(eventFilterQuery);
+  }
+
   async find(eventsFilterQuery: FilterQuery<Event>): Promise<Event[]> {
     return this.eventModel.find(eventsFilterQuery);
   }

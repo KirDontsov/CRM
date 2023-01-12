@@ -14,6 +14,10 @@ export class EventsService {
     return this.eventsRepository.findOne({ id });
   }
 
+  async getEventsByUserId(userId: string): Promise<Event[]> {
+    return this.eventsRepository.findAllByUserId({ userId });
+  }
+
   async getEvents(): Promise<Event[]> {
     return this.eventsRepository.find({});
   }

@@ -16,15 +16,21 @@ export class EventsResolver {
   constructor(private readonly eventsService: EventsService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Query(() => Event, { name: 'event' })
+  @Query(() => Event, { name: 'getEvent' })
   findOne(@Args('id') id: string) {
     return this.eventsService.getEventById(id);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Query(() => [Event], { name: 'events' })
+  @Query(() => [Event], { name: 'getEvents' })
   findAll() {
     return this.eventsService.getEvents();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Query(() => [Event], { name: 'getEventsByUserId' })
+  findAllByUser(@Args('userId') userId: string) {
+    return this.eventsService.getEventsByUserId(userId);
   }
 
   @UseGuards(JwtAuthGuard)

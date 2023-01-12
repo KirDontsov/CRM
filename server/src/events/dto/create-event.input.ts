@@ -3,6 +3,9 @@ import { InputType, Field } from '@nestjs/graphql';
 @InputType()
 export class CreateEventInput {
   @Field()
+  userId: string;
+
+  @Field()
   eventName: string;
 
   @Field()
