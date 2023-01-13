@@ -1,4 +1,4 @@
-import { FC, useCallback } from 'react';
+import { FC, memo, useCallback } from 'react';
 import { Button, Stack, Typography } from '@mui/material';
 import { useMutation } from '@apollo/client';
 import { SubmitHandler, useForm, FormProvider } from 'react-hook-form';
@@ -6,7 +6,7 @@ import { SubmitHandler, useForm, FormProvider } from 'react-hook-form';
 import { FormComboBox, ComboBoxOption } from '../../../components/FormComboBox';
 import { FormInput } from '../../../components/FormInput';
 
-import { OPTIONS, REGISTER_USER } from './constants';
+import { OPTIONS, CREATE_USER } from './constants';
 import styles from './styles.module.scss';
 
 type Inputs = {
@@ -20,8 +20,8 @@ export interface UsersFormProps {
   onClose: () => void;
 }
 
-export const UsersForm: FC<UsersFormProps> = ({ onClose }) => {
-  const [registerUser] = useMutation(REGISTER_USER, {
+export const UsersForm: FC<UsersFormProps> = memo(({ onClose }) => {
+  const [createUser] = useMutation(CREATE_USER, {
     onCompleted: () => {
       // TODO: показать тост успех
       onClose();
@@ -35,13 +35,13 @@ export const UsersForm: FC<UsersFormProps> = ({ onClose }) => {
 
   const onSubmit: SubmitHandler<Inputs> = useCallback(
     async ({ username, email, password, roles }) => {
-      await registerUser({
+      await createUser({
         variables: {
           input: { username, email, password, roles: roles?.value },
         },
       });
     },
-    [registerUser],
+    [createUser],
   );
 
   return (
@@ -66,4 +66,4 @@ export const UsersForm: FC<UsersFormProps> = ({ onClose }) => {
       </FormProvider>
     </div>
   );
-};
+});

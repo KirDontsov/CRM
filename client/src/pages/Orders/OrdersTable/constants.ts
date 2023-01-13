@@ -9,6 +9,7 @@ export const GET_ORDERS = gql`
       releaseDate
       createdAt
       orderName
+      status
       initialComment
       sparePartsCost
       totalCost
@@ -40,13 +41,19 @@ export const HEAD_CELLS: HeadCell[] = [
     id: 'initialPhotos',
     numeric: false,
     disablePadding: true,
-    label: 'Первичные фото',
+    label: 'Фото',
   },
   {
     id: 'orderName',
     numeric: false,
     disablePadding: true,
-    label: 'Наименование заказа',
+    label: 'Название заказа',
+  },
+  {
+    id: 'status',
+    numeric: false,
+    disablePadding: true,
+    label: 'Статус',
   },
   {
     id: 'initialCost',
@@ -58,19 +65,19 @@ export const HEAD_CELLS: HeadCell[] = [
     id: 'leftHeadlamp',
     numeric: false,
     disablePadding: false,
-    label: 'Работы по левой фаре',
+    label: 'Работы левая фара',
   },
   {
     id: 'rightHeadlamp',
     numeric: false,
     disablePadding: false,
-    label: 'Работы по правой фаре',
+    label: 'Работы правая фара',
   },
   {
     id: 'releaseDate',
     numeric: false,
     disablePadding: false,
-    label: 'Дата завершения заказа',
+    label: 'Дата закрытия',
   },
   {
     id: 'sparePartsCost',
@@ -88,6 +95,6 @@ export const HEAD_CELLS: HeadCell[] = [
     id: 'initialComment',
     numeric: false,
     disablePadding: false,
-    label: 'Первичный коментарий к заказу',
+    label: 'Коментарий',
   },
 ];

@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, memo } from 'react';
 import { useContextSelector } from 'use-context-selector';
 
 import { AppContext } from '../../../context';
@@ -12,7 +12,7 @@ export interface ContactsIconProps {
   onLeave?: () => void;
 }
 
-export const ContactsIcon: FC<ContactsIconProps> = ({ active, link = '', onEnter, onLeave }) => {
+export const ContactsIcon: FC<ContactsIconProps> = memo(({ active, link = '', onEnter, onLeave }) => {
   const darkMode = useContextSelector(AppContext, (ctx) => ctx.state.darkMode);
   return (
     <svg
@@ -45,4 +45,4 @@ export const ContactsIcon: FC<ContactsIconProps> = ({ active, link = '', onEnter
       </defs>
     </svg>
   );
-};
+});

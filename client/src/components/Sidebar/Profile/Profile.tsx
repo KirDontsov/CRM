@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, memo } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { useContextSelector } from 'use-context-selector';
 import { Typography } from '@mui/material';
@@ -22,7 +22,7 @@ const GET_USER = gql`
   }
 `;
 
-export const Profile: FC<ProfileProps> = ({ collapsed }) => {
+export const Profile: FC<ProfileProps> = memo(({ collapsed }) => {
   const userId = useContextSelector(AppContext, (ctx) => ctx.state.userId);
   const darkMode = useContextSelector(AppContext, (ctx) => ctx.state.darkMode);
 
@@ -51,4 +51,4 @@ export const Profile: FC<ProfileProps> = ({ collapsed }) => {
       )}
     </div>
   );
-};
+});

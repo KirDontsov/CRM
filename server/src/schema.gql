@@ -80,6 +80,7 @@ type Order {
   releaseDate: DateTime
   rightHeadlamp: [String!]!
   sparePartsCost: String!
+  status: String!
   totalCost: String!
   updatedAt: DateTime!
 }
@@ -112,6 +113,7 @@ input UpdateOrderInput {
   orderName: String
   rightHeadlamp: [String!]
   sparePartsCost: String
+  status: String!
 }
 
 input UpdateUserInput {

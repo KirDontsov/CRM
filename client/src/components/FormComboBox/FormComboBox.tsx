@@ -1,7 +1,7 @@
-import { FC, SyntheticEvent, useCallback } from 'react';
+import { FC, memo, SyntheticEvent, useCallback } from 'react';
+import { useController } from 'react-hook-form';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import { useController } from 'react-hook-form';
 import { Typography } from '@mui/material';
 
 export interface ComboBoxProps {
@@ -18,9 +18,9 @@ export interface ComboBoxOption {
   value: string;
 }
 
-export const FormComboBox: FC<ComboBoxProps> = ({ name, label, required = false, options, multi = false }) => {
+export const FormComboBox: FC<ComboBoxProps> = memo(({ name, label, required = false, options, multi = false }) => {
   const {
-    field: { onChange },
+    field: { onChange, value },
     fieldState: { error },
   } = useController({
     name,
@@ -28,11 +28,13 @@ export const FormComboBox: FC<ComboBoxProps> = ({ name, label, required = false,
   });
 
   const handleChange = useCallback(
-    (_: SyntheticEvent<Element, Event>, value: ComboBoxOption | null | ComboBoxOption[]) => {
-      if (multi && Array.isArray(value)) {
-        onChange(options.filter((option) => value?.includes(option)));
-      } else if (!Array.isArray(value)) {
-        onChange(options.find((option) => option.id === value?.id));
+    (_: SyntheticEvent<Element, Event>, newValue: ComboBoxOption | null | ComboBoxOption[]) => {
+      // если комбобокс с множественным выбором, то value будет массивом
+      if (multi && Array.isArray(newValue)) {
+        onChange(newValue);
+        // если комбобокс с одинарным выбором, то value будет объектом
+      } else if (!Array.isArray(newValue)) {
+        onChange(options.find(({ id }) => newValue?.id === id));
       }
     },
     [multi, onChange, options],
@@ -41,9 +43,9 @@ export const FormComboBox: FC<ComboBoxProps> = ({ name, label, required = false,
   return (
     <>
       <Autocomplete
-        {...(multi ? { multiple: true } : {})}
+        {...(multi ? { multiple: true, value } : { value })}
         onChange={handleChange}
-        isOptionEqualToValue={(option, value) => option.id === value.id}
+        isOptionEqualToValue={(option, v) => option?.id === v?.id}
         disablePortal
         options={options}
         renderInput={(params) => <TextField {...params} variant="standard" label={label} />}
@@ -51,4 +53,4 @@ export const FormComboBox: FC<ComboBoxProps> = ({ name, label, required = false,
       {!!error && <Typography color="#F7685B">{error.message}</Typography>}
     </>
   );
-};
+});

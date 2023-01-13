@@ -9,25 +9,34 @@ import { OrdersForm } from './OrdersForm';
 import styles from './styles.module.scss';
 
 export const Orders = () => {
-  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState('');
 
-  const toggleDrawer = () => {
-    setOpen((prev) => !prev);
+  const handleOpen = () => {
+    setSelected('new');
   };
+
+  const handleClose = () => {
+    setSelected('');
+  };
+
+  const handleSelect = (id: string) => {
+    setSelected(id);
+  };
+
   return (
     <Box className={styles.ordersContainer}>
       <div>
-        <Button type="submit" variant="contained" startIcon={<Add />} onClick={toggleDrawer}>
+        <Button type="submit" variant="contained" startIcon={<Add />} onClick={handleOpen}>
           Новый заказ
         </Button>
       </div>
 
       <Paper elevation={2} className={styles.ordersContentContainer}>
-        <OrdersTable />
+        <OrdersTable onSelect={handleSelect} />
       </Paper>
-      {open && (
-        <Curtain onClose={toggleDrawer}>
-          <OrdersForm onClose={toggleDrawer} />
+      {selected && (
+        <Curtain onClose={handleClose}>
+          <OrdersForm selected={selected} onClose={handleClose} />
         </Curtain>
       )}
     </Box>

@@ -31,6 +31,7 @@ type PropsComparator<V extends ComponentType> = (
   nextProps: Readonly<ComponentProps<V>>,
 ) => boolean;
 
+// кастомная обертка над React.memo чтобы можно было пробросить дженерик
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 function typedMemo<V extends ComponentType<any>>(Component: V, propsComparator?: PropsComparator<V>) {
   return memo(Component, propsComparator) as unknown as V;

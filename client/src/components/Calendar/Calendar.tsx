@@ -1,4 +1,4 @@
-import { FC, useCallback, useState } from 'react';
+import { FC, memo, useCallback, useState } from 'react';
 import { Paper, Button, Typography, IconButton } from '@mui/material';
 import { ChevronLeftRounded, ChevronRightRounded } from '@mui/icons-material';
 import dayjs from 'dayjs';
@@ -18,7 +18,7 @@ export interface CalendarProps {
   onDateSelect: (date: Date) => void;
 }
 
-export const Calendar: FC<CalendarProps> = ({ events, loading, onDateSelect }) => {
+export const Calendar: FC<CalendarProps> = memo(({ events, loading, onDateSelect }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedMonth, setSelectedMonth] = useState(new Date());
 
@@ -65,4 +65,4 @@ export const Calendar: FC<CalendarProps> = ({ events, loading, onDateSelect }) =
       />
     </div>
   );
-};
+});

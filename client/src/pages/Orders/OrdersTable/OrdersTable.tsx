@@ -1,3 +1,4 @@
+import { FC, memo } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -11,13 +12,18 @@ import { TableToolbar } from '../../../components/TableToolbar';
 import { SharedTableHead } from '../../../components/SharedTableHead';
 import { getComparator } from '../../../utils';
 import { useTableControls } from '../../../shared';
+import { OrdersStatuses } from '../../../apollo-client';
+import { STATUS_OPTIONS } from '../OrdersForm/constants';
 
 import { DELETE_ORDERS, GET_ORDERS, HEAD_CELLS } from './constants';
 import { Data } from './interfaces';
 import styles from './styles.module.scss';
 import { mapWorkTypes } from './utils';
 
-export const OrdersTable = () => {
+export interface OrdersTableProps {
+  onSelect: (id: string) => void;
+}
+export const OrdersTable: FC<OrdersTableProps> = memo(({ onSelect }) => {
   const { data, loading } = useQuery(GET_ORDERS);
   const orders: Data[] = data?.getOrders ?? [];
 
@@ -91,14 +97,34 @@ export const OrdersTable = () => {
                           />
                         )}
                       </TableCell>
-                      <TableCell>{row.orderName}</TableCell>
-                      <TableCell>{row.initialCost}</TableCell>
-                      <TableCell>{mapWorkTypes(row.leftHeadlamp)}</TableCell>
-                      <TableCell>{mapWorkTypes(row.rightHeadlamp)}</TableCell>
+                      <TableCell
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSelect(row.id);
+                        }}
+                        className={styles.nameLink}
+                      >
+                        {row.orderName}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          ...(row.status === OrdersStatuses.Done && {
+                            color: (theme) => theme.palette.success.main,
+                          }),
+                          ...(row.status === OrdersStatuses.InProgress && {
+                            color: (theme) => theme.palette.primary.main,
+                          }),
+                        }}
+                      >
+                        {STATUS_OPTIONS.find(({ id }) => row?.status === id)?.label}
+                      </TableCell>
+                      <TableCell>{row?.initialCost}</TableCell>
+                      <TableCell>{mapWorkTypes(row?.leftHeadlamp)}</TableCell>
+                      <TableCell>{mapWorkTypes(row?.rightHeadlamp)}</TableCell>
                       <TableCell>{row?.releaseDate ? dayjs(row?.releaseDate).format('DD.MM.YYYY') : ''}</TableCell>
-                      <TableCell>{row.sparePartsCost === '0' ? '' : row.sparePartsCost}</TableCell>
-                      <TableCell>{row.totalCost}</TableCell>
-                      <TableCell>{row.initialComment}</TableCell>
+                      <TableCell>{row?.sparePartsCost === '0' ? '' : row?.sparePartsCost}</TableCell>
+                      <TableCell>{row?.totalCost}</TableCell>
+                      <TableCell>{row?.initialComment}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -108,4 +134,4 @@ export const OrdersTable = () => {
       </TableContainer>
     </>
   );
-};
+});

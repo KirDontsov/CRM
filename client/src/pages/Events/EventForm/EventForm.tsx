@@ -1,4 +1,4 @@
-import { FC, useCallback } from 'react';
+import { FC, memo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, CardActionArea, CardContent, Stack, Typography } from '@mui/material';
 import { useMutation } from '@apollo/client';
@@ -26,7 +26,7 @@ export interface EventFormProps {
   onClose: () => void;
 }
 
-export const EventForm: FC<EventFormProps> = ({ date, events, onClose }) => {
+export const EventForm: FC<EventFormProps> = memo(({ date, events, onClose }) => {
   const userId = useContextSelector(AppContext, (ctx) => ctx.state.userId);
   const navigate = useNavigate();
   const [createEvent] = useMutation(CREATE_EVENT, {
@@ -34,7 +34,7 @@ export const EventForm: FC<EventFormProps> = ({ date, events, onClose }) => {
       // TODO: показать тост успех
       onClose();
     },
-    refetchQueries: ['getEvents'],
+    refetchQueries: ['getEventsByUserId'],
   });
 
   const form = useForm<Inputs>();
@@ -126,4 +126,4 @@ export const EventForm: FC<EventFormProps> = ({ date, events, onClose }) => {
       </FormProvider>
     </div>
   );
-};
+});

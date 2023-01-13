@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, memo } from 'react';
 import { useContextSelector } from 'use-context-selector';
 
 import { AppContext } from '../../../context';
@@ -8,7 +8,7 @@ export interface DashboardIconProps {
   active: string;
 }
 
-export const DashboardIcon: FC<DashboardIconProps> = ({ link, active }) => {
+export const DashboardIcon: FC<DashboardIconProps> = memo(({ link, active }) => {
   const darkMode = useContextSelector(AppContext, (ctx) => ctx.state.darkMode);
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -26,4 +26,4 @@ export const DashboardIcon: FC<DashboardIconProps> = ({ link, active }) => {
       </defs>
     </svg>
   );
-};
+});

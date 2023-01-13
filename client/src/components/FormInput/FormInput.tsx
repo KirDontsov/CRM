@@ -1,6 +1,6 @@
-import { TextField, Typography } from '@mui/material';
+import { FC, memo } from 'react';
 import { useController } from 'react-hook-form';
-import { FC } from 'react';
+import { TextField, Typography } from '@mui/material';
 
 export interface FromInputProps {
   name: string;
@@ -8,9 +8,9 @@ export interface FromInputProps {
   required?: boolean;
   multi?: boolean;
 }
-export const FormInput: FC<FromInputProps> = ({ name, label, required = false, multi = false }) => {
+export const FormInput: FC<FromInputProps> = memo(({ name, label, required = false, multi = false }) => {
   const {
-    field: { onChange },
+    field: { onChange, value },
     fieldState: { error },
   } = useController({
     name,
@@ -23,8 +23,9 @@ export const FormInput: FC<FromInputProps> = ({ name, label, required = false, m
         {...(multi ? { multiline: true, rows: 3, variant: 'filled' } : { variant: 'standard' })}
         label={label}
         onChange={onChange}
+        value={value ?? ''}
       />
       {!!error && <Typography color="#F7685B">{error.message}</Typography>}
     </>
   );
-};
+});

@@ -5,6 +5,7 @@ import { CreateOrderInput } from './dto/create-order.input';
 import { UpdateOrderInput } from './dto/update-order.input';
 import { OrdersRepository } from './mongo/orders.repository';
 import { Order } from './mongo/order.schema';
+import { OrdersStatuses } from './dto/orders-statuses';
 
 @Injectable()
 export class OrdersService {
@@ -25,6 +26,7 @@ export class OrdersService {
       createdAt: new Date(),
       updatedAt: new Date(),
       releaseDate: null,
+      status: OrdersStatuses.Open,
       totalCost: `${
         Number(createOrderInput.initialCost) -
         Number(createOrderInput.sparePartsCost)
@@ -34,7 +36,12 @@ export class OrdersService {
   }
 
   async update(id: string, orderUpdates: UpdateOrderInput): Promise<Order> {
-    return this.ordersRepository.findOneAndUpdate({ id }, orderUpdates);
+    const order = {
+      ...orderUpdates,
+      releaseDate:
+        orderUpdates?.status === OrdersStatuses.Done ? new Date() : null,
+    };
+    return this.ordersRepository.findOneAndUpdate({ id }, order);
   }
 
   async remove(id: string): Promise<Order> {

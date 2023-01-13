@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, memo } from 'react';
 import { useContextSelector } from 'use-context-selector';
 
 import { AppContext } from '../../../context';
@@ -9,7 +9,7 @@ export interface ContactsIconProps {
   active: boolean | string;
 }
 
-export const ToggleIcon: FC<ContactsIconProps> = ({ active }) => {
+export const ToggleIcon: FC<ContactsIconProps> = memo(({ active }) => {
   const darkMode = useContextSelector(AppContext, (ctx) => ctx.state.darkMode);
   return (
     <span className={styles.toggleIcon}>
@@ -30,4 +30,4 @@ export const ToggleIcon: FC<ContactsIconProps> = ({ active }) => {
       </svg>
     </span>
   );
-};
+});

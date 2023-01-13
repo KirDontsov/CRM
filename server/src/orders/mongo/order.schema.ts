@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 import { WorkTypes } from '../dto/work-types';
+import { OrdersStatuses } from '../dto/orders-statuses';
 
 export type OrderDocument = Order & Document;
 
@@ -12,6 +13,9 @@ export class Order {
 
   @Prop()
   orderName: string;
+
+  @Prop({ type: String, enum: OrdersStatuses })
+  status: string;
 
   @Prop()
   initialPhotos: string;

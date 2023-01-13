@@ -8,7 +8,7 @@ export const OPTIONS: ComboBoxOption[] = [
   { label: 'Менеджер', value: UserRoles.Reader, id: UserRoles.Reader },
 ];
 
-export const REGISTER_USER = gql`
+export const CREATE_USER = gql`
   mutation createUser($input: CreateUserInput!) {
     createUser(createUserInput: $input) {
       id

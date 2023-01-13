@@ -8,6 +8,9 @@ export class Order {
   @Field()
   orderName: string;
 
+  @Field(() => String)
+  status: string;
+
   @Field({ nullable: true })
   initialPhotos: string;
 

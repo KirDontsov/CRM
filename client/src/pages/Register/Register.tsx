@@ -9,8 +9,8 @@ import { LogoutLayout } from '../../components/LogoutLayout';
 import styles from './styles.module.scss';
 
 const REGISTER_USER = gql`
-  mutation RegisterUser($input: CreateUserInput!) {
-    signup(createUserInput: $input) {
+  mutation createUser($input: CreateUserInput!) {
+    createUser(createUserInput: $input) {
       id
       username
       email
@@ -29,7 +29,7 @@ type Inputs = {
 export const Register = () => {
   const navigate = useNavigate();
 
-  const [registerUser] = useMutation(REGISTER_USER, {
+  const [createUser] = useMutation(REGISTER_USER, {
     onCompleted: () => {
       // TODO: показать тост успех
       navigate('/login');
@@ -45,13 +45,13 @@ export const Register = () => {
   const onSubmit: SubmitHandler<Inputs> = useCallback(
     async (data) => {
       const { username, email, password, roles } = data;
-      await registerUser({
+      await createUser({
         variables: {
           input: { username, email, password, roles },
         },
       });
     },
-    [registerUser],
+    [createUser],
   );
 
   return (

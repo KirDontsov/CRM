@@ -23,4 +23,4 @@ export const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-export { WorkTypes, UserRoles } from './types';
+export { WorkTypes, UserRoles, OrdersStatuses } from './types';

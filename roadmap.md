@@ -5,8 +5,8 @@ Back:
 - Сущности users
 - Сущности orders
 - Сущности statuses
+- Сущности events
 - role based access control
-- events
 
 Client:
 - Форма авторизации

@@ -1,9 +1,11 @@
-import { WorkTypes } from '../../../apollo-client';
+import { OrdersStatuses, WorkTypes } from '../../../apollo-client';
 
 export interface Data {
   id: string;
 
   orderName: string;
+
+  status: OrdersStatuses;
 
   initialPhotos: string;
 
