@@ -2,9 +2,8 @@ import { FC, memo, useCallback } from 'react';
 import { Button, Stack, Typography } from '@mui/material';
 import { useMutation } from '@apollo/client';
 import { SubmitHandler, useForm, FormProvider } from 'react-hook-form';
-
-import { FormComboBox, ComboBoxOption } from '../../../components/FormComboBox';
-import { FormInput } from '../../../components/FormInput';
+import { FormComboBox, ComboBoxOption } from '@components/FormComboBox';
+import { FormInput } from '@components/FormInput';
 
 import { OPTIONS, CREATE_USER } from './constants';
 import styles from './styles.module.scss';

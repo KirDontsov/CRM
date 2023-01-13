@@ -1,8 +1,7 @@
 import { Box, Button, Paper } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useState } from 'react';
-
-import { Curtain } from '../../components/Curtain';
+import { Curtain } from '@components/Curtain';
 
 import { UsersTable } from './UsersTable';
 import { UsersForm } from './UsersForm';

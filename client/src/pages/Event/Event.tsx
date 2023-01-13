@@ -3,9 +3,8 @@ import { useMutation, useQuery } from '@apollo/client';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useCallback } from 'react';
 import { useContextSelector } from 'use-context-selector';
-
-import { AppContext } from '../../context';
-import { UserRoles } from '../../apollo-client';
+import { AppContext } from '@context';
+import { UserRoles } from '@apollo-client';
 
 import styles from './styles.module.scss';
 import { DELETE_EVENT, GET_EVENT } from './constants';

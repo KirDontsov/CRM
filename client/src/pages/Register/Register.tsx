@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { gql, useMutation } from '@apollo/client';
 import { Button, Container, Stack, TextField, Typography } from '@mui/material';
-
-import { LogoutLayout } from '../../components/LogoutLayout';
+import { LogoutLayout } from '@components/LogoutLayout';
 
 import styles from './styles.module.scss';
 

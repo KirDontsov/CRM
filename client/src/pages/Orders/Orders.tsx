@@ -1,8 +1,7 @@
+import { useState } from 'react';
 import { Box, Button, Paper } from '@mui/material';
 import { Add } from '@mui/icons-material';
-import { useState } from 'react';
-
-import { Curtain } from '../../components/Curtain';
+import { Curtain } from '@components/Curtain';
 
 import { OrdersTable } from './OrdersTable';
 import { OrdersForm } from './OrdersForm';

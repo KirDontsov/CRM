@@ -2,9 +2,9 @@ import { FC, ReactNode } from 'react';
 import { Paper, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useContextSelector } from 'use-context-selector';
+import { AppContext } from '@context';
 
 import { Nav } from '../Nav';
-import { AppContext } from '../../context';
 
 import styles from './styles.module.scss';
 

@@ -2,14 +2,14 @@ import { Link, useLocation } from 'react-router-dom';
 import { useState, useCallback, useEffect, MouseEvent, useRef } from 'react';
 import { Paper, Typography } from '@mui/material';
 import { useContextSelector } from 'use-context-selector';
+import { AppContext } from '@context';
+import { UserRoles } from '@apollo-client';
 
 import { DashboardIcon } from '../Icons/DashboardIcon';
 import { ContactsIcon } from '../Icons/ContactsIcon';
 import { SettingsIcon } from '../Icons/SettingsIcon';
 import { ToggleIcon } from '../Icons/ToggleIcon';
 import { EventsIcon } from '../Icons/EventsIcon';
-import { AppContext } from '../../context';
-import { UserRoles } from '../../apollo-client';
 
 import { SidebarLink } from './SidebarLink';
 import { Profile } from './Profile';

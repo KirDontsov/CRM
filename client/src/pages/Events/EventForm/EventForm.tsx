@@ -5,10 +5,10 @@ import { useMutation } from '@apollo/client';
 import { SubmitHandler, useForm, FormProvider } from 'react-hook-form';
 import dayjs from 'dayjs';
 import { useContextSelector } from 'use-context-selector';
+import { FormInput } from '@components/FormInput';
+import { AppContext } from '@context';
 
-import { FormInput } from '../../../components/FormInput';
 import { EventsData } from '../interfaces';
-import { AppContext } from '../../../context';
 
 import { CREATE_EVENT } from './constants';
 import styles from './styles.module.scss';

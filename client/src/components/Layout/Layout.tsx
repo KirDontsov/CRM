@@ -2,10 +2,10 @@ import { FC, useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useContextSelector } from 'use-context-selector';
 import { Paper } from '@mui/material';
+import { AppContext } from '@context';
 
 import { Nav } from '../Nav';
 import { Sidebar } from '../Sidebar';
-import { AppContext } from '../../context';
 
 import styles from './styles.module.scss';
 

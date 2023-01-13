@@ -1,4 +1,4 @@
-import { UserRoles } from '../../apollo-client';
+import { UserRoles } from '@apollo-client';
 
 export const ROUTES = [
   {

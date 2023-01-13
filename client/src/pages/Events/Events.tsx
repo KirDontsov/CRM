@@ -2,10 +2,9 @@ import { useState } from 'react';
 import { Paper, Typography } from '@mui/material';
 import { useQuery } from '@apollo/client';
 import { useContextSelector } from 'use-context-selector';
-
-import { Calendar } from '../../components/Calendar';
-import { Curtain } from '../../components/Curtain';
-import { AppContext } from '../../context';
+import { Calendar } from '@components/Calendar';
+import { Curtain } from '@components/Curtain';
+import { AppContext } from '@context';
 
 import styles from './styles.module.scss';
 import { EventForm } from './EventForm';

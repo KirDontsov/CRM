@@ -5,9 +5,8 @@ import { useContextSelector } from 'use-context-selector';
 import { gql, useMutation } from '@apollo/client';
 import { Button, Container, Stack, TextField, Typography } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
-
-import { LogoutLayout } from '../../components/LogoutLayout';
-import { AppContext } from '../../context';
+import { LogoutLayout } from '@components/LogoutLayout';
+import { AppContext } from '@context';
 
 import styles from './styles.module.scss';
 

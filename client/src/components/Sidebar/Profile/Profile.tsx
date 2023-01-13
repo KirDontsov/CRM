@@ -2,8 +2,7 @@ import { FC, memo } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { useContextSelector } from 'use-context-selector';
 import { Typography } from '@mui/material';
-
-import { AppContext } from '../../../context';
+import { AppContext } from '@context';
 
 import { Avatar } from './Avatar';
 import styles from './styles.module.scss';

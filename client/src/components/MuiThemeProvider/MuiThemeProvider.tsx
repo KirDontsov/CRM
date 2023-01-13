@@ -1,8 +1,7 @@
 import { FC, ReactNode, useMemo } from 'react';
-import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
 import { useContextSelector } from 'use-context-selector';
-
-import { AppContext } from '../../context';
+import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
+import { AppContext } from '@context';
 
 export interface MuiThemeProviderProps {
   children?: ReactNode | ReactNode[];

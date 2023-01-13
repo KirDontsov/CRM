@@ -1,10 +1,9 @@
 import { FC, memo, useCallback, useState } from 'react';
 import { Paper, Button, Typography, IconButton } from '@mui/material';
 import { ChevronLeftRounded, ChevronRightRounded } from '@mui/icons-material';
+import { EventsData } from '@pages/Dashboard/interfaces';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
-
-import { EventsData } from '../../pages/Dashboard/interfaces';
 
 import { DisplayDailyCalendar } from './DisplayDailyCalendar';
 

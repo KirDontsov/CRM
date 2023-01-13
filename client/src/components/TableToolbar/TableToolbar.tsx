@@ -7,9 +7,8 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { useContextSelector } from 'use-context-selector';
-
-import { AppContext } from '../../context';
-import { UserRoles } from '../../apollo-client';
+import { AppContext } from '@context';
+import { UserRoles } from '@apollo-client';
 
 export interface EnhancedTableToolbarProps {
   title: string;

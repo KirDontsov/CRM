@@ -5,12 +5,10 @@ import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import { useQuery } from '@apollo/client';
-
-import { TableToolbar } from '../../../components/TableToolbar';
-import { SharedTableHead } from '../../../components/SharedTableHead';
-import { getComparator } from '../../../utils';
-import { useTableControls } from '../../../shared';
-import { UserRoles } from '../../../apollo-client';
+import { TableToolbar } from '@components/TableToolbar';
+import { SharedTableHead } from '@components/SharedTableHead';
+import { getComparator, useTableControls } from '@shared';
+import { UserRoles } from '@src/apollo-client';
 
 import { DELETE_USERS, GET_USERS, HEAD_CELLS } from './constants';
 import { Data } from './interfaces';

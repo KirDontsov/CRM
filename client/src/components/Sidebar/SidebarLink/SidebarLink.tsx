@@ -1,8 +1,7 @@
 import { FC, memo } from 'react';
 import { Typography } from '@mui/material';
 import { useContextSelector } from 'use-context-selector';
-
-import { AppContext } from '../../../context';
+import { AppContext } from '@context';
 
 import styles from './styles.module.scss';
 

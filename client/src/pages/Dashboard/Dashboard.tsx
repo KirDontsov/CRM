@@ -1,4 +1,4 @@
-import { useCallback, useState, MouseEvent } from 'react';
+import { useCallback, useState, MouseEvent, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, CardActionArea, CardContent, Paper, Typography } from '@mui/material';
 import { Area, AreaChart, CartesianGrid, Cell, Pie, Tooltip, XAxis, YAxis, PieChart, Sector } from 'recharts';
@@ -7,20 +7,16 @@ import { useContextSelector } from 'use-context-selector';
 import { useQuery } from '@apollo/client';
 import dayjs from 'dayjs';
 import SquareIcon from '@mui/icons-material/Square';
-
-import { AppContext } from '../../context';
+import { AppContext } from '@context';
+import { GET_ORDERS } from '@pages/Orders/OrdersTable/constants';
+import { OrdersStatuses } from '@apollo-client';
+import { OrdersData } from '@pages/Orders/OrdersTable/interfaces';
 
 import styles from './styles.module.scss';
 import { CHART_DATA, GET_EVENTS } from './constants';
 import { EventsData } from './interfaces';
 
-const PIE_CHART_DATA = [
-  { name: 'В работе', value: 4 },
-  { name: 'Закрытые', value: 3 },
-  { name: 'Отмененыые', value: 3 },
-  { name: 'Проблемные', value: 2 },
-];
-const COLORS = ['#109CF1', '#2ED47A', '#885AF8', '#F7685B'];
+const COLORS = ['#109CF1', '#2ED47A', '#885AF8', '#F7685B', '#ff0'];
 const RADIAN = Math.PI / 180;
 
 export const Dashboard = () => {
@@ -35,6 +31,38 @@ export const Dashboard = () => {
     },
   });
   const events: EventsData[] = data?.getEventsByUserId ?? [];
+
+  const { data: ordersData } = useQuery(GET_ORDERS, {
+    variables: {
+      userId,
+    },
+  });
+
+  const pieChartData = useMemo(
+    () => [
+      {
+        name: 'В работе',
+        value: (ordersData?.getOrders?.filter(({ status }: OrdersData) => status === OrdersStatuses.InProgress) ?? [])
+          ?.length,
+      },
+      {
+        name: 'Закрытые',
+        value: (ordersData?.getOrders?.filter(({ status }: OrdersData) => status === OrdersStatuses.Done) ?? [])
+          ?.length,
+      },
+      {
+        name: 'Отмененые',
+        value: (ordersData?.getOrders?.filter(({ status }: OrdersData) => status === OrdersStatuses.Cancelled) ?? [])
+          ?.length,
+      },
+      {
+        name: 'Новые',
+        value: (ordersData?.getOrders?.filter(({ status }: OrdersData) => status === OrdersStatuses.Open) ?? [])
+          ?.length,
+      },
+    ],
+    [ordersData],
+  );
 
   const handleFormatLabel = (value: string, name: string) => {
     if (name === 'pv') {
@@ -153,6 +181,42 @@ export const Dashboard = () => {
       </Paper>
       <div className={styles.dashboardRightPart}>
         <Paper elevation={2} className={styles.widget}>
+          <Typography variant="h1">Заказы</Typography>
+          <div className={styles.pieContainer}>
+            <PieChart width={400} height={400}>
+              <Pie
+                activeIndex={activeIndex}
+                activeShape={renderActiveShape}
+                data={pieChartData}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+                onMouseEnter={onPieEnter}
+              >
+                {pieChartData.map((entry, index) => (
+                  <Cell key={`cell-${entry.name}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+            </PieChart>
+            <div className={styles.pieStat}>
+              {pieChartData.map((entry, index) => (
+                <div key={entry.name} style={{ color: COLORS[index] }} className={styles.pieStatItem}>
+                  <SquareIcon />
+                  <Typography component="p" color={darkMode ? '#fff' : 'initial'}>{`${entry.name}`}</Typography>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Paper>
+
+        <Paper
+          // пока только моки
+          elevation={2}
+          className={styles.widget}
+        >
           <Typography variant="h1">Выручка</Typography>
           <AreaChart
             width={600}
@@ -172,37 +236,6 @@ export const Dashboard = () => {
             <Area type="monotone" dataKey="pv" label="Прибыль" stackId="1" stroke="#2ED47A" fill="#2ED47A" />
             <Area type="monotone" dataKey="uv" label="Выручка" stackId="1" stroke="#885AF8" fill="#885AF8" />
           </AreaChart>
-        </Paper>
-        <Paper elevation={2} className={styles.widget}>
-          <Typography variant="h1">Заказы</Typography>
-          <div className={styles.pieContainer}>
-            <PieChart width={400} height={400}>
-              <Pie
-                activeIndex={activeIndex}
-                activeShape={renderActiveShape}
-                data={PIE_CHART_DATA}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-                onMouseEnter={onPieEnter}
-              >
-                {PIE_CHART_DATA.map((entry, index) => (
-                  <Cell key={`cell-${entry.name}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-            </PieChart>
-            <div className={styles.pieStat}>
-              {PIE_CHART_DATA.map((entry, index) => (
-                <div key={entry.name} style={{ color: COLORS[index] }} className={styles.pieStatItem}>
-                  <SquareIcon />
-                  <Typography component="p" color={darkMode ? '#fff' : 'initial'}>{`${entry.name}`}</Typography>
-                </div>
-              ))}
-            </div>
-          </div>
         </Paper>
       </div>
     </div>

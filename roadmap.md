@@ -7,6 +7,7 @@ Back:
 - Сущности statuses
 - Сущности events
 - role based access control
+- tests
 
 Client:
 - Форма авторизации
@@ -20,3 +21,4 @@ Client:
 - dark mode
 - events
 - calendar
+- tests

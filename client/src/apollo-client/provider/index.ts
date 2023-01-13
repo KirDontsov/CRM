@@ -1,0 +1,1 @@
+export { GenericApolloProvider } from './Provider';

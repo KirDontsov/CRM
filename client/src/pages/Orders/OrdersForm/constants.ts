@@ -1,7 +1,6 @@
 import { gql } from '@apollo/client';
-
-import { ComboBoxOption } from '../../../components/FormComboBox';
-import { WorkTypes, OrdersStatuses } from '../../../apollo-client';
+import { ComboBoxOption } from '@components/FormComboBox';
+import { WorkTypes, OrdersStatuses } from '@src/apollo-client';
 
 export const OPTIONS: ComboBoxOption[] = [
   { label: 'Замена стекла (НОВОЕ)', value: WorkTypes.GlassReplacementNew, id: WorkTypes.GlassReplacementNew },

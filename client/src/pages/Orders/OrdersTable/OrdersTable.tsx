@@ -7,16 +7,15 @@ import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import { useQuery } from '@apollo/client';
 import dayjs from 'dayjs';
+import { TableToolbar } from '@components/TableToolbar';
+import { SharedTableHead } from '@components/SharedTableHead';
+import { useTableControls, getComparator } from '@shared';
+import { OrdersStatuses } from '@src/apollo-client';
 
-import { TableToolbar } from '../../../components/TableToolbar';
-import { SharedTableHead } from '../../../components/SharedTableHead';
-import { getComparator } from '../../../utils';
-import { useTableControls } from '../../../shared';
-import { OrdersStatuses } from '../../../apollo-client';
 import { STATUS_OPTIONS } from '../OrdersForm/constants';
 
 import { DELETE_ORDERS, GET_ORDERS, HEAD_CELLS } from './constants';
-import { Data } from './interfaces';
+import { OrdersData } from './interfaces';
 import styles from './styles.module.scss';
 import { mapWorkTypes } from './utils';
 
@@ -25,7 +24,7 @@ export interface OrdersTableProps {
 }
 export const OrdersTable: FC<OrdersTableProps> = memo(({ onSelect }) => {
   const { data, loading } = useQuery(GET_ORDERS);
-  const orders: Data[] = data?.getOrders ?? [];
+  const orders: OrdersData[] = data?.getOrders ?? [];
 
   const {
     selected,
@@ -36,7 +35,7 @@ export const OrdersTable: FC<OrdersTableProps> = memo(({ onSelect }) => {
     handleSelectAllClick,
     handleRequestSort,
     handleDeleteItems,
-  } = useTableControls<Data>(orders, 'orderName', DELETE_ORDERS, 'getOrders');
+  } = useTableControls<OrdersData>(orders, 'orderName', DELETE_ORDERS, 'getOrders');
 
   return (
     <>
@@ -44,7 +43,7 @@ export const OrdersTable: FC<OrdersTableProps> = memo(({ onSelect }) => {
       <TableContainer>
         {!loading && (
           <Table sx={{ minWidth: 1765 }} aria-labelledby="tableTitle" size="medium">
-            <SharedTableHead<Data>
+            <SharedTableHead<OrdersData>
               data={HEAD_CELLS}
               numSelected={selected.length}
               order={order}

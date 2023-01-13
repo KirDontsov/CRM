@@ -1,7 +1,6 @@
 import { gql } from '@apollo/client';
-
-import { ComboBoxOption } from '../../../components/FormComboBox';
-import { UserRoles } from '../../../apollo-client';
+import { ComboBoxOption } from '@components/FormComboBox';
+import { UserRoles } from '@src/apollo-client';
 
 export const OPTIONS: ComboBoxOption[] = [
   { label: 'Админ', value: UserRoles.Admin, id: UserRoles.Admin },

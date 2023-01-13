@@ -1,9 +1,8 @@
 import { FC, ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useContextSelector } from 'use-context-selector';
-
-import { AppContext } from '../../context';
-import { UserRoles } from '../../apollo-client';
+import { AppContext } from '@context';
+import { UserRoles } from '@apollo-client';
 
 export interface ProtectedRouteProps {
   children: ReactNode;

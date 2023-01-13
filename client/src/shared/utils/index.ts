@@ -1,6 +1,6 @@
 export type Order = 'asc' | 'desc';
 
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
+function descendingComparator<V>(a: V, b: V, orderBy: keyof V) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
   }

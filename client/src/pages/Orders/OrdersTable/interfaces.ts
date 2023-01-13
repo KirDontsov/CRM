@@ -1,6 +1,6 @@
-import { OrdersStatuses, WorkTypes } from '../../../apollo-client';
+import { OrdersStatuses, WorkTypes } from '@apollo-client';
 
-export interface Data {
+export interface OrdersData {
   id: string;
 
   orderName: string;
@@ -32,7 +32,7 @@ export interface Data {
 
 export interface HeadCell {
   disablePadding: boolean;
-  id: keyof Data;
+  id: keyof OrdersData;
   label: string;
   numeric: boolean;
 }

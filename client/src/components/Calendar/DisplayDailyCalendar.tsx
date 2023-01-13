@@ -12,9 +12,8 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { useContextSelector } from 'use-context-selector';
-
-import { EventsData } from '../../pages/Dashboard/interfaces';
-import { AppContext } from '../../context';
+import { EventsData } from '@pages/Dashboard/interfaces';
+import { AppContext } from '@context';
 
 import styles from './styles.module.scss';
 

@@ -1,8 +1,7 @@
-import { Typography, Switch, FormControlLabel, Paper } from '@mui/material';
-import { useContextSelector } from 'use-context-selector';
 import { useCallback } from 'react';
-
-import { AppContext } from '../../context';
+import { useContextSelector } from 'use-context-selector';
+import { Typography, Switch, FormControlLabel, Paper } from '@mui/material';
+import { AppContext } from '@context';
 
 import styles from './styles.module.scss';
 
