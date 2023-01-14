@@ -21,4 +21,5 @@ Client:
 - dark mode
 - events
 - calendar
+- toasts
 - tests

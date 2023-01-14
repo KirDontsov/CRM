@@ -4,6 +4,7 @@ import { useMutation } from '@apollo/client';
 import { SubmitHandler, useForm, FormProvider } from 'react-hook-form';
 import { FormComboBox, ComboBoxOption } from '@components/FormComboBox';
 import { FormInput } from '@components/FormInput';
+import { toast } from 'react-toastify';
 
 import { OPTIONS, CREATE_USER } from './constants';
 import styles from './styles.module.scss';
@@ -22,7 +23,7 @@ export interface UsersFormProps {
 export const UsersForm: FC<UsersFormProps> = memo(({ onClose }) => {
   const [createUser] = useMutation(CREATE_USER, {
     onCompleted: () => {
-      // TODO: показать тост успех
+      toast('Пользователь создан успешно', { type: 'success' });
       onClose();
     },
     refetchQueries: ['getUsers'],
@@ -34,11 +35,18 @@ export const UsersForm: FC<UsersFormProps> = memo(({ onClose }) => {
 
   const onSubmit: SubmitHandler<Inputs> = useCallback(
     async ({ username, email, password, roles }) => {
-      await createUser({
-        variables: {
-          input: { username, email, password, roles: roles?.value },
-        },
-      });
+      try {
+        await createUser({
+          variables: {
+            input: { username, email, password, roles: roles?.value },
+          },
+        });
+      } catch (e) {
+        // @ts-ignore
+        toast(`Произошла ошибка: ${e?.message ?? ''}`, {
+          type: 'error',
+        });
+      }
     },
     [createUser],
   );

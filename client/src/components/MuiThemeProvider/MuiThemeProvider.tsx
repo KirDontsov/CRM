@@ -33,6 +33,9 @@ export const MuiThemeProvider: FC<MuiThemeProviderProps> = ({ children }) => {
           success: {
             main: '#2ED47A',
           },
+          secondary: {
+            main: darkMode ? '#885AF8' : '#334D6E',
+          },
         },
         components: {
           MuiTableCell: {

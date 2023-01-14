@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import { useContextSelector } from 'use-context-selector';
 import { FormInput } from '@components/FormInput';
 import { AppContext } from '@context';
+import { toast } from 'react-toastify';
 
 import { EventsData } from '../interfaces';
 
@@ -15,7 +16,6 @@ import styles from './styles.module.scss';
 
 type Inputs = {
   eventName: string;
-  // TODO: привести к enum
   eventType: string;
   eventComment: string;
 };
@@ -31,7 +31,7 @@ export const EventForm: FC<EventFormProps> = memo(({ date, events, onClose }) =>
   const navigate = useNavigate();
   const [createEvent] = useMutation(CREATE_EVENT, {
     onCompleted: () => {
-      // TODO: показать тост успех
+      toast('Событие создано успешно', { type: 'success' });
       onClose();
     },
     refetchQueries: ['getEventsByUserId'],
@@ -43,17 +43,24 @@ export const EventForm: FC<EventFormProps> = memo(({ date, events, onClose }) =>
 
   const onSubmit: SubmitHandler<Inputs> = useCallback(
     async ({ eventName, eventType, eventComment }) => {
-      await createEvent({
-        variables: {
-          input: {
-            userId,
-            eventName,
-            eventType,
-            eventComment,
-            targetDate: date ? dayjs(date).add(3, 'h').toISOString() : '',
+      try {
+        await createEvent({
+          variables: {
+            input: {
+              userId,
+              eventName,
+              eventType,
+              eventComment,
+              targetDate: date ? dayjs(date).add(3, 'h').toISOString() : '',
+            },
           },
-        },
-      });
+        });
+      } catch (e) {
+        // @ts-ignore
+        toast(`Произошла ошибка: ${e?.message ?? ''}`, {
+          type: 'error',
+        });
+      }
     },
     [createEvent, date, userId],
   );

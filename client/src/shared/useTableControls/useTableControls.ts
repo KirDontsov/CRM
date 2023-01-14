@@ -1,5 +1,6 @@
 import { ChangeEvent, MouseEvent, useCallback, useState } from 'react';
 import { DocumentNode, useMutation } from '@apollo/client';
+import { toast } from 'react-toastify';
 
 export type Order = 'asc' | 'desc';
 
@@ -15,18 +16,25 @@ export function useTableControls<V extends { id: string }>(
 
   const [deleteItems] = useMutation(mutation, {
     onCompleted: () => {
-      // TODO: показать тост успех
+      toast('Данные удалены успешно', { type: 'success' });
       setSelected([]);
     },
     refetchQueries: [queryToRefetch],
   });
 
   const handleDeleteItems = useCallback(async () => {
-    await deleteItems({
-      variables: {
-        ids: selected,
-      },
-    });
+    try {
+      await deleteItems({
+        variables: {
+          ids: selected,
+        },
+      });
+    } catch (e) {
+      // @ts-ignore
+      toast(`Произошла ошибка: ${e?.message ?? ''}`, {
+        type: 'error',
+      });
+    }
   }, [deleteItems, selected]);
 
   const handleRequestSort = (event: MouseEvent<unknown>, property: keyof V) => {

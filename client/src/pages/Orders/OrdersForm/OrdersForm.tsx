@@ -4,6 +4,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import { SubmitHandler, useForm, FormProvider } from 'react-hook-form';
 import { FormComboBox, ComboBoxOption } from '@components/FormComboBox';
 import { FormInput } from '@components/FormInput';
+import { toast } from 'react-toastify';
 
 import { CREATE_ORDER, GET_ORDER, OPTIONS, SAVE_ORDER, STATUS_OPTIONS } from './constants';
 import styles from './styles.module.scss';
@@ -39,7 +40,7 @@ export const DEFAULT_VALUES = {
 export const OrdersForm: FC<OrdersFormProps> = memo(({ selected, onClose }) => {
   const [createOrder] = useMutation(CREATE_ORDER, {
     onCompleted: () => {
-      // TODO: показать тост успех
+      toast('Заказ создан успешно', { type: 'success' });
       onClose();
     },
     refetchQueries: ['getOrders'],
@@ -47,7 +48,7 @@ export const OrdersForm: FC<OrdersFormProps> = memo(({ selected, onClose }) => {
 
   const [saveOrder] = useMutation(SAVE_ORDER, {
     onCompleted: () => {
-      // TODO: показать тост успех
+      toast('Заказ изменен успешно', { type: 'success' });
       onClose();
     },
     refetchQueries: ['getOrders'],
@@ -79,8 +80,8 @@ export const OrdersForm: FC<OrdersFormProps> = memo(({ selected, onClose }) => {
 
   const form = useForm<Inputs>({ defaultValues });
 
-  const { handleSubmit, reset } = form;
-
+  const { handleSubmit, reset, formState } = form;
+  const { isDirty, isValid } = formState;
   const onSubmit: SubmitHandler<Inputs> = useCallback(
     async ({
       orderName,
@@ -92,35 +93,42 @@ export const OrdersForm: FC<OrdersFormProps> = memo(({ selected, onClose }) => {
       rightHeadlamp,
       sparePartsCost,
     }) => {
-      if (selected && selected !== 'new') {
-        await saveOrder({
-          variables: {
-            input: {
-              id: selected,
-              orderName,
-              status: status?.id,
-              initialComment: initialComment || null,
-              initialCost,
-              initialPhotos: initialPhotos || null,
-              leftHeadlamp: leftHeadlamp?.map(({ value }) => value) ?? [],
-              rightHeadlamp: rightHeadlamp?.map(({ value }) => value) ?? [],
-              sparePartsCost: sparePartsCost || null,
+      try {
+        if (selected && selected !== 'new') {
+          await saveOrder({
+            variables: {
+              input: {
+                id: selected,
+                orderName,
+                status: status?.id,
+                initialComment: initialComment || null,
+                initialCost,
+                initialPhotos: initialPhotos || null,
+                leftHeadlamp: leftHeadlamp?.map(({ value }) => value) ?? [],
+                rightHeadlamp: rightHeadlamp?.map(({ value }) => value) ?? [],
+                sparePartsCost: sparePartsCost || null,
+              },
             },
-          },
-        });
-      } else {
-        await createOrder({
-          variables: {
-            input: {
-              orderName,
-              initialComment: initialComment || null,
-              initialCost,
-              initialPhotos: initialPhotos || null,
-              leftHeadlamp: leftHeadlamp?.map(({ value }) => value) ?? [],
-              rightHeadlamp: rightHeadlamp?.map(({ value }) => value) ?? [],
-              sparePartsCost: sparePartsCost || null,
+          });
+        } else {
+          await createOrder({
+            variables: {
+              input: {
+                orderName,
+                initialComment: initialComment || null,
+                initialCost,
+                initialPhotos: initialPhotos || null,
+                leftHeadlamp: leftHeadlamp?.map(({ value }) => value) ?? [],
+                rightHeadlamp: rightHeadlamp?.map(({ value }) => value) ?? [],
+                sparePartsCost: sparePartsCost || null,
+              },
             },
-          },
+          });
+        }
+      } catch (e) {
+        // @ts-ignore
+        toast(`Произошла ошибка: ${e?.message ?? ''}`, {
+          type: 'error',
         });
       }
     },
@@ -154,7 +162,7 @@ export const OrdersForm: FC<OrdersFormProps> = memo(({ selected, onClose }) => {
             <FormInput name="initialComment" label="Комментарий" multi />
           </Stack>
           <div className={styles.bottom}>
-            <Button type="submit" variant="contained">
+            <Button type="submit" variant="contained" disabled={!isDirty || !isValid}>
               {selected && selected !== 'new' ? 'Сохранить изменения' : 'Создать новый заказ'}
             </Button>
           </div>

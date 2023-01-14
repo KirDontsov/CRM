@@ -2,25 +2,15 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useContextSelector } from 'use-context-selector';
-import { gql, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { Button, Container, Stack, TextField, Typography } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { LogoutLayout } from '@components/LogoutLayout';
 import { AppContext } from '@context';
+import { toast } from 'react-toastify';
+import { LOGIN_USER } from '@pages/Login/constants';
 
 import styles from './styles.module.scss';
-
-const LOGIN_USER = gql`
-  mutation login($input: LoginUserInput!) {
-    login(loginUserInput: $input) {
-      user {
-        id
-        roles
-      }
-      access_token
-    }
-  }
-`;
 
 type Inputs = {
   username: string;
@@ -57,11 +47,18 @@ export const Login = () => {
   const onSubmit: SubmitHandler<Inputs> = useCallback(
     async (formData) => {
       const { username, password } = formData;
-      await loginUser({
-        variables: {
-          input: { username, password },
-        },
-      });
+      try {
+        await loginUser({
+          variables: {
+            input: { username, password },
+          },
+        });
+      } catch (e) {
+        // @ts-ignore
+        toast(`Произошла ошибка: ${e?.message ?? ''}`, {
+          type: 'error',
+        });
+      }
     },
     [loginUser],
   );

@@ -41,9 +41,8 @@ export class AuthService {
     const user = await this.usersService.getUserByName(
       createUserInput.username,
     );
-    // TODO: unique constraint
     if (user) {
-      throw new Error('User already exists');
+      throw new Error(`Пользователь c именем ${user.username} уже существует `);
     }
     // хэшируем пароль
     const password = await hash(createUserInput.password, 10);

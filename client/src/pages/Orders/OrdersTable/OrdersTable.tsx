@@ -101,6 +101,9 @@ export const OrdersTable: FC<OrdersTableProps> = memo(({ onSelect }) => {
                           e.stopPropagation();
                           onSelect(row.id);
                         }}
+                        sx={{
+                          color: (theme) => theme.palette.secondary.main,
+                        }}
                         className={styles.nameLink}
                       >
                         {row.orderName}

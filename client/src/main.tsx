@@ -1,4 +1,5 @@
 import React from 'react';
+import { ToastContainer } from 'react-toastify';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Layout } from '@components/Layout';
@@ -15,6 +16,7 @@ import { Event } from '@pages/Event';
 import { AppContextProvider } from '@context';
 import { GenericApolloProvider } from '@apollo-client';
 
+import 'react-toastify/dist/ReactToastify.css';
 import './styles/styles.module.scss';
 
 const router = createBrowserRouter([
@@ -68,6 +70,18 @@ createRoot(document.getElementById('root') as HTMLElement).render(
       <AppContextProvider>
         <MuiThemeProvider>
           <RouterProvider router={router} />
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable={false}
+            pauseOnHover
+            theme="light"
+          />
         </MuiThemeProvider>
       </AppContextProvider>
     </GenericApolloProvider>

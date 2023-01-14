@@ -20,3 +20,16 @@ export const DELETE_EVENT = gql`
     }
   }
 `;
+
+export const UPDATE_EVENT = gql`
+  mutation saveEvent($input: UpdateEventInput!) {
+    saveEvent(updateEventInput: $input) {
+      id
+      userId
+      eventName
+      eventType
+      eventComment
+      targetDate
+    }
+  }
+`;

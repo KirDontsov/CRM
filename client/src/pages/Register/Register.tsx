@@ -4,6 +4,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { gql, useMutation } from '@apollo/client';
 import { Button, Container, Stack, TextField, Typography } from '@mui/material';
 import { LogoutLayout } from '@components/LogoutLayout';
+import { toast } from 'react-toastify';
 
 import styles from './styles.module.scss';
 
@@ -30,7 +31,7 @@ export const Register = () => {
 
   const [createUser] = useMutation(REGISTER_USER, {
     onCompleted: () => {
-      // TODO: показать тост успех
+      toast('Пользователь создан успешно', { type: 'success' });
       navigate('/login');
     },
   });
@@ -44,11 +45,18 @@ export const Register = () => {
   const onSubmit: SubmitHandler<Inputs> = useCallback(
     async (data) => {
       const { username, email, password, roles } = data;
-      await createUser({
-        variables: {
-          input: { username, email, password, roles },
-        },
-      });
+      try {
+        await createUser({
+          variables: {
+            input: { username, email, password, roles },
+          },
+        });
+      } catch (e) {
+        // @ts-ignore
+        toast(`Произошла ошибка: ${e?.message ?? ''}`, {
+          type: 'error',
+        });
+      }
     },
     [createUser],
   );
