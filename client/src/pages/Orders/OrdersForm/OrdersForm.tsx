@@ -115,6 +115,7 @@ export const OrdersForm: FC<OrdersFormProps> = memo(({ selected, onClose }) => {
             variables: {
               input: {
                 orderName,
+                status: status?.id,
                 initialComment: initialComment || null,
                 initialCost,
                 initialPhotos: initialPhotos || null,

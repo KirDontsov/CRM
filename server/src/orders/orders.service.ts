@@ -26,7 +26,9 @@ export class OrdersService {
       createdAt: new Date(),
       updatedAt: new Date(),
       releaseDate: null,
-      status: OrdersStatuses.Open,
+      status: createOrderInput?.status
+        ? createOrderInput.status
+        : OrdersStatuses.Open,
       totalCost: `${
         Number(createOrderInput.initialCost) -
         Number(createOrderInput.sparePartsCost)

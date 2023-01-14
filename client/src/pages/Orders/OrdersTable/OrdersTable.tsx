@@ -116,6 +116,9 @@ export const OrdersTable: FC<OrdersTableProps> = memo(({ onSelect }) => {
                           ...(row.status === OrdersStatuses.InProgress && {
                             color: (theme) => theme.palette.primary.main,
                           }),
+                          ...(row.status === OrdersStatuses.Cancelled && {
+                            color: (theme) => theme.palette.error.main,
+                          }),
                         }}
                       >
                         {STATUS_OPTIONS.find(({ id }) => row?.status === id)?.label}

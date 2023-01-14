@@ -16,7 +16,7 @@ import styles from './styles.module.scss';
 import { CHART_DATA, GET_EVENTS } from './constants';
 import { EventsData } from './interfaces';
 
-const COLORS = ['#109CF1', '#2ED47A', '#885AF8', '#F7685B', '#ff0'];
+const COLORS = ['#109CF1', '#2ED47A', '#F7685B', '#C2CFE0'];
 const RADIAN = Math.PI / 180;
 
 export const Dashboard = () => {

@@ -32,6 +32,11 @@ export const MuiThemeProvider: FC<MuiThemeProviderProps> = ({ children }) => {
           },
           success: {
             main: '#2ED47A',
+            contrastText: '#fff',
+          },
+          error: {
+            main: '#F7685B',
+            contrastText: '#fff',
           },
           secondary: {
             main: darkMode ? '#885AF8' : '#334D6E',
