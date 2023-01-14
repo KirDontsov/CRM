@@ -114,7 +114,7 @@ input UpdateOrderInput {
   orderName: String
   rightHeadlamp: [String!]
   sparePartsCost: String
-  status: String
+  status: String!
 }
 
 input UpdateUserInput {
