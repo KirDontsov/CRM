@@ -48,6 +48,7 @@ export const FormComboBox: FC<ComboBoxProps> = memo(({ name, label, required = f
         isOptionEqualToValue={(option, v) => option?.id === v?.id}
         disablePortal
         options={options}
+        disableClearable
         renderInput={(params) => <TextField {...params} variant="standard" label={label} />}
       />
       {!!error && <Typography color="#F7685B">{error.message}</Typography>}
