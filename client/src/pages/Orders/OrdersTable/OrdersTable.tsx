@@ -1,4 +1,4 @@
-import { FC, memo } from 'react';
+import { FC, memo, useCallback, useMemo } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -9,8 +9,10 @@ import { useQuery } from '@apollo/client';
 import dayjs from 'dayjs';
 import { TableToolbar } from '@components/TableToolbar';
 import { SharedTableHead } from '@components/SharedTableHead';
-import { useTableControls, getComparator } from '@shared';
+import { useTableControls, getComparator, PAGING } from '@shared';
 import { OrdersStatuses } from '@src/apollo-client';
+import produce from 'immer';
+import { FetchMoreObserver } from '@components/FetchMoreObserver';
 
 import { STATUS_OPTIONS } from '../OrdersForm/constants';
 
@@ -23,8 +25,17 @@ export interface OrdersTableProps {
   onSelect: (id: string) => void;
 }
 export const OrdersTable: FC<OrdersTableProps> = memo(({ onSelect }) => {
-  const { data, loading } = useQuery(GET_ORDERS);
-  const orders: OrdersData[] = data?.getOrders ?? [];
+  const { data, fetchMore, loading } = useQuery(GET_ORDERS, {
+    variables: {
+      limit: PAGING.limit,
+      offset: PAGING.offset,
+    },
+  });
+
+  const { orders, ordersCount }: { orders: OrdersData[]; ordersCount: number } = useMemo(
+    () => ({ orders: data?.getOrders ?? [], ordersCount: data?.countOrders }),
+    [data],
+  );
 
   const {
     selected,
@@ -37,23 +48,35 @@ export const OrdersTable: FC<OrdersTableProps> = memo(({ onSelect }) => {
     handleDeleteItems,
   } = useTableControls<OrdersData>(orders, 'orderName', DELETE_ORDERS, 'getOrders');
 
+  const handleFetchMore = useCallback(async () => {
+    if (loading) return false;
+    await fetchMore({
+      variables: { limit: PAGING.limit, offset: orders.length || PAGING.offset },
+      updateQuery: (prev, { fetchMoreResult }) =>
+        produce(prev, (result: { getOrders: OrdersData[] }) => {
+          result?.getOrders?.push(...(fetchMoreResult?.getOrders || []));
+        }),
+    });
+    return orders.length >= ordersCount;
+  }, [loading, fetchMore, orders, ordersCount]);
+
   return (
     <>
       <TableToolbar numSelected={selected.length} title="Заказы" deleteItems={handleDeleteItems} />
       <TableContainer>
-        {!loading && (
-          <Table sx={{ minWidth: 1765 }} aria-labelledby="tableTitle" size="medium">
-            <SharedTableHead<OrdersData>
-              data={HEAD_CELLS}
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={orders.length}
-            />
-            <TableBody>
-              {orders
+        <Table sx={{ minWidth: 1765 }} aria-labelledby="tableTitle" size="medium">
+          <SharedTableHead<OrdersData>
+            data={HEAD_CELLS}
+            numSelected={selected.length}
+            order={order}
+            orderBy={orderBy}
+            onSelectAllClick={handleSelectAllClick}
+            onRequestSort={handleRequestSort}
+            rowCount={orders.length}
+          />
+          <TableBody>
+            {Boolean(orders.length) &&
+              orders
                 .slice()
                 // @ts-ignore
                 .sort(getComparator(order, orderBy))
@@ -133,10 +156,15 @@ export const OrdersTable: FC<OrdersTableProps> = memo(({ onSelect }) => {
                     </TableRow>
                   );
                 })}
-            </TableBody>
-          </Table>
-        )}
+          </TableBody>
+        </Table>
       </TableContainer>
+      <FetchMoreObserver
+        fetchMore={handleFetchMore}
+        fetchMoreLoading={loading}
+        itemsLength={orders.length}
+        totalCount={ordersCount}
+      />
     </>
   );
 });

@@ -11,6 +11,9 @@ import { AppContext } from '@context';
 import { GET_ORDERS } from '@pages/Orders/OrdersTable/constants';
 import { OrdersStatuses } from '@apollo-client';
 import { OrdersData } from '@pages/Orders/OrdersTable/interfaces';
+import { PAGING } from '@shared';
+import produce from 'immer';
+import { FetchMoreObserver } from '@components/FetchMoreObserver';
 
 import styles from './styles.module.scss';
 import { CHART_DATA, GET_EVENTS } from './constants';
@@ -25,16 +28,35 @@ export const Dashboard = () => {
   const darkMode = useContextSelector(AppContext, (ctx) => ctx.state.darkMode);
   const userId = useContextSelector(AppContext, (ctx) => ctx.state.userId);
 
-  const { data, loading } = useQuery(GET_EVENTS, {
+  const { data, fetchMore, loading } = useQuery(GET_EVENTS, {
     variables: {
       userId,
+      limit: PAGING.limit,
+      offset: PAGING.offset,
     },
   });
-  const events: EventsData[] = data?.getEventsByUserId ?? [];
+  const { events, eventsCount }: { events: EventsData[]; eventsCount: number } = useMemo(
+    () => ({ events: data?.getEventsByUserId ?? [], eventsCount: data?.countEvents ?? [] }),
+    [data],
+  );
+
+  const handleFetchMore = useCallback(async () => {
+    if (loading) return false;
+    await fetchMore({
+      variables: { limit: PAGING.limit, offset: events.length || PAGING.offset },
+      updateQuery: (prev, { fetchMoreResult }) =>
+        produce(prev, (result: { getEventsByUserId: EventsData[] }) => {
+          result?.getEventsByUserId?.push(...(fetchMoreResult?.getEventsByUserId || []));
+        }),
+    });
+    return events.length >= eventsCount;
+  }, [loading, fetchMore, events, eventsCount]);
 
   const { data: ordersData } = useQuery(GET_ORDERS, {
     variables: {
       userId,
+      offset: 0,
+      limit: 100,
     },
   });
 
@@ -143,7 +165,7 @@ export const Dashboard = () => {
       <Paper elevation={2} className={styles.dashboardLeftPart}>
         <Typography variant="h1">События</Typography>
         <div className={styles.eventCardsContainer}>
-          {!loading &&
+          {Boolean(events.length) &&
             events
               ?.slice()
               ?.sort((a, b) => {
@@ -177,6 +199,12 @@ export const Dashboard = () => {
                   </CardActionArea>
                 </div>
               ))}
+          <FetchMoreObserver
+            fetchMore={handleFetchMore}
+            fetchMoreLoading={loading}
+            itemsLength={events.length}
+            totalCount={eventsCount}
+          />
         </div>
       </Paper>
       <div className={styles.dashboardRightPart}>

@@ -2,18 +2,27 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 
+import { FetchUsersInput } from '../dto/fetch-users.input';
+
 import { User, UserDocument } from './user.schema';
 
 @Injectable()
 export class UsersRepository {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
+  async getCount(): Promise<number> {
+    return this.userModel.countDocuments();
+  }
+
   async findOne(userFilterQuery: FilterQuery<User>): Promise<User> {
     return this.userModel.findOne(userFilterQuery);
   }
 
-  async find(usersFilterQuery: FilterQuery<User>): Promise<User[]> {
-    return this.userModel.find(usersFilterQuery);
+  async find({ limit, offset }: FetchUsersInput): Promise<User[]> {
+    return this.userModel.find(null, null, {
+      limit,
+      skip: offset,
+    });
   }
 
   async create(user: User): Promise<User> {

@@ -2,6 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 
+import { FetchEventsByUserInput } from '../dto/fetch-events-by-user.input';
+import { FetchEventsInput } from '../dto/fetch-events.input';
+
 import { Event, EventDocument } from './event.schema';
 
 // запросы в монго
@@ -11,18 +14,32 @@ export class EventsRepository {
     @InjectModel(Event.name) private eventModel: Model<EventDocument>,
   ) {}
 
+  async getCount(userId: string): Promise<number> {
+    return this.eventModel.countDocuments({ userId });
+  }
+
   async findOne(eventFilterQuery: FilterQuery<Event>): Promise<Event> {
     return this.eventModel.findOne(eventFilterQuery);
   }
 
-  async findAllByUserId(
-    eventFilterQuery: FilterQuery<Event>,
-  ): Promise<Event[]> {
-    return this.eventModel.find(eventFilterQuery);
+  async findAllByUserId({
+    userId,
+    limit,
+    offset,
+  }: FetchEventsByUserInput): Promise<Event[]> {
+    return this.eventModel.find({ userId }, null, {
+      limit,
+      skip: offset,
+    });
   }
 
-  async find(eventsFilterQuery: FilterQuery<Event>): Promise<Event[]> {
-    return this.eventModel.find(eventsFilterQuery);
+  async find(
+    { limit, offset }: FetchEventsInput = { offset: 0, limit: 10 },
+  ): Promise<Event[]> {
+    return this.eventModel.find(null, null, {
+      limit,
+      offset,
+    });
   }
 
   async create(event: Event): Promise<Event> {

@@ -1,22 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
+import { Args } from '@nestjs/graphql';
 
 import { CreateOrderInput } from './dto/create-order.input';
 import { UpdateOrderInput } from './dto/update-order.input';
 import { OrdersRepository } from './mongo/orders.repository';
 import { Order } from './mongo/order.schema';
 import { OrdersStatuses } from './dto/orders-statuses';
+import { FetchOrdersInput } from './dto/fetch-orders.input';
 
 @Injectable()
 export class OrdersService {
   constructor(private readonly ordersRepository: OrdersRepository) {}
 
+  async getCount(): Promise<number> {
+    return this.ordersRepository.getCount();
+  }
+
   async getOrderById(id: string): Promise<Order> {
     return this.ordersRepository.findOne({ id });
   }
 
-  async getOrders(): Promise<Order[]> {
-    return this.ordersRepository.find({});
+  async getOrders(@Args() args: FetchOrdersInput): Promise<Order[]> {
+    return this.ordersRepository.find(args);
   }
 
   async create(createOrderInput: CreateOrderInput) {

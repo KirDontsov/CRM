@@ -19,6 +19,11 @@ const mockEvent = {
   __typename: 'Event',
 };
 
+const PAGING = {
+  limit: 20,
+  offset: 0,
+};
+
 describe('EventsService', () => {
   let service: EventsService;
 
@@ -55,12 +60,15 @@ describe('EventsService', () => {
   });
 
   it('should query all events', async () => {
-    const res = await service.getEvents();
+    const res = await service.getEvents(PAGING);
     expect(res).toEqual([expect.objectContaining(mockEvent)]);
   });
 
   it('should query all events by userId', async () => {
-    const res = await service.getEventsByUserId(mockEvent.userId);
+    const res = await service.getEventsByUserId({
+      ...PAGING,
+      userId: mockEvent.userId,
+    });
     expect(res).toEqual([expect.objectContaining(mockEvent)]);
   });
 

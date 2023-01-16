@@ -10,10 +10,17 @@ import { EventsService } from './events.service';
 import { Event } from './entities/event.entity';
 import { CreateEventInput } from './dto/create-event.input';
 import { UpdateEventInput } from './dto/update-event.input';
+import { FetchEventsByUserInput } from './dto/fetch-events-by-user.input';
+import { FetchEventsInput } from './dto/fetch-events.input';
 
 @Resolver(() => Event)
 export class EventsResolver {
   constructor(private readonly eventsService: EventsService) {}
+
+  @Query(() => Number, { name: 'countEvents' })
+  async getCount(@Args('userId') userId: string): Promise<number> {
+    return this.eventsService.getCount(userId);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Query(() => Event, { name: 'getEvent' })
@@ -23,14 +30,14 @@ export class EventsResolver {
 
   @UseGuards(JwtAuthGuard)
   @Query(() => [Event], { name: 'getEvents' })
-  findAll() {
-    return this.eventsService.getEvents();
+  findAll(@Args() args: FetchEventsInput) {
+    return this.eventsService.getEvents(args);
   }
 
   @UseGuards(JwtAuthGuard)
   @Query(() => [Event], { name: 'getEventsByUserId' })
-  findAllByUser(@Args('userId') userId: string) {
-    return this.eventsService.getEventsByUserId(userId);
+  findAllByUser(@Args() args: FetchEventsByUserInput) {
+    return this.eventsService.getEventsByUserId(args);
   }
 
   @UseGuards(JwtAuthGuard)
