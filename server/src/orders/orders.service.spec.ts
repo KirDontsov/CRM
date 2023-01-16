@@ -26,6 +26,11 @@ const mockOrder = {
   __typename: 'Order',
 };
 
+const PAGING = {
+  limit: 20,
+  offset: 0,
+};
+
 describe('OrdersService', () => {
   let service: OrdersService;
 
@@ -59,7 +64,7 @@ describe('OrdersService', () => {
   });
 
   it('should query all users', async () => {
-    const res = await service.getOrders();
+    const res = await service.getOrders(PAGING);
     expect(res).toEqual([expect.objectContaining(mockOrder)]);
   });
 

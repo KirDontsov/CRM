@@ -20,6 +20,11 @@ const mockUser = {
   __typename: 'User',
 };
 
+const PAGING = {
+  limit: 20,
+  offset: 0,
+};
+
 describe('UsersService', () => {
   let service: UsersService;
 
@@ -53,7 +58,7 @@ describe('UsersService', () => {
   });
 
   it('should query all users', async () => {
-    const res = await service.getUsers();
+    const res = await service.getUsers(PAGING);
     expect(res).toEqual([expect.objectContaining(mockUser)]);
   });
 
