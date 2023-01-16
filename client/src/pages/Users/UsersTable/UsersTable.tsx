@@ -7,15 +7,26 @@ import Checkbox from '@mui/material/Checkbox';
 import { useQuery } from '@apollo/client';
 import { TableToolbar } from '@components/TableToolbar';
 import { SharedTableHead } from '@components/SharedTableHead';
-import { getComparator, useTableControls } from '@shared';
+import { getComparator, PAGING, useTableControls } from '@shared';
 import { UserRoles } from '@src/apollo-client';
+import { FetchMoreObserver } from '@components/FetchMoreObserver/FetchMoreObserver';
+import { useCallback, useMemo } from 'react';
+import produce from 'immer';
 
 import { DELETE_USERS, GET_USERS, HEAD_CELLS } from './constants';
 import { Data } from './interfaces';
 
 export const UsersTable = () => {
-  const { data } = useQuery(GET_USERS);
-  const users: Data[] = data?.getUsers ?? [];
+  const { data, fetchMore, loading } = useQuery(GET_USERS, {
+    variables: {
+      limit: PAGING.limit,
+      offset: PAGING.offset,
+    },
+  });
+  const { users, usersCount }: { users: Data[]; usersCount: number } = useMemo(
+    () => ({ users: data?.getUsers ?? [], usersCount: data?.countUsers ?? 0 }),
+    [data],
+  );
 
   const {
     selected,
@@ -27,6 +38,18 @@ export const UsersTable = () => {
     handleRequestSort,
     handleDeleteItems,
   } = useTableControls<Data>(users, 'username', DELETE_USERS, 'getUsers');
+
+  const handleFetchMore = useCallback(async () => {
+    if (loading) return false;
+    await fetchMore({
+      variables: { limit: PAGING.limit, offset: users.length || PAGING.offset },
+      updateQuery: (prev, { fetchMoreResult }) =>
+        produce(prev, (result: { getUsers: Data[] }) => {
+          result?.getUsers?.push(...(fetchMoreResult?.getUsers || []));
+        }),
+    });
+    return users.length >= usersCount;
+  }, [loading, fetchMore, users, usersCount]);
 
   return (
     <>
@@ -43,46 +66,53 @@ export const UsersTable = () => {
             rowCount={users.length}
           />
           <TableBody>
-            {users
-              .slice()
-              .sort(getComparator(order, orderBy))
-              .map((row, index) => {
-                const isItemSelected = isSelected(row.id);
-                const labelId = `enhanced-table-checkbox-${index}`;
+            {Boolean(users.length) &&
+              users
+                .slice()
+                .sort(getComparator(order, orderBy))
+                .map((row, index) => {
+                  const isItemSelected = isSelected(row.id);
+                  const labelId = `enhanced-table-checkbox-${index}`;
 
-                return (
-                  <TableRow
-                    hover
-                    onClick={(event) => handleClick(event, row.id)}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row.id}
-                    selected={isItemSelected}
-                    sx={{
-                      pl: { sm: 2 },
-                    }}
-                  >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          'aria-labelledby': labelId,
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell component="th" id={labelId} scope="row" padding="none">
-                      {row.username}
-                    </TableCell>
-                    <TableCell>{row.email}</TableCell>
-                    <TableCell>{row.roles === UserRoles.Admin ? 'Админ' : 'Менеджер'}</TableCell>
-                  </TableRow>
-                );
-              })}
+                  return (
+                    <TableRow
+                      hover
+                      onClick={(event) => handleClick(event, row.id)}
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={row.id}
+                      selected={isItemSelected}
+                      sx={{
+                        pl: { sm: 2 },
+                      }}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          color="primary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            'aria-labelledby': labelId,
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell component="th" id={labelId} scope="row" padding="none">
+                        {row.username}
+                      </TableCell>
+                      <TableCell>{row.email}</TableCell>
+                      <TableCell>{row.roles === UserRoles.Admin ? 'Админ' : 'Менеджер'}</TableCell>
+                    </TableRow>
+                  );
+                })}
           </TableBody>
         </Table>
       </TableContainer>
+      <FetchMoreObserver
+        fetchMore={handleFetchMore}
+        fetchMoreLoading={loading}
+        itemsLength={users.length}
+        totalCount={usersCount}
+      />
     </>
   );
 };

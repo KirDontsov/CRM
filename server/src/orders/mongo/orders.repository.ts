@@ -2,6 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 
+import { FetchOrdersInput } from '../dto/fetch-orders.input';
+
 import { Order, OrderDocument } from './order.schema';
 
 // запросы в монго
@@ -11,12 +13,19 @@ export class OrdersRepository {
     @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
   ) {}
 
+  async getCount(): Promise<number> {
+    return this.orderModel.countDocuments();
+  }
+
   async findOne(orderFilterQuery: FilterQuery<Order>): Promise<Order> {
     return this.orderModel.findOne(orderFilterQuery);
   }
 
-  async find(ordersFilterQuery: FilterQuery<Order>): Promise<Order[]> {
-    return this.orderModel.find(ordersFilterQuery);
+  async find({ limit, offset }: FetchOrdersInput): Promise<Order[]> {
+    return this.orderModel.find(null, null, {
+      limit,
+      skip: offset,
+    });
   }
 
   async create(order: Order): Promise<Order> {

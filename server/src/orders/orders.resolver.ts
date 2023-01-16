@@ -10,10 +10,16 @@ import { OrdersService } from './orders.service';
 import { Order } from './entities/order.entity';
 import { CreateOrderInput } from './dto/create-order.input';
 import { UpdateOrderInput } from './dto/update-order.input';
+import { FetchOrdersInput } from './dto/fetch-orders.input';
 
 @Resolver(() => Order)
 export class OrdersResolver {
   constructor(private readonly ordersService: OrdersService) {}
+
+  @Query(() => Number, { name: 'countOrders' })
+  async getCount(): Promise<number> {
+    return this.ordersService.getCount();
+  }
 
   @UseGuards(JwtAuthGuard)
   @Query(() => Order, { name: 'getOrder' })
@@ -23,8 +29,8 @@ export class OrdersResolver {
 
   @UseGuards(JwtAuthGuard)
   @Query(() => [Order], { name: 'getOrders' })
-  findAll() {
-    return this.ordersService.getOrders();
+  findAll(@Args() args: FetchOrdersInput) {
+    return this.ordersService.getOrders(args);
   }
 
   @UseGuards(JwtAuthGuard)

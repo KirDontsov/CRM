@@ -3,8 +3,9 @@ import { gql } from '@apollo/client';
 import { HeadCell } from './interfaces';
 
 export const GET_USERS = gql`
-  query getUsers {
-    getUsers {
+  query getUsers($limit: Int!, $offset: Int!) {
+    countUsers
+    getUsers(limit: $limit, offset: $offset) {
       id
       username
       email

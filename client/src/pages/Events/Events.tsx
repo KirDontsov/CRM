@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Paper, Typography } from '@mui/material';
 import { useQuery } from '@apollo/client';
 import { useContextSelector } from 'use-context-selector';
 import { Calendar } from '@components/Calendar';
 import { Curtain } from '@components/Curtain';
 import { AppContext } from '@context';
+import { PAGING } from '@shared';
 
 import styles from './styles.module.scss';
 import { EventForm } from './EventForm';
@@ -23,9 +24,11 @@ export const Events = () => {
   const { data, loading } = useQuery(GET_EVENTS, {
     variables: {
       userId,
+      limit: 100,
+      offset: PAGING.offset,
     },
   });
-  const events: EventsData[] = data?.getEventsByUserId ?? [];
+  const events: EventsData[] = useMemo(() => data?.getEventsByUserId ?? [], [data]);
 
   const toggleDrawer = (newDate?: Date) => {
     if (newDate && isEvent(newDate)) {

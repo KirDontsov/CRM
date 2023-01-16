@@ -3,8 +3,9 @@ import { gql } from '@apollo/client';
 import { HeadCell } from './interfaces';
 
 export const GET_ORDERS = gql`
-  query getOrders {
-    getOrders {
+  query getOrders($limit: Int!, $offset: Int!) {
+    countOrders
+    getOrders(limit: $limit, offset: $offset) {
       id
       releaseDate
       createdAt

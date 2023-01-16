@@ -87,13 +87,16 @@ type Order {
 }
 
 type Query {
+  countEvents(userId: String!): Float!
+  countOrders: Float!
+  countUsers: Float!
   getEvent(id: String!): Event!
-  getEvents: [Event!]!
-  getEventsByUserId(userId: String!): [Event!]!
+  getEvents(limit: Int! = 20, offset: Int! = 0): [Event!]!
+  getEventsByUserId(limit: Int! = 20, offset: Int! = 0, userId: String!): [Event!]!
   getOrder(id: String!): Order!
-  getOrders: [Order!]!
+  getOrders(limit: Int! = 20, offset: Int! = 0): [Order!]!
   getUser(id: String!): User!
-  getUsers: [User!]!
+  getUsers(limit: Int! = 20, offset: Int! = 0): [User!]!
 }
 
 input UpdateEventInput {
