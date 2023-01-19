@@ -1,0 +1,13 @@
+body {
+	margin: 0;
+	min-height: 100vh;
+	overflow-x: hidden;
+}
+
+.link {
+	text-decoration: none;
+	color: #334D6E;
+	width: fit-content;
+	display: flex;
+	cursor: pointer;
+}

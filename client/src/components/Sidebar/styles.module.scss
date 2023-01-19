@@ -1,0 +1,47 @@
+@import '../../styles/global.module';
+
+.sideBarCollapsed {
+	width: 68px !important;
+	padding: 18px 2px 40px !important;
+	align-items: center;
+}
+
+.sideBar {
+	display: flex;
+	flex-direction: column;
+	padding: 18px 40px 40px;
+	width: 256px;
+	height: calc(100vh - 58px);
+	box-shadow: 6px 0 18px rgba(0, 0, 0, 0.06);
+	gap: 40px;
+	position: relative;
+	z-index: 3;
+	border-radius: 0 !important;
+	.menuUlCollapsed {
+		align-items: center;
+	}
+	.menuUl {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+
+		.sidebarLink {
+			& > svg {
+				margin-right: 14px;
+			}
+		}
+	}
+	.divider {
+		border-top: 1px solid $icon-gray
+	}
+	.bottomMenuUl {
+		display: flex;
+		flex-direction: column;
+		align-content: space-between;
+		height: 100%;
+	}
+	.bottomMenuLink {
+		position: absolute;
+		bottom: 22px;
+	}
+}

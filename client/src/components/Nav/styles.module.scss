@@ -1,0 +1,38 @@
+@import '../../styles/global.module';
+
+.nav {
+	height: 60px;
+	background: $bg-main;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	z-index: 2;
+	border-radius: 0 !important;
+}
+
+.navContent {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 18px 24px;
+	.navRight {
+		display: flex;
+		width: fit-content;
+	}
+}
+
+
+.link {
+	text-decoration: none;
+	width: fit-content;
+	&:hover {
+		color: #34AFF9;
+	}
+	&:active {
+		color: #098EDF;
+	}
+}
+
+.loginLink {
+	margin-right: 10px;
+}

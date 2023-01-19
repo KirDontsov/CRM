@@ -1,0 +1,17 @@
+@import '../../../styles/global.module';
+
+.photo {
+	background: 50% 50% / contain no-repeat;
+	width: 100px;
+	height: 100px;
+	display: block;
+	content: '';
+}
+
+.nameLink {
+	cursor: pointer;
+	font-weight: 600 !important;
+	&:hover {
+		color: $active !important;
+	}
+}

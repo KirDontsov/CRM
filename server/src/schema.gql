@@ -1,0 +1,136 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateEventInput {
+  eventComment: String
+  eventName: String!
+  eventType: String!
+  targetDate: DateTime!
+  userId: String!
+}
+
+input CreateOrderInput {
+  initialComment: String
+  initialCost: String!
+  initialPhotos: String
+  leftHeadlamp: [String!]
+  orderName: String!
+  rightHeadlamp: [String!]
+  sparePartsCost: String
+  status: String
+}
+
+input CreateUserInput {
+  email: String!
+  password: String!
+  roles: String!
+  username: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Event {
+  createdAt: DateTime!
+  eventComment: String
+  eventName: String!
+  eventType: String!
+  id: String!
+  targetDate: DateTime!
+  updatedAt: DateTime!
+  userId: String!
+}
+
+type LoginResponse {
+  access_token: String!
+  user: User!
+}
+
+input LoginUserInput {
+  password: String!
+  username: String!
+}
+
+type Mutation {
+  createEvent(createEventInput: CreateEventInput!): Event!
+  createOrder(createOrderInput: CreateOrderInput!): Order!
+  createUser(createUserInput: CreateUserInput!): User!
+  deleteEvent(id: String!): Event!
+  deleteEvents(ids: [String!]!): [Event!]!
+  deleteOrder(id: String!): Order!
+  deleteOrders(ids: [String!]!): [Order!]!
+  deleteUser(id: String!): User!
+  deleteUsers(ids: [String!]!): [User!]!
+  login(loginUserInput: LoginUserInput!): LoginResponse!
+  saveEvent(updateEventInput: UpdateEventInput!): Event!
+  saveOrder(updateOrderInput: UpdateOrderInput!): Order!
+  saveUser(updateUserInput: UpdateUserInput!): User!
+}
+
+type Order {
+  createdAt: DateTime!
+  id: String!
+  initialComment: String
+  initialCost: String!
+  initialPhotos: String
+  leftHeadlamp: [String!]!
+  orderName: String!
+  releaseDate: DateTime
+  rightHeadlamp: [String!]!
+  sparePartsCost: String!
+  status: String!
+  totalCost: String!
+  updatedAt: DateTime!
+}
+
+type Query {
+  countEvents(userId: String!): Float!
+  countOrders: Float!
+  countUsers: Float!
+  getEvent(id: String!): Event!
+  getEvents(limit: Int! = 20, offset: Int! = 0): [Event!]!
+  getEventsByUserId(limit: Int! = 20, offset: Int! = 0, userId: String!): [Event!]!
+  getOrder(id: String!): Order!
+  getOrders(limit: Int! = 20, offset: Int! = 0): [Order!]!
+  getUser(id: String!): User!
+  getUsers(limit: Int! = 20, offset: Int! = 0): [User!]!
+}
+
+input UpdateEventInput {
+  eventComment: String
+  eventName: String
+  eventType: String
+  id: String!
+  targetDate: DateTime
+  userId: String
+}
+
+input UpdateOrderInput {
+  id: String!
+  initialComment: String
+  initialCost: String
+  initialPhotos: String
+  leftHeadlamp: [String!]
+  orderName: String
+  rightHeadlamp: [String!]
+  sparePartsCost: String
+  status: String!
+}
+
+input UpdateUserInput {
+  email: String
+  id: String!
+  password: String
+  roles: String
+  username: String
+}
+
+type User {
+  email: String!
+  id: String!
+  roles: String!
+  username: String!
+}

@@ -1,0 +1,28 @@
+.cardContent {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	width: 100%;
+	height: 100%;
+	.eventsContainer {
+		display: flex;
+		justify-content: flex-end;
+		width: 100%;
+		gap: 2px;
+		.event {
+			display: flex;
+			width: 4px;
+			height: 4px;
+			content: '';
+			border-radius: 50%;
+		}
+	}
+	.textContainer {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		height: calc(100% - 4px);
+	}
+}

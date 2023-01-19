@@ -1,0 +1,18 @@
+@import '../../styles/global.module';
+
+.layoutMainContainer {
+	height: 100vh;
+	overflow: hidden;
+}
+
+.layoutContentContainer {
+	display: flex;
+	background: $bg-gray;
+}
+
+.layoutContent {
+	width: 100%;
+	padding: 96px 36px 36px;
+	overflow-y: auto;
+	height: calc(100vh - 36px - 36px);
+}
