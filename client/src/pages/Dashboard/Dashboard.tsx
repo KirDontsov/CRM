@@ -24,7 +24,6 @@ const RADIAN = Math.PI / 180;
 
 export const Dashboard = () => {
   const navigate = useNavigate();
-  const collapsed = useContextSelector(AppContext, (ctx) => ctx.state.collapsed);
   const darkMode = useContextSelector(AppContext, (ctx) => ctx.state.darkMode);
   const userId = useContextSelector(AppContext, (ctx) => ctx.state.userId);
 
@@ -158,10 +157,7 @@ export const Dashboard = () => {
   };
 
   return (
-    <div
-      className={styles.dashboardContainer}
-      style={{ width: collapsed ? 'calc(100% - 33px)' : 'calc(100% - 180px)' }}
-    >
+    <div className={styles.dashboardContainer}>
       <Paper elevation={2} className={styles.dashboardLeftPart}>
         <Typography variant="h1">События</Typography>
         <div className={styles.eventCardsContainer}>
@@ -247,7 +243,7 @@ export const Dashboard = () => {
         >
           <Typography variant="h1">Выручка</Typography>
           <AreaChart
-            width={600}
+            width={500}
             height={350}
             data={CHART_DATA}
             margin={{
