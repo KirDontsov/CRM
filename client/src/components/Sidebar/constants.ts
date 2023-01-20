@@ -26,4 +26,9 @@ export const ROUTES = [
     link: '/settings',
     access: [UserRoles.Admin, UserRoles.Reader],
   },
+  {
+    name: 'Разрешения',
+    link: '/permissions',
+    access: [UserRoles.Admin],
+  },
 ];

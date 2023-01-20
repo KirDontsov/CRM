@@ -18,6 +18,7 @@ import { GenericApolloProvider } from '@apollo-client';
 
 import 'react-toastify/dist/ReactToastify.css';
 import './styles/styles.module.scss';
+import {Permissions} from "@pages/Permissions";
 
 const router = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
       {
         path: '/orders',
         element: <Orders />,
+      },
+      {
+        path: '/permissions',
+        element: <Permissions />,
       },
       {
         path: '/users',

@@ -7,7 +7,8 @@ Back:
 - Сущности statuses
 - Сущности events
 - role based access control
-- tests
+- tests 
+- permissions
 
 Client:
 - Форма авторизации
@@ -23,3 +24,4 @@ Client:
 - calendar
 - toasts
 - tests
+- permissions

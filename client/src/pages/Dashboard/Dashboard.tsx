@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import SquareIcon from '@mui/icons-material/Square';
 import { AppContext } from '@context';
 import { GET_ORDERS } from '@pages/Orders/OrdersTable/constants';
-import { OrdersStatuses } from '@apollo-client';
+import {OrdersStatuses, UserRoles} from '@apollo-client';
 import { OrdersData } from '@pages/Orders/OrdersTable/interfaces';
 import { PAGING } from '@shared';
 import produce from 'immer';
@@ -26,6 +26,7 @@ export const Dashboard = () => {
   const navigate = useNavigate();
   const darkMode = useContextSelector(AppContext, (ctx) => ctx.state.darkMode);
   const userId = useContextSelector(AppContext, (ctx) => ctx.state.userId);
+  const userRoles = useContextSelector(AppContext, (ctx) => ctx.state.userRoles);
 
   const { data, fetchMore, loading } = useQuery(GET_EVENTS, {
     variables: {
@@ -221,22 +222,21 @@ export const Dashboard = () => {
                 onMouseEnter={onPieEnter}
               >
                 {pieChartData.map((entry, index) => (
-                  <Cell key={`cell-${entry.name}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell key={`cell-${entry.name}`} fill={COLORS[index % COLORS.length]}/>
                 ))}
               </Pie>
             </PieChart>
             <div className={styles.pieStat}>
               {pieChartData.map((entry, index) => (
-                <div key={entry.name} style={{ color: COLORS[index] }} className={styles.pieStatItem}>
-                  <SquareIcon />
+                <div key={entry.name} style={{color: COLORS[index]}} className={styles.pieStatItem}>
+                  <SquareIcon/>
                   <Typography component="p" color={darkMode ? '#fff' : 'initial'}>{`${entry.name}`}</Typography>
                 </div>
               ))}
             </div>
           </div>
         </Paper>
-
-        <Paper
+        {userRoles === UserRoles.Admin && (<Paper
           // пока только моки
           elevation={2}
           className={styles.widget}
@@ -253,14 +253,15 @@ export const Dashboard = () => {
               bottom: 0,
             }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis tick={false} />
-            <Tooltip formatter={handleFormatLabel as unknown as Formatter<string, string>} />
-            <Area type="monotone" dataKey="pv" label="Прибыль" stackId="1" stroke="#2ED47A" fill="#2ED47A" />
-            <Area type="monotone" dataKey="uv" label="Выручка" stackId="1" stroke="#885AF8" fill="#885AF8" />
+            <CartesianGrid strokeDasharray="3 3"/>
+            <XAxis dataKey="name"/>
+            <YAxis tick={false}/>
+            <Tooltip formatter={handleFormatLabel as unknown as Formatter<string, string>}/>
+            <Area type="monotone" dataKey="pv" label="Прибыль" stackId="1" stroke="#2ED47A" fill="#2ED47A"/>
+            <Area type="monotone" dataKey="uv" label="Выручка" stackId="1" stroke="#885AF8" fill="#885AF8"/>
           </AreaChart>
-        </Paper>
+        </Paper>)}
+
       </div>
     </div>
   );
