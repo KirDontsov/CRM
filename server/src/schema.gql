@@ -21,6 +21,10 @@ input CreateOrderInput {
   status: String
 }
 
+input CreatePermissionInput {
+  value: String!
+}
+
 input CreateUserInput {
   email: String!
   password: String!
@@ -57,6 +61,7 @@ input LoginUserInput {
 type Mutation {
   createEvent(createEventInput: CreateEventInput!): Event!
   createOrder(createOrderInput: CreateOrderInput!): Order!
+  createPermission(createPermissionInput: CreatePermissionInput!): Permission!
   createUser(createUserInput: CreateUserInput!): User!
   deleteEvent(id: String!): Event!
   deleteEvents(ids: [String!]!): [Event!]!
@@ -86,6 +91,11 @@ type Order {
   updatedAt: DateTime!
 }
 
+type Permission {
+  id: String!
+  value: String!
+}
+
 type Query {
   countEvents(userId: String!): Float!
   countOrders: Float!
@@ -95,6 +105,7 @@ type Query {
   getEventsByUserId(limit: Int! = 20, offset: Int! = 0, userId: String!): [Event!]!
   getOrder(id: String!): Order!
   getOrders(limit: Int! = 20, offset: Int! = 0): [Order!]!
+  getPermissions(userId: String!): [Permission!]!
   getUser(id: String!): User!
   getUsers(limit: Int! = 20, offset: Int! = 0): [User!]!
 }
