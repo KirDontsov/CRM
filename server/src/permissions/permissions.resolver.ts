@@ -12,7 +12,7 @@ export class PermissionsResolver {
   constructor(private readonly permissionsService: PermissionsService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Query(() => [Permission], { name: 'getPermissions' })
+  @Query(() => [Permission])
   getPermissions(@Args('userId') userId: string) {
     return this.permissionsService.getPermissions(userId);
   }
