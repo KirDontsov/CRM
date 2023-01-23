@@ -1,31 +1,32 @@
+import { useMemo } from 'react';
+import { useContextSelector } from "use-context-selector";
 import { TableToolbar } from '@components/TableToolbar';
 import TableContainer from '@mui/material/TableContainer';
 import Table from '@mui/material/Table';
 import { SharedTableHead } from '@components/SharedTableHead';
-import { Data } from '@pages/Users/UsersTable/interfaces';
-import { DELETE_USERS, GET_USERS, HEAD_CELLS } from '@pages/Users/UsersTable/constants';
+import { HEAD_CELLS } from './constants';
 import TableBody from '@mui/material/TableBody';
-import { getComparator, PAGING, useTableControls } from '@shared';
+import { getComparator, useTableControls } from '@shared';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import Checkbox from '@mui/material/Checkbox';
-import { UserRoles } from '@apollo-client';
 import { useQuery } from '@apollo/client';
-import { useCallback, useMemo } from 'react';
-import produce from 'immer';
+import { GET_PERMISSIONS } from "./constants";
+import { AppContext } from "@context";
+import { PermissionData } from "./interfaces";
+import { DELETE_USERS } from "@pages/Users/UsersTable/constants";
 
 export const PermissionsTable = () => {
+  const userId = useContextSelector(AppContext, (ctx) => ctx.state.userId);
   // TODO: заменить на разрешения
-  const { data, fetchMore, loading } = useQuery(GET_USERS, {
+  const { data } = useQuery(GET_PERMISSIONS, {
     variables: {
-      limit: PAGING.limit,
-      offset: PAGING.offset,
+      id: userId,
     },
+    skip: !userId,
   });
-  const { users, usersCount }: { users: Data[]; usersCount: number } = useMemo(
-    () => ({ users: data?.getUsers ?? [], usersCount: data?.countUsers ?? 0 }),
-    [data],
-  );
+
+  const permissions: PermissionData[] = useMemo(() => data?.getPermissions ?? [], [data]);
 
   const {
     selected,
@@ -36,36 +37,25 @@ export const PermissionsTable = () => {
     handleSelectAllClick,
     handleRequestSort,
     handleDeleteItems,
-  } = useTableControls<Data>(users, 'username', DELETE_USERS, 'getUsers');
+  } = useTableControls<PermissionData>(permissions, 'value', DELETE_USERS, 'getUsers');
 
-  const handleFetchMore = useCallback(async () => {
-    if (loading) return false;
-    await fetchMore({
-      variables: { limit: PAGING.limit, offset: users.length || PAGING.offset },
-      updateQuery: (prev, { fetchMoreResult }) =>
-        produce(prev, (result: { getUsers: Data[] }) => {
-          result?.getUsers?.push(...(fetchMoreResult?.getUsers || []));
-        }),
-    });
-    return users.length >= usersCount;
-  }, [loading, fetchMore, users, usersCount]);
   return (
     <>
       <TableToolbar numSelected={selected.length} title="Разрешения" deleteItems={handleDeleteItems} />
       <TableContainer>
         <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
-          <SharedTableHead<Data>
+          <SharedTableHead<PermissionData>
             data={HEAD_CELLS}
             numSelected={selected.length}
             order={order}
             orderBy={orderBy}
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={users.length}
+            rowCount={permissions.length}
           />
           <TableBody>
-            {Boolean(users.length) &&
-              users
+            {Boolean(permissions.length) &&
+              permissions
                 .slice()
                 .sort(getComparator(order, orderBy))
                 .map((row, index) => {
@@ -94,11 +84,8 @@ export const PermissionsTable = () => {
                           }}
                         />
                       </TableCell>
-                      <TableCell component="th" id={labelId} scope="row" padding="none">
-                        {row.username}
-                      </TableCell>
-                      <TableCell>{row.email}</TableCell>
-                      <TableCell>{row.roles === UserRoles.Admin ? 'Админ' : 'Менеджер'}</TableCell>
+                      <TableCell>{row.value}</TableCell>
+                      <TableCell>{row.id}</TableCell>
                     </TableRow>
                   );
                 })}
