@@ -8,7 +8,7 @@ export type UserDocument = User & Document;
 // схема в монго
 @Schema()
 export class User {
-  @Prop()
+  @Prop({ unique: true })
   id: string;
 
   @Prop({ type: String, enum: UserRoles, default: UserRoles.Reader })
@@ -17,7 +17,7 @@ export class User {
   @Prop()
   username: string;
 
-  @Prop()
+  @Prop({ unique: true })
   email: string;
 
   @Prop()

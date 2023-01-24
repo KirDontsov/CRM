@@ -1,20 +1,33 @@
-import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Args,
+  Mutation,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRoles } from '../auth/dto/user-roles';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { FilialsService } from '../filials/filials.service';
+import { FunctionalRolesService } from '../functional-roles/functional-roles.service';
 
 import { UsersService } from './users.service';
-import { User } from './entities/user.entity';
 import { UpdateUserInput } from './dto/update-user.input';
 import { FetchUsersInput } from './dto/fetch-users.input';
+import { User } from './entities/user.entity';
 
 // gql запросы
 @Resolver(() => User)
 export class UsersResolver {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly filialsService: FilialsService,
+    private readonly functionalRolesService: FunctionalRolesService,
+  ) {}
 
   @Query(() => Number, { name: 'countUsers' })
   async getCount(): Promise<number> {
@@ -33,6 +46,18 @@ export class UsersResolver {
   @Query(() => [User], { name: 'getUsers' })
   findAll(@Args() args: FetchUsersInput) {
     return this.usersService.getUsers(args);
+  }
+
+  @ResolveField()
+  async filials(@Parent() user: User) {
+    const { id } = user;
+    return this.filialsService.findAllByUserId({ userId: id });
+  }
+
+  @ResolveField()
+  async functionalRoles(@Parent() user: User) {
+    const { id } = user;
+    return this.functionalRolesService.findAllByUserId({ userId: id });
   }
 
   @Roles(UserRoles.Admin)

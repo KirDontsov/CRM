@@ -1,20 +1,20 @@
 import { useMemo } from 'react';
-import { useContextSelector } from "use-context-selector";
+import { useContextSelector } from 'use-context-selector';
 import { TableToolbar } from '@components/TableToolbar';
 import TableContainer from '@mui/material/TableContainer';
 import Table from '@mui/material/Table';
 import { SharedTableHead } from '@components/SharedTableHead';
-import { HEAD_CELLS } from './constants';
 import TableBody from '@mui/material/TableBody';
 import { getComparator, useTableControls } from '@shared';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import Checkbox from '@mui/material/Checkbox';
 import { useQuery } from '@apollo/client';
-import { GET_PERMISSIONS } from "./constants";
-import { AppContext } from "@context";
-import { PermissionData } from "./interfaces";
-import { DELETE_USERS } from "@pages/Users/UsersTable/constants";
+import { AppContext } from '@context';
+import { DELETE_USERS } from '@pages/Users/UsersTable/constants';
+
+import { GET_PERMISSIONS, HEAD_CELLS } from './constants';
+import { PermissionData } from './interfaces';
 
 export const PermissionsTable = () => {
   const userId = useContextSelector(AppContext, (ctx) => ctx.state.userId);
