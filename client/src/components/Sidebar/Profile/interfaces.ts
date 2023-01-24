@@ -1,7 +1,7 @@
-export interface Data {
+export interface UserData {
   id: string;
   username: string;
   email: string;
   roles: string;
-  filials: string;
+  filials: [{ name: string }];
 }

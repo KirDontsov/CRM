@@ -1,25 +1,17 @@
 import { FC, memo } from 'react';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { useContextSelector } from 'use-context-selector';
 import { Typography } from '@mui/material';
 import { AppContext } from '@context';
 
+import { UserData } from './interfaces';
 import { Avatar } from './Avatar';
+import { GET_USER } from './constants';
 import styles from './styles.module.scss';
 
 export interface ProfileProps {
   collapsed: boolean;
 }
-
-const GET_USER = gql`
-  query getUser($id: String!) {
-    getUser(id: $id) {
-      id
-      username
-      email
-    }
-  }
-`;
 
 export const Profile: FC<ProfileProps> = memo(({ collapsed }) => {
   const userId = useContextSelector(AppContext, (ctx) => ctx.state.userId);
@@ -30,8 +22,7 @@ export const Profile: FC<ProfileProps> = memo(({ collapsed }) => {
     skip: !userId,
   });
 
-  const username = data?.getUser?.username ?? '';
-  const email = data?.getUser?.email ?? '';
+  const { username, email, filials }: UserData = data?.getUser ?? {};
 
   return (
     <div className={styles.profileContainer}>
@@ -46,6 +37,9 @@ export const Profile: FC<ProfileProps> = memo(({ collapsed }) => {
               {email}
             </Typography>
           </a>
+          <Typography component="span" className={styles.filial} color={darkMode ? '#885AF8' : '#C2CFE0'}>
+            {filials?.map(({ name }) => name).join(', ')}
+          </Typography>
         </div>
       )}
     </div>

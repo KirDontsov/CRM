@@ -2,6 +2,8 @@ import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { AppContextProvider } from '@context';
+import { GenericApolloProvider } from '@apollo-client';
 import { Layout } from '@components/Layout';
 import { ProtectedRoute } from '@components/ProtectedRoute';
 import { MuiThemeProvider } from '@components/MuiThemeProvider';
@@ -13,12 +15,10 @@ import { Settings } from '@pages/Settings';
 import { Orders } from '@pages/Orders';
 import { Events } from '@pages/Events';
 import { Event } from '@pages/Event';
-import { AppContextProvider } from '@context';
-import { GenericApolloProvider } from '@apollo-client';
+import { Permissions } from '@pages/Permissions';
 
 import 'react-toastify/dist/ReactToastify.css';
 import './styles/styles.module.scss';
-import {Permissions} from "@pages/Permissions";
 
 const router = createBrowserRouter([
   {

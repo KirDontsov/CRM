@@ -24,7 +24,13 @@ export const UsersTable = () => {
     },
   });
   const { users, usersCount }: { users: Data[]; usersCount: number } = useMemo(
-    () => ({ users: data?.getUsers ?? [], usersCount: data?.countUsers ?? 0 }),
+    () => ({
+      users: (data?.getUsers ?? []).map((user: Omit<Data, 'filials'> & { filials: [{ name: string }] }) => ({
+        ...user,
+        filials: user.filials.map(({ name }) => name).join(', '),
+      })),
+      usersCount: data?.countUsers ?? 0,
+    }),
     [data],
   );
 
@@ -101,6 +107,7 @@ export const UsersTable = () => {
                       </TableCell>
                       <TableCell>{row.email}</TableCell>
                       <TableCell>{row.roles === UserRoles.Admin ? 'Админ' : 'Менеджер'}</TableCell>
+                      <TableCell>{row.filials}</TableCell>
                     </TableRow>
                   );
                 })}
