@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { Args } from '@nestjs/graphql';
+import { Args, Context } from '@nestjs/graphql';
 
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
@@ -25,8 +25,11 @@ export class UsersService {
     return this.usersRepository.findOne({ username });
   }
 
-  async getUsers(@Args() args: FetchUsersInput): Promise<User[]> {
-    return this.usersRepository.find(args);
+  async getUsers(
+    @Args() args: FetchUsersInput,
+    @Context() context,
+  ): Promise<User[]> {
+    return this.usersRepository.find(args, context);
   }
 
   async createUser(createUserInput: CreateUserInput): Promise<User> {

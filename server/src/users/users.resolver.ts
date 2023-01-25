@@ -5,6 +5,7 @@ import {
   Mutation,
   ResolveField,
   Parent,
+  Context,
 } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 
@@ -17,8 +18,8 @@ import { FunctionalRolesService } from '../functional-roles/functional-roles.ser
 
 import { UsersService } from './users.service';
 import { UpdateUserInput } from './dto/update-user.input';
-import { FetchUsersInput } from './dto/fetch-users.input';
 import { User } from './entities/user.entity';
+import { FetchUsersInput } from './dto/fetch-users.input';
 
 // gql запросы
 @Resolver(() => User)
@@ -44,8 +45,8 @@ export class UsersResolver {
   @Roles(UserRoles.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Query(() => [User], { name: 'getUsers' })
-  findAll(@Args() args: FetchUsersInput) {
-    return this.usersService.getUsers(args);
+  findAll(@Args() args: FetchUsersInput, @Context() context) {
+    return this.usersService.getUsers(args, context);
   }
 
   @ResolveField()

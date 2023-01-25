@@ -6,6 +6,9 @@ export const LOGIN_USER = gql`
       user {
         id
         roles
+        filials {
+          id
+        }
       }
       access_token
     }

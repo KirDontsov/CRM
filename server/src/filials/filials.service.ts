@@ -5,6 +5,7 @@ import { CreateFilialInput } from './dto/create-filial.input';
 // import { UpdateFilialInput } from './dto/update-filial.input';
 import { FilialsRepository } from './mongo/filials.repository';
 import { FetchFilialsByUserInput } from './dto/fetch-filials-by-user.input';
+import { UpdateFilialInput } from './dto/update-filial.input';
 
 @Injectable()
 export class FilialsService {
@@ -27,8 +28,8 @@ export class FilialsService {
   }
 
   // updateFilialInput: UpdateFilialInput
-  update(id: number) {
-    return `This action updates a #${id} filial`;
+  update(id: number, input: UpdateFilialInput) {
+    return `This action updates a #${id} ${input} filial`;
   }
 
   remove(id: number) {

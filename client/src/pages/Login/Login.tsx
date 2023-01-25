@@ -25,10 +25,12 @@ export const Login = () => {
 
   const [loginUser] = useMutation(LOGIN_USER, {
     onCompleted: (data) => {
+      const { id, roles: userRoles, filials } = data?.login?.user;
       login({
-        userId: data?.login?.user?.id ?? '',
-        userRoles: data?.login?.user?.roles ?? '',
+        userId: id,
+        userRoles,
         access_token: data?.login?.access_token ?? '',
+        filialIds: filials.map(({ id: filialId }: { id: string }) => filialId),
       }).then(() => {
         if (!data?.login?.user?.id) {
           navigate('/login');
@@ -64,7 +66,7 @@ export const Login = () => {
   );
 
   const handleLogout = useCallback(() => {
-    logout();
+    logout().then();
   }, [logout]);
 
   return (

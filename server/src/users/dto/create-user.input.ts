@@ -13,6 +13,9 @@ export class CreateUserInput {
   @Field()
   password: string;
 
+  @Field(() => [String])
+  filialIds: string[];
+
   @Field()
   roles: UserRoles;
 }

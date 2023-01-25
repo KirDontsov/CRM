@@ -39,6 +39,7 @@ input CreatePermissionInput {
 
 input CreateUserInput {
   email: String!
+  filialIds: [String!]!
   password: String!
   roles: String!
   username: String!
@@ -184,6 +185,7 @@ input UpdateOrderInput {
 
 input UpdateUserInput {
   email: String
+  filialIds: [String!]
   id: String!
   password: String
   roles: String

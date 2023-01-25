@@ -18,11 +18,17 @@ export class UsersRepository {
     return this.userModel.findOne(userFilterQuery);
   }
 
-  async find({ limit, offset }: FetchUsersInput): Promise<User[]> {
-    return this.userModel.find(null, null, {
-      limit,
-      skip: offset,
-    });
+  async find({ limit, offset }: FetchUsersInput, context): Promise<User[]> {
+    const filialIds = JSON.parse(context?.req?.headers?.filialids ?? '') ?? [];
+
+    return this.userModel
+      .find(null, null, {
+        limit,
+        skip: offset,
+      })
+      .where('filialIds')
+      .in(filialIds)
+      .exec();
   }
 
   async create(user: User): Promise<User> {

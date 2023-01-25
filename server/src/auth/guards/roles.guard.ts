@@ -1,5 +1,4 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
@@ -10,9 +9,7 @@ import { ROLES_KEY } from '../decorators/roles.decorator';
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const ctx = GqlExecutionContext.create(context);
     const requiredRoles = this.reflector.getAllAndOverride<UserRoles[]>(
       ROLES_KEY,
@@ -23,8 +20,21 @@ export class RolesGuard implements CanActivate {
       return true;
     }
 
-    return requiredRoles.some((role) =>
-      ctx.getContext()?.req?.user?.roles?.includes(role),
+    // у нас есть текущий пользователь
+    // находим филиал относящийся к нему
+    // проверяем хедеры на наличие нужного filialIds
+    const queryFilialIds =
+      JSON.parse(ctx.getContext()?.req?.headers?.filialids ?? '') ?? [];
+    const { roles, filialIds } = ctx.getContext()?.req?.user ?? {};
+
+    const hasRequiredFilials = filialIds?.every((filialId) =>
+      queryFilialIds.includes(filialId),
     );
+
+    const hasRequiredRoles = requiredRoles.some((role) =>
+      roles?.includes(role),
+    );
+
+    return hasRequiredRoles || hasRequiredFilials;
   }
 }

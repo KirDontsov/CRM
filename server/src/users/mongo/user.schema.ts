@@ -23,6 +23,9 @@ export class User {
   @Prop()
   password: string;
 
+  @Prop()
+  filialIds: string[];
+
   @Prop({ required: true, default: () => new Date() })
   createdAt: Date;
 

@@ -6,6 +6,7 @@ import { Args } from '@nestjs/graphql';
 import { FunctionalRolesRepository } from './mongo/functional-roles.repository';
 import { CreateFunctionalRoleInput } from './dto/create-functional-role.input';
 import { FetchFunctionalRolesByUserInput } from './dto/fetch-functional-roles-by-user.input';
+import { UpdateFunctionalRoleInput } from './dto/update-functional-role.input';
 
 @Injectable()
 export class FunctionalRolesService {
@@ -36,8 +37,8 @@ export class FunctionalRolesService {
   }
 
   // updateFunctionalRoleInput: UpdateFunctionalRoleInput
-  update(id: string) {
-    return `This action updates a #${id} functionalRole`;
+  update(id: string, input: UpdateFunctionalRoleInput) {
+    return `This action updates a #${id} , ${input} functionalRole`;
   }
 
   remove(id: number) {
