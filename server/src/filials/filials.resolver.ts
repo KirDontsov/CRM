@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, Context } from '@nestjs/graphql';
 
 import { FilialsService } from './filials.service';
 import { Filial } from './entities/filial.entity';
@@ -17,8 +17,8 @@ export class FilialsResolver {
   }
 
   @Query(() => [Filial])
-  getFilials() {
-    return this.filialsService.findAll();
+  getFilials(@Context() context) {
+    return this.filialsService.findAllByContext(context);
   }
 
   @Query(() => Filial)

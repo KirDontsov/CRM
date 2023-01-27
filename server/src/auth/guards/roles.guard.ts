@@ -4,6 +4,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { UserRoles } from '../dto/user-roles';
 import { ROLES_KEY } from '../decorators/roles.decorator';
+import { safeJSONParse } from '../../utils';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -24,15 +25,15 @@ export class RolesGuard implements CanActivate {
     // находим филиал относящийся к нему
     // проверяем хедеры на наличие нужного filialIds
     const queryFilialIds =
-      JSON.parse(ctx.getContext()?.req?.headers?.filialids ?? '') ?? [];
+      safeJSONParse(ctx.getContext()?.req?.headers?.filialids ?? '') ?? [];
     const { roles, filialIds } = ctx.getContext()?.req?.user ?? {};
 
-    const hasRequiredFilials = filialIds?.every((filialId) =>
-      queryFilialIds.includes(filialId),
+    const hasRequiredFilials = filialIds?.every(
+      (filialId) => queryFilialIds.indexOf(filialId) !== -1,
     );
 
-    const hasRequiredRoles = requiredRoles.some((role) =>
-      roles?.includes(role),
+    const hasRequiredRoles = requiredRoles.some(
+      (role) => roles?.indexOf(role) !== -1,
     );
 
     return hasRequiredRoles || hasRequiredFilials;

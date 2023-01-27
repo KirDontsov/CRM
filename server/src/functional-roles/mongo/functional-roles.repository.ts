@@ -27,10 +27,7 @@ export class FunctionalRolesRepository {
   async findAllByUserId({
     userId,
   }: FetchFunctionalRolesByUserInput): Promise<FunctionalRole[]> {
-    const functionalRoles = await this.functionalRoleModel.find();
-    return (
-      functionalRoles.filter(({ userIds }) => userIds.includes(userId)) ?? []
-    );
+    return this.functionalRoleModel.find({ userIds: { $eq: userId } });
   }
 
   async create(

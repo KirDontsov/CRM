@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { Args, Context } from '@nestjs/graphql';
+import { Args } from '@nestjs/graphql';
 
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
@@ -13,8 +13,8 @@ import { FetchUsersInput } from './dto/fetch-users.input';
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  async getCount(): Promise<number> {
-    return this.usersRepository.getCount();
+  async getCount(context): Promise<number> {
+    return this.usersRepository.getCount(context);
   }
 
   async getUserById(id: string): Promise<User> {
@@ -27,7 +27,7 @@ export class UsersService {
 
   async getUsers(
     @Args() args: FetchUsersInput,
-    @Context() context,
+    context: ExecutionContext,
   ): Promise<User[]> {
     return this.usersRepository.find(args, context);
   }

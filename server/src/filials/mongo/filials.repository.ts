@@ -19,6 +19,11 @@ export class FilialsRepository {
     return this.filialModel.find(filialFilterQuery);
   }
 
+  async findAllByContext(context): Promise<Filial[]> {
+    const userId = context?.req?.headers?.userid ?? '';
+    return this.filialModel.find({ userIds: { $eq: userId } });
+  }
+
   async findAllByUserId({
     userId,
   }: FetchFilialsByUserInput): Promise<Filial[]> {
@@ -35,5 +40,10 @@ export class FilialsRepository {
     // eslint-disable-next-line new-cap
     const newPermission = new this.filialModel(filial);
     return newPermission.save();
+  }
+
+  // TODO: findOneAndUpdate
+  async findOneAndUpdate(id, filialFilterQuery: FilterQuery<Filial>) {
+    return { id, filialFilterQuery };
   }
 }

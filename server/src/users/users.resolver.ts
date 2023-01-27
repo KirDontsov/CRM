@@ -7,7 +7,7 @@ import {
   Parent,
   Context,
 } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
+import { ExecutionContext, UseGuards } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -31,8 +31,8 @@ export class UsersResolver {
   ) {}
 
   @Query(() => Number, { name: 'countUsers' })
-  async getCount(): Promise<number> {
-    return this.usersService.getCount();
+  async getCount(@Context() context): Promise<number> {
+    return this.usersService.getCount(context);
   }
 
   // получение данных пользователя нужно при авторизации для всех ролей
@@ -45,7 +45,7 @@ export class UsersResolver {
   @Roles(UserRoles.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Query(() => [User], { name: 'getUsers' })
-  findAll(@Args() args: FetchUsersInput, @Context() context) {
+  findAll(@Args() args: FetchUsersInput, @Context() context: ExecutionContext) {
     return this.usersService.getUsers(args, context);
   }
 

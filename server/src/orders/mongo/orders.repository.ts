@@ -38,11 +38,13 @@ export class OrdersRepository {
     orderFilterQuery: FilterQuery<Order>,
     order: Partial<Order>,
   ): Promise<Order> {
-    const existingOrder = await this.orderModel
-      .findOneAndUpdate({ id: orderFilterQuery.id }, order, {
+    const existingOrder = await this.orderModel.findOneAndUpdate(
+      { id: orderFilterQuery.id },
+      order,
+      {
         new: true,
-      })
-      .exec();
+      },
+    );
 
     if (!existingOrder) {
       throw new NotFoundException(`Order #${order.id} not found`);
@@ -57,11 +59,9 @@ export class OrdersRepository {
   }
 
   async findAndRemove(ordersFilterQuery: FilterQuery<Order>): Promise<Order[]> {
-    const orders = await this.orderModel
-      .find()
-      .where('id')
-      .in(ordersFilterQuery.ids)
-      .exec();
+    const orders = await this.orderModel.find({
+      id: { $in: ordersFilterQuery.ids },
+    });
 
     const ids = orders.map(({ id }) => id);
     await this.orderModel.deleteMany({ id: { $in: ids } });

@@ -12,21 +12,16 @@ import { UserRoles } from '@src/apollo-client';
 import { FetchMoreObserver } from '@components/FetchMoreObserver/FetchMoreObserver';
 import { useCallback, useMemo } from 'react';
 import produce from 'immer';
-import { useContextSelector } from 'use-context-selector';
-import { AppContext } from '@context';
 
 import { DELETE_USERS, GET_USERS, HEAD_CELLS } from './constants';
 import { Data } from './interfaces';
 
 export const UsersTable = () => {
-  const filialIds = useContextSelector(AppContext, (ctx) => ctx.state.filialIds);
   const { data, fetchMore, loading } = useQuery(GET_USERS, {
     variables: {
-      filialIds,
       limit: PAGING.limit,
       offset: PAGING.offset,
     },
-    skip: !filialIds?.length,
   });
   const { users, usersCount }: { users: Data[]; usersCount: number } = useMemo(
     () => ({

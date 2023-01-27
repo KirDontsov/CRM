@@ -4,8 +4,8 @@ import { Args } from '@nestjs/graphql';
 import { CreateFilialInput } from './dto/create-filial.input';
 // import { UpdateFilialInput } from './dto/update-filial.input';
 import { FilialsRepository } from './mongo/filials.repository';
-import { FetchFilialsByUserInput } from './dto/fetch-filials-by-user.input';
 import { UpdateFilialInput } from './dto/update-filial.input';
+import { FetchFilialsByUserInput } from './dto/fetch-filials-by-user.input';
 
 @Injectable()
 export class FilialsService {
@@ -13,6 +13,10 @@ export class FilialsService {
 
   findAll() {
     return this.filialsRepository.find({});
+  }
+
+  findAllByContext(context) {
+    return this.filialsRepository.findAllByContext(context);
   }
 
   findAllByUserId(@Args() args: FetchFilialsByUserInput) {
@@ -28,8 +32,8 @@ export class FilialsService {
   }
 
   // updateFilialInput: UpdateFilialInput
-  update(id: number, input: UpdateFilialInput) {
-    return `This action updates a #${id} ${input} filial`;
+  update(id: string, input: UpdateFilialInput) {
+    return this.filialsRepository.findOneAndUpdate({ id }, input);
   }
 
   remove(id: number) {

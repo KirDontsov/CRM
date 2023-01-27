@@ -52,11 +52,13 @@ export class EventsRepository {
     eventFilterQuery: FilterQuery<Event>,
     event: Partial<Event>,
   ): Promise<Event> {
-    const existingEvent = await this.eventModel
-      .findOneAndUpdate({ id: eventFilterQuery.id }, event, {
+    const existingEvent = await this.eventModel.findOneAndUpdate(
+      { id: eventFilterQuery.id },
+      event,
+      {
         new: true,
-      })
-      .exec();
+      },
+    );
 
     if (!existingEvent) {
       throw new NotFoundException(`Event #${event.id} not found`);
@@ -71,11 +73,9 @@ export class EventsRepository {
   }
 
   async findAndRemove(eventsFilterQuery: FilterQuery<Event>): Promise<Event[]> {
-    const events = await this.eventModel
-      .find()
-      .where('id')
-      .in(eventsFilterQuery.ids)
-      .exec();
+    const events = await this.eventModel.find({
+      id: { $in: eventsFilterQuery.ids },
+    });
 
     const ids = events.map(({ id }) => id);
     await this.eventModel.deleteMany({ id: { $in: ids } });

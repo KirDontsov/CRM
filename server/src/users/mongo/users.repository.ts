@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 
 import { FetchUsersInput } from '../dto/fetch-users.input';
+import { safeJSONParse } from '../../utils';
 
 import { User, UserDocument } from './user.schema';
 
@@ -10,25 +11,23 @@ import { User, UserDocument } from './user.schema';
 export class UsersRepository {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async getCount(): Promise<number> {
-    return this.userModel.countDocuments();
+  async getCount(context): Promise<number> {
+    const filialIds =
+      safeJSONParse(context?.req?.headers?.filialids ?? '') ?? [];
+    return this.userModel.countDocuments({ filialIds: { $in: filialIds } });
   }
 
   async findOne(userFilterQuery: FilterQuery<User>): Promise<User> {
     return this.userModel.findOne(userFilterQuery);
   }
 
-  async find({ limit, offset }: FetchUsersInput, context): Promise<User[]> {
-    const filialIds = JSON.parse(context?.req?.headers?.filialids ?? '') ?? [];
+  async find({ limit, offset }: FetchUsersInput, ctx): Promise<User[]> {
+    const filialIds = safeJSONParse(ctx?.req?.headers?.filialids ?? '') ?? [];
 
-    return this.userModel
-      .find(null, null, {
-        limit,
-        skip: offset,
-      })
-      .where('filialIds')
-      .in(filialIds)
-      .exec();
+    return this.userModel.find({ filialIds: { $in: filialIds } }, null, {
+      limit,
+      skip: offset,
+    });
   }
 
   async create(user: User): Promise<User> {
@@ -41,11 +40,13 @@ export class UsersRepository {
     userFilterQuery: FilterQuery<User>,
     user: Partial<User>,
   ): Promise<User> {
-    const existingUser = await this.userModel
-      .findOneAndUpdate({ id: userFilterQuery.id }, user, {
+    const existingUser = await this.userModel.findOneAndUpdate(
+      { id: userFilterQuery.id },
+      user,
+      {
         new: true,
-      })
-      .exec();
+      },
+    );
 
     if (!existingUser) {
       throw new NotFoundException(`User #${user.id} not found`);
@@ -60,11 +61,9 @@ export class UsersRepository {
   }
 
   async findAndRemove(usersFilterQuery: FilterQuery<User>): Promise<User[]> {
-    const users = await this.userModel
-      .find()
-      .where('id')
-      .in(usersFilterQuery.ids)
-      .exec();
+    const users = await this.userModel.find({
+      id: { $in: usersFilterQuery.ids },
+    });
 
     const ids = users.map(({ id }) => id);
     await this.userModel.deleteMany({ id: { $in: ids } });
