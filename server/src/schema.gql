@@ -158,7 +158,7 @@ input UpdateEventInput {
 }
 
 input UpdateFilialInput {
-  id: Int!
+  id: String!
   name: String
   userIds: [String!]
 }
@@ -194,6 +194,7 @@ input UpdateUserInput {
 
 type User {
   email: String!
+  filialIds: [String!]!
   filials: [Filial!]!
   functionalRoles: [FunctionalRole!]!
   id: String!

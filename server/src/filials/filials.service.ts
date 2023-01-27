@@ -28,12 +28,11 @@ export class FilialsService {
   }
 
   findOne(id: string) {
-    return this.filialsRepository.find({ id });
+    return this.filialsRepository.findOne({ id });
   }
 
-  // updateFilialInput: UpdateFilialInput
-  update(id: string, input: UpdateFilialInput) {
-    return this.filialsRepository.findOneAndUpdate({ id }, input);
+  update(id: string, updateFilialInput: UpdateFilialInput) {
+    return this.filialsRepository.findOneAndUpdate({ id }, updateFilialInput);
   }
 
   remove(id: number) {

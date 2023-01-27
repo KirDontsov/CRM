@@ -14,11 +14,6 @@ export const GET_USERS = gql`
       filials {
         name
       }
-      functionalRoles {
-        id
-        name
-        code
-      }
     }
   }
 `;

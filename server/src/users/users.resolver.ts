@@ -14,7 +14,6 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRoles } from '../auth/dto/user-roles';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { FilialsService } from '../filials/filials.service';
-import { FunctionalRolesService } from '../functional-roles/functional-roles.service';
 
 import { UsersService } from './users.service';
 import { UpdateUserInput } from './dto/update-user.input';
@@ -27,7 +26,6 @@ export class UsersResolver {
   constructor(
     private readonly usersService: UsersService,
     private readonly filialsService: FilialsService,
-    private readonly functionalRolesService: FunctionalRolesService,
   ) {}
 
   @Query(() => Number, { name: 'countUsers' })
@@ -37,15 +35,18 @@ export class UsersResolver {
 
   // получение данных пользователя нужно при авторизации для всех ролей
   @UseGuards(JwtAuthGuard)
-  @Query(() => User, { name: 'getUser' })
-  findOne(@Args('id') id: string) {
-    return this.usersService.getUserById(id);
+  @Query(() => User)
+  getUser(@Args('id') id: string) {
+    return this.usersService.getUserById({ id });
   }
 
   @Roles(UserRoles.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Query(() => [User], { name: 'getUsers' })
-  findAll(@Args() args: FetchUsersInput, @Context() context: ExecutionContext) {
+  @Query(() => [User])
+  getUsers(
+    @Args() args: FetchUsersInput,
+    @Context() context: ExecutionContext,
+  ) {
     return this.usersService.getUsers(args, context);
   }
 
@@ -55,30 +56,27 @@ export class UsersResolver {
     return this.filialsService.findAllByUserId({ userId: id });
   }
 
-  @ResolveField()
-  async functionalRoles(@Parent() user: User) {
-    const { id } = user;
-    return this.functionalRolesService.findAllByUserId({ userId: id });
-  }
-
   @Roles(UserRoles.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Mutation(() => User, { name: 'saveUser' })
-  updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
-    return this.usersService.update(updateUserInput.id, updateUserInput);
+  @Mutation(() => User)
+  saveUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
+    return this.usersService.findOneAndUpdate(
+      { id: updateUserInput.id },
+      updateUserInput,
+    );
   }
 
   @Roles(UserRoles.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Mutation(() => User)
   deleteUser(@Args('id') id: string) {
-    return this.usersService.remove(id);
+    return this.usersService.findOneAndDelete({ id });
   }
 
   @Roles(UserRoles.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Mutation(() => [User])
   deleteUsers(@Args({ name: 'ids', type: () => [String] }) ids: string[]) {
-    return this.usersService.removeUsers(ids);
+    return this.usersService.findManyAndRemove({ ids });
   }
 }

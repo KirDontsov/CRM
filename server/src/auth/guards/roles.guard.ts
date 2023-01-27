@@ -29,10 +29,10 @@ export class RolesGuard implements CanActivate {
     const { roles, filialIds } = ctx.getContext()?.req?.user ?? {};
 
     const hasRequiredFilials = filialIds?.every(
-      (filialId) => queryFilialIds.indexOf(filialId) !== -1,
+      (filialId) => queryFilialIds?.indexOf(filialId) !== -1,
     );
 
-    const hasRequiredRoles = requiredRoles.some(
+    const hasRequiredRoles = requiredRoles?.some(
       (role) => roles?.indexOf(role) !== -1,
     );
 

@@ -14,6 +14,7 @@ type Inputs = {
   email: string;
   password: string;
   roles: ComboBoxOption;
+  filialIds: ComboBoxOption[];
 };
 
 export interface UsersFormProps {
@@ -37,11 +38,17 @@ export const UsersForm: FC<UsersFormProps> = memo(({ onClose }) => {
   const { handleSubmit } = form;
 
   const onSubmit: SubmitHandler<Inputs> = useCallback(
-    async ({ username, email, password, roles }) => {
+    async ({ username, email, password, roles, filialIds }) => {
       try {
         await createUser({
           variables: {
-            input: { username, email, password, roles: roles?.value },
+            input: {
+              username,
+              email,
+              password,
+              roles: roles?.value,
+              filialIds: filialIds?.map(({ value }) => value) ?? [],
+            },
           },
         });
       } catch (e) {
@@ -68,7 +75,7 @@ export const UsersForm: FC<UsersFormProps> = memo(({ onClose }) => {
             <FormInput name="email" label="Email" required />
             <FormInput name="password" label="Пароль" required />
             <FormComboBox name="roles" label="Роль" required options={OPTIONS} />
-            <FormComboBox name="filials" label="Филиалы" required multi options={filialOptions} />
+            <FormComboBox name="filialIds" label="Филиалы" required multi options={filialOptions} />
           </Stack>
           <div className={styles.bottom}>
             <Button type="submit" variant="contained">

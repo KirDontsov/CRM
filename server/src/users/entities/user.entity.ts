@@ -15,6 +15,9 @@ export class User {
   @Field()
   email: string;
 
+  @Field(() => [String])
+  filialIds: string[];
+
   // ResolveField
   @Field(() => [Filial])
   filials: Filial[];
