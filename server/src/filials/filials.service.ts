@@ -1,41 +1,74 @@
-import { Injectable } from '@nestjs/common';
-import { Args } from '@nestjs/graphql';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { FilterQuery, Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { v4 as uuidv4 } from 'uuid';
 
 import { CreateFilialInput } from './dto/create-filial.input';
-// import { UpdateFilialInput } from './dto/update-filial.input';
-import { FilialsRepository } from './mongo/filials.repository';
 import { UpdateFilialInput } from './dto/update-filial.input';
 import { FetchFilialsByUserInput } from './dto/fetch-filials-by-user.input';
+import { Filial, FilialDocument } from './mongo/filial.schema';
 
 @Injectable()
 export class FilialsService {
-  constructor(private readonly filialsRepository: FilialsRepository) {}
+  constructor(
+    @InjectModel(Filial.name) private filialModel: Model<FilialDocument>,
+  ) {}
 
-  findAll() {
-    return this.filialsRepository.find({});
+  async findOne(filialFilterQuery: FilterQuery<Filial>): Promise<Filial> {
+    return this.filialModel.findOne(filialFilterQuery);
   }
 
-  findAllByContext(context) {
-    return this.filialsRepository.findAllByContext(context);
+  async findAllByContext(context): Promise<Filial[]> {
+    const userId = context?.req?.headers?.userid ?? '';
+    return this.filialModel.find({ userIds: { $eq: userId } });
   }
 
-  findAllByUserId(@Args() args: FetchFilialsByUserInput) {
-    return this.filialsRepository.findAllByUserId(args);
+  async findAllByUserId({
+    userId,
+  }: FetchFilialsByUserInput): Promise<Filial[]> {
+    const filials = await this.filialModel.find();
+    return (
+      filials.filter(({ userIds }) => userIds.indexOf(userId) !== -1) ?? []
+    );
   }
 
-  create(createFilialInput: CreateFilialInput) {
-    return this.filialsRepository.create(createFilialInput);
+  async create(createFilialInput: CreateFilialInput): Promise<Filial> {
+    const filial = {
+      ...createFilialInput,
+      id: uuidv4(),
+      createdAt: new Date(),
+    };
+    // eslint-disable-next-line new-cap
+    const newPermission = new this.filialModel(filial);
+    return newPermission.save();
   }
 
-  findOne(id: string) {
-    return this.filialsRepository.findOne({ id });
+  async findOneAndUpdate(
+    filialFilterQuery: FilterQuery<Filial>,
+    filial: UpdateFilialInput,
+  ) {
+    const existingFilial = await this.filialModel.findOneAndUpdate(
+      { id: filialFilterQuery.id },
+      {
+        ...filial,
+        _doc: {
+          userIds: filial.userIds,
+        },
+      },
+      {
+        new: true,
+      },
+    );
+
+    if (!existingFilial) {
+      throw new NotFoundException(`Filial #${filial.id} not found`);
+    }
+    return existingFilial;
   }
 
-  update(id: string, updateFilialInput: UpdateFilialInput) {
-    return this.filialsRepository.findOneAndUpdate({ id }, updateFilialInput);
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} filial`;
+  async deleteFilial(id: string) {
+    const filial = this.filialModel.findOne({ id });
+    await this.filialModel.deleteOne({ id });
+    return filial;
   }
 }

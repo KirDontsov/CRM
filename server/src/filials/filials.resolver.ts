@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int, Context } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 
 import { FilialsService } from './filials.service';
 import { Filial } from './entities/filial.entity';
@@ -23,18 +23,21 @@ export class FilialsResolver {
 
   @Query(() => Filial)
   getFilial(@Args('id') id: string) {
-    return this.filialsService.findOne(id);
+    return this.filialsService.findOne({ id });
   }
 
   @Mutation(() => Filial)
   updateFilial(
     @Args('updateFilialInput') updateFilialInput: UpdateFilialInput,
   ) {
-    return this.filialsService.update(updateFilialInput.id, updateFilialInput);
+    return this.filialsService.findOneAndUpdate(
+      { id: updateFilialInput.id },
+      updateFilialInput,
+    );
   }
 
   @Mutation(() => Filial)
-  removeFilial(@Args('id', { type: () => Int }) id: number) {
-    return this.filialsService.remove(id);
+  deleteFilial(@Args('id') id: string) {
+    return this.filialsService.deleteFilial(id);
   }
 }

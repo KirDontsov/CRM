@@ -53,14 +53,17 @@ export class UsersService {
     // добавляем новый id пользователя так же и в филиалы - добавление РАБОТАЕТ а удаление и замена нет!
     await Promise.all(
       createUserInput?.filialIds?.map(async (id) => {
-        const filial = await this.filialsService.findOne(id);
+        const filial = await this.filialsService.findOne({ id });
         if (!filial) {
           throw new NotFoundException(`Filial #${filial.id} not found`);
         }
-        await this.filialsService.update(id, {
-          id,
-          userIds: filial?.userIds?.concat(newUserId),
-        });
+        await this.filialsService.findOneAndUpdate(
+          { id },
+          {
+            id,
+            userIds: filial?.userIds?.concat(newUserId),
+          },
+        );
       }),
     );
 
@@ -74,6 +77,45 @@ export class UsersService {
     user: UpdateUserInput,
   ): Promise<User> {
     const oldUser = await this.userModel.findOne({ id: user?.id });
+    if (!oldUser) {
+      throw new NotFoundException(`Filial #${oldUser.id} not found`);
+    }
+    await Promise.all(
+      // мы проходимся по старым филиалам
+      (user?.filialIds?.length >= oldUser?.filialIds?.length
+        ? user?.filialIds
+        : oldUser?.filialIds
+      )?.map(async (id) => {
+        const filial = await this.filialsService.findOne({ id });
+        if (!filial) {
+          throw new NotFoundException(`Filial #${filial.id} not found`);
+        }
+        // ADD
+        if (user?.filialIds?.length > oldUser?.filialIds?.length) {
+          if (filial.userIds.indexOf(user.id) === -1) {
+            await this.filialsService.findOneAndUpdate(
+              { id },
+              {
+                ...filial,
+                userIds: filial.userIds.concat(user.id),
+              },
+            );
+          }
+        }
+        // DELETE
+        if (user?.filialIds?.length < oldUser?.filialIds?.length) {
+          // если у пользователя среди его филиалов нет этого филиала, то ничего не делаем
+          if (user.filialIds.indexOf(id) !== -1) return;
+          await this.filialsService.findOneAndUpdate(
+            { id },
+            {
+              ...filial,
+              userIds: filial.userIds.filter((userId) => userId !== user.id),
+            },
+          );
+        }
+      }),
+    );
     const updatedUser = await this.userModel.findOneAndUpdate(
       { id: userFilterQuery.id },
       user,
@@ -85,61 +127,31 @@ export class UsersService {
     if (!updatedUser) {
       throw new NotFoundException(`User #${user.id} not found`);
     }
-    // TODO: разобраться как апдейтить остальные филиалы
-    // if old.length > updatedLength - delete
-    // if updatedLength > old.length - add
-    // if updatedLength = old.length && old !== updated - replace
-    await Promise.all(
-      // мы проходимся по старым филиалам
-      (updatedUser?.filialIds?.length >= oldUser?.filialIds?.length
-        ? updatedUser?.filialIds
-        : oldUser?.filialIds
-      )?.map(async (id) => {
-        const filial = await this.filialsService.findOne(id);
-        if (!filial) {
-          throw new NotFoundException(`Filial #${filial.id} not found`);
-        }
-        // add or delete
-        if (updatedUser?.filialIds?.length > oldUser?.filialIds?.length) {
-          // eslint-disable-next-line no-console
-          console.log('=== ADD ===');
-          await this.filialsService.update(id, {
-            ...filial,
-            userIds: filial.userIds.concat(updatedUser.id),
-          });
-        }
-        if (updatedUser?.filialIds?.length < oldUser?.filialIds?.length) {
-          // eslint-disable-next-line no-console
-          console.log('=== DELETE ===');
-          await this.filialsService.update(id, {
-            ...filial,
-            userIds: filial.userIds.filter(
-              (userId) => userId !== updatedUser.id,
-            ),
-          });
-        }
-        // console.log('=== REPLACE ===');
-        // await this.filialsService.update(id, {
-        //   ...filial,
-        //   userIds: filial.userIds.concat(updatedUser.id),
-        // });
-      }),
-    );
     return updatedUser;
   }
 
   async findOneAndDelete(userFilterQuery: FilterQuery<User>): Promise<User> {
     const user = await this.userModel.findOne(userFilterQuery);
+    if (!user) {
+      throw new NotFoundException(`User #${user.id} not found`);
+    }
     await Promise.all(
       user?.filialIds?.map(async (id) => {
-        const filial = await this.filialsService.findOne(id);
+        const filial = await this.filialsService.findOne({ id });
         if (!filial) {
           throw new NotFoundException(`Filial #${filial.id} not found`);
         }
-        await this.filialsService.update(id, {
-          ...filial,
-          userIds: filial?.userIds?.filter((userId) => userId !== user.id),
-        });
+        if (user.filialIds.indexOf(id) !== -1) {
+          await this.filialsService.findOneAndUpdate(
+            { id },
+            {
+              ...filial,
+              userIds: filial?.userIds?.filter(
+                (userId) => userId !== userFilterQuery.id,
+              ),
+            },
+          );
+        }
       }),
     );
     await this.userModel.deleteOne(userFilterQuery);
@@ -153,8 +165,27 @@ export class UsersService {
       id: { $in: usersFilterQuery.ids },
     });
 
-    const ids = users.map(({ id }) => id);
-    await this.userModel.deleteMany({ id: { $in: ids } });
+    const filialIds = [...new Set(...users.map(({ filialIds: ids }) => ids))];
+
+    await Promise.all(
+      filialIds?.map(async (id) => {
+        const filial = await this.filialsService.findOne({ id });
+        if (!filial) {
+          throw new NotFoundException(`Filial #${filial.id} not found`);
+        }
+        await this.filialsService.findOneAndUpdate(
+          { id },
+          {
+            ...filial,
+            userIds: filial?.userIds?.filter(
+              (userId) => usersFilterQuery.ids.indexOf(userId) === -1,
+            ),
+          },
+        );
+      }),
+    );
+
+    await this.userModel.deleteMany({ id: { $in: usersFilterQuery.ids } });
     return users;
   }
 }

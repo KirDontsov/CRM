@@ -95,12 +95,12 @@ type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   deleteEvent(id: String!): Event!
   deleteEvents(ids: [String!]!): [Event!]!
+  deleteFilial(id: String!): Filial!
   deleteOrder(id: String!): Order!
   deleteOrders(ids: [String!]!): [Order!]!
   deleteUser(id: String!): User!
   deleteUsers(ids: [String!]!): [User!]!
   login(loginUserInput: LoginUserInput!): LoginResponse!
-  removeFilial(id: Int!): Filial!
   removeFunctionalRole(id: Int!): FunctionalRole!
   saveEvent(updateEventInput: UpdateEventInput!): Event!
   saveOrder(updateOrderInput: UpdateOrderInput!): Order!

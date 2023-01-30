@@ -4,7 +4,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { FilialsService } from './filials.service';
 import { FilialsResolver } from './filials.resolver';
-import { FilialsRepository } from './mongo/filials.repository';
 import { Filial, FilialSchema } from './mongo/filial.schema';
 
 @Module({
@@ -17,7 +16,7 @@ import { Filial, FilialSchema } from './mongo/filial.schema';
       },
     ]),
   ],
-  providers: [FilialsResolver, FilialsService, FilialsRepository],
+  providers: [FilialsResolver, FilialsService],
   exports: [FilialsService],
 })
 export class FilialsModule {}
