@@ -50,13 +50,14 @@ export class UsersService {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    // добавляем новый id пользователя так же и в филиалы - добавление РАБОТАЕТ а удаление и замена нет!
+    // добавляем новый id пользователя так же и в филиалы
     await Promise.all(
       createUserInput?.filialIds?.map(async (id) => {
         const filial = await this.filialsService.findOne({ id });
         if (!filial) {
           throw new NotFoundException(`Filial #${filial.id} not found`);
         }
+        // т.к. это новый id, то просто добавляем его к филиалам без проверок
         await this.filialsService.findOneAndUpdate(
           { id },
           {
@@ -81,7 +82,7 @@ export class UsersService {
       throw new NotFoundException(`Filial #${oldUser.id} not found`);
     }
     await Promise.all(
-      // мы проходимся по старым филиалам
+      // мы проходимся по старым или новым филиалам в зависимости от операции add/delete
       (user?.filialIds?.length >= oldUser?.filialIds?.length
         ? user?.filialIds
         : oldUser?.filialIds
@@ -92,6 +93,7 @@ export class UsersService {
         }
         // ADD
         if (user?.filialIds?.length > oldUser?.filialIds?.length) {
+          // если этого id еще нет в массиве. то добавляем его чтобы не дублировать
           if (filial.userIds.indexOf(user.id) === -1) {
             await this.filialsService.findOneAndUpdate(
               { id },
@@ -164,7 +166,7 @@ export class UsersService {
     const users = await this.userModel.find({
       id: { $in: usersFilterQuery.ids },
     });
-
+    // сначала находим id всех филиалов и убираем дубли
     const filialIds = [...new Set(...users.map(({ filialIds: ids }) => ids))];
 
     await Promise.all(
@@ -173,6 +175,7 @@ export class UsersService {
         if (!filial) {
           throw new NotFoundException(`Filial #${filial.id} not found`);
         }
+        // удаляем из массива userIds те id, которых нет в inpute
         await this.filialsService.findOneAndUpdate(
           { id },
           {
