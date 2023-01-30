@@ -50,8 +50,7 @@ export class FilialsService {
     const existingFilial = await this.filialModel.findOneAndUpdate(
       { id: filialFilterQuery.id },
       {
-        ...filial,
-        _doc: {
+        $set: {
           userIds: filial.userIds,
         },
       },
