@@ -33,6 +33,7 @@ export class FilialsResolver {
     return this.filialsService.findOneAndUpdate(
       { id: updateFilialInput.id },
       updateFilialInput,
+      'userIds',
     );
   }
 

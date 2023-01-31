@@ -12,6 +12,7 @@ input CreateEventInput {
 
 input CreateFilialInput {
   name: String!
+  orderIds: [String!]!
   userIds: [String!]!
 }
 
@@ -23,6 +24,7 @@ input CreateFunctionalRoleInput {
 }
 
 input CreateOrderInput {
+  filialIds: [String!]!
   initialComment: String
   initialCost: String!
   initialPhotos: String
@@ -64,6 +66,7 @@ type Event {
 type Filial {
   id: String!
   name: String!
+  orderIds: [String!]!
   userIds: [String!]!
 }
 
@@ -111,6 +114,7 @@ type Mutation {
 
 type Order {
   createdAt: DateTime!
+  filials: [Filial!]!
   id: String!
   initialComment: String
   initialCost: String!
@@ -160,6 +164,7 @@ input UpdateEventInput {
 input UpdateFilialInput {
   id: String!
   name: String
+  orderIds: [String!]
   userIds: [String!]
 }
 
@@ -172,6 +177,7 @@ input UpdateFunctionalRoleInput {
 }
 
 input UpdateOrderInput {
+  filialIds: [String!]
   id: String!
   initialComment: String
   initialCost: String

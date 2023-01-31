@@ -2,11 +2,13 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { FilterQuery, Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { v4 as uuidv4 } from 'uuid';
+import { Maybe } from 'graphql/jsutils/Maybe';
 
 import { CreateFilialInput } from './dto/create-filial.input';
 import { UpdateFilialInput } from './dto/update-filial.input';
 import { FetchFilialsByUserInput } from './dto/fetch-filials-by-user.input';
 import { Filial, FilialDocument } from './mongo/filial.schema';
+import { FetchFilialsByOrderInput } from './dto/fetch-filials-by-order.input';
 
 @Injectable()
 export class FilialsService {
@@ -32,6 +34,15 @@ export class FilialsService {
     );
   }
 
+  async findAllByOrderId({
+    orderId,
+  }: FetchFilialsByOrderInput): Promise<Filial[]> {
+    const filials = await this.filialModel.find();
+    return (
+      filials.filter(({ orderIds }) => orderIds.indexOf(orderId) !== -1) ?? []
+    );
+  }
+
   async create(createFilialInput: CreateFilialInput): Promise<Filial> {
     const filial = {
       ...createFilialInput,
@@ -46,14 +57,17 @@ export class FilialsService {
   async findOneAndUpdate(
     filialFilterQuery: FilterQuery<Filial>,
     filial: UpdateFilialInput,
+    type: Maybe<string>,
   ) {
     const existingFilial = await this.filialModel.findOneAndUpdate(
       { id: filialFilterQuery.id },
-      {
-        $set: {
-          userIds: filial.userIds,
-        },
-      },
+      type
+        ? {
+            $set: {
+              [type]: filial[type],
+            },
+          }
+        : filial,
       {
         new: true,
       },

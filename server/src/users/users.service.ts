@@ -64,6 +64,7 @@ export class UsersService {
             id,
             userIds: filial?.userIds?.concat(newUserId),
           },
+          'userIds',
         );
       }),
     );
@@ -73,7 +74,7 @@ export class UsersService {
     return newUser.save();
   }
 
-  async findOneAndUpdate(
+  async updateUser(
     userFilterQuery: FilterQuery<User>,
     user: UpdateUserInput,
   ): Promise<User> {
@@ -101,6 +102,7 @@ export class UsersService {
                 ...filial,
                 userIds: filial.userIds.concat(user.id),
               },
+              'userIds',
             );
           }
         }
@@ -114,6 +116,7 @@ export class UsersService {
               ...filial,
               userIds: filial.userIds.filter((userId) => userId !== user.id),
             },
+            'userIds',
           );
         }
       }),
@@ -132,7 +135,7 @@ export class UsersService {
     return updatedUser;
   }
 
-  async findOneAndDelete(userFilterQuery: FilterQuery<User>): Promise<User> {
+  async deleteUser(userFilterQuery: FilterQuery<User>): Promise<User> {
     const user = await this.userModel.findOne(userFilterQuery);
     if (!user) {
       throw new NotFoundException(`User #${user.id} not found`);
@@ -152,6 +155,7 @@ export class UsersService {
                 (userId) => userId !== userFilterQuery.id,
               ),
             },
+            'userIds',
           );
         }
       }),
@@ -160,9 +164,7 @@ export class UsersService {
     return user;
   }
 
-  async findManyAndRemove(
-    usersFilterQuery: FilterQuery<User>,
-  ): Promise<User[]> {
+  async deleteUsers(usersFilterQuery: FilterQuery<User>): Promise<User[]> {
     const users = await this.userModel.find({
       id: { $in: usersFilterQuery.ids },
     });
@@ -184,6 +186,7 @@ export class UsersService {
               (userId) => usersFilterQuery.ids.indexOf(userId) === -1,
             ),
           },
+          'userIds',
         );
       }),
     );

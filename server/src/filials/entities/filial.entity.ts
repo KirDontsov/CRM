@@ -10,4 +10,7 @@ export class Filial {
 
   @Field(() => [String])
   userIds: string[];
+
+  @Field(() => [String])
+  orderIds: string[];
 }

@@ -15,6 +15,9 @@ export class Filial {
   @Prop(() => [String])
   userIds: string[];
 
+  @Prop(() => [String])
+  orderIds: string[];
+
   @Prop({ required: true, default: () => new Date() })
   createdAt: Date;
 }

@@ -60,7 +60,7 @@ export class UsersResolver {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Mutation(() => User)
   saveUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
-    return this.usersService.findOneAndUpdate(
+    return this.usersService.updateUser(
       { id: updateUserInput.id },
       updateUserInput,
     );
@@ -70,13 +70,13 @@ export class UsersResolver {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Mutation(() => User)
   deleteUser(@Args('id') id: string) {
-    return this.usersService.findOneAndDelete({ id });
+    return this.usersService.deleteUser({ id });
   }
 
   @Roles(UserRoles.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Mutation(() => [User])
   deleteUsers(@Args({ name: 'ids', type: () => [String] }) ids: string[]) {
-    return this.usersService.findManyAndRemove({ ids });
+    return this.usersService.deleteUsers({ ids });
   }
 }

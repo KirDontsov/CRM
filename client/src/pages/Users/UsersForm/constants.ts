@@ -17,12 +17,3 @@ export const CREATE_USER = gql`
     }
   }
 `;
-
-export const GET_FILIALS = gql`
-  query getFilials {
-    getFilials {
-      id
-      name
-    }
-  }
-`;

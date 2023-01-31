@@ -73,6 +73,10 @@ export const GET_ORDER = gql`
       initialCost
       leftHeadlamp
       rightHeadlamp
+      filials {
+        id
+        name
+      }
     }
   }
 `;

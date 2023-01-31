@@ -5,6 +5,7 @@ import { SubmitHandler, useForm, FormProvider } from 'react-hook-form';
 import { FormComboBox, ComboBoxOption } from '@components/FormComboBox';
 import { FormInput } from '@components/FormInput';
 import { toast } from 'react-toastify';
+import { GET_FILIALS } from '@shared';
 
 import { CREATE_ORDER, GET_ORDER, OPTIONS, SAVE_ORDER, STATUS_OPTIONS } from './constants';
 import styles from './styles.module.scss';
@@ -20,6 +21,7 @@ type Inputs = {
   rightHeadlamp: ComboBoxOption[];
   initialPhotos: string;
   initialCost: string;
+  filials: ComboBoxOption[];
 };
 
 export interface OrdersFormProps {
@@ -35,15 +37,28 @@ export const DEFAULT_VALUES = {
   leftHeadlamp: [],
   rightHeadlamp: [],
   sparePartsCost: '',
+  filials: [],
 };
 
 export const OrdersForm: FC<OrdersFormProps> = memo(({ selected, onClose }) => {
+  const { data: filialsData } = useQuery(GET_FILIALS);
+
+  const filialOptions = useMemo(
+    () =>
+      (filialsData?.getFilials ?? []).map(({ id, name }: { id: string; name: string }) => ({
+        id,
+        label: name,
+        value: id,
+      })),
+    [filialsData],
+  );
+
   const [createOrder] = useMutation(CREATE_ORDER, {
     onCompleted: () => {
       toast('Заказ создан успешно', { type: 'success' });
       onClose();
     },
-    refetchQueries: ['getOrders'],
+    refetchQueries: ['getOrders', 'getOrderById'],
   });
 
   const [saveOrder] = useMutation(SAVE_ORDER, {
@@ -51,7 +66,7 @@ export const OrdersForm: FC<OrdersFormProps> = memo(({ selected, onClose }) => {
       toast('Заказ изменен успешно', { type: 'success' });
       onClose();
     },
-    refetchQueries: ['getOrders'],
+    refetchQueries: ['getOrders', 'getOrderById'],
   });
 
   const { data, loading } = useQuery(GET_ORDER, {
@@ -73,15 +88,19 @@ export const OrdersForm: FC<OrdersFormProps> = memo(({ selected, onClose }) => {
             leftHeadlamp: OPTIONS.filter(({ id }) => data?.getOrder?.leftHeadlamp?.includes(id)) ?? [],
             rightHeadlamp: OPTIONS.filter(({ id }) => data?.getOrder?.rightHeadlamp?.includes(id)) ?? [],
             initialComment: data?.getOrder?.initialComment,
+            filials: filialOptions.filter(({ id }: { id: string }) =>
+              data?.getOrder?.filials.map(({ id: filialId }: { id: string }) => filialId)?.includes(id),
+            ),
           }
         : DEFAULT_VALUES,
-    [data?.getOrder, loading, selected],
+    [data?.getOrder, filialOptions, loading, selected],
   );
 
   const form = useForm<Inputs>({ defaultValues });
 
   const { handleSubmit, reset, formState } = form;
   const { isDirty, isValid } = formState;
+
   const onSubmit: SubmitHandler<Inputs> = useCallback(
     async ({
       orderName,
@@ -92,6 +111,7 @@ export const OrdersForm: FC<OrdersFormProps> = memo(({ selected, onClose }) => {
       leftHeadlamp,
       rightHeadlamp,
       sparePartsCost,
+      filials,
     }) => {
       try {
         if (selected && selected !== 'new') {
@@ -107,6 +127,7 @@ export const OrdersForm: FC<OrdersFormProps> = memo(({ selected, onClose }) => {
                 leftHeadlamp: leftHeadlamp?.map(({ value }) => value) ?? [],
                 rightHeadlamp: rightHeadlamp?.map(({ value }) => value) ?? [],
                 sparePartsCost: sparePartsCost || null,
+                filialIds: filials?.map(({ value }) => value) ?? [],
               },
             },
           });
@@ -122,6 +143,7 @@ export const OrdersForm: FC<OrdersFormProps> = memo(({ selected, onClose }) => {
                 leftHeadlamp: leftHeadlamp?.map(({ value }) => value) ?? [],
                 rightHeadlamp: rightHeadlamp?.map(({ value }) => value) ?? [],
                 sparePartsCost: sparePartsCost || null,
+                filialIds: filials?.map(({ value }) => value) ?? [],
               },
             },
           });
@@ -161,6 +183,7 @@ export const OrdersForm: FC<OrdersFormProps> = memo(({ selected, onClose }) => {
             <FormComboBox name="status" label="Статус заказа" options={STATUS_OPTIONS} />
 
             <FormInput name="initialComment" label="Комментарий" multi />
+            <FormComboBox name="filials" label="Филиалы" required multi options={filialOptions} />
           </Stack>
           <div className={styles.bottom}>
             <Button type="submit" variant="contained" disabled={!isDirty || !isValid}>
