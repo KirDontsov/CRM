@@ -36,7 +36,7 @@ export const Layout: FC = () => {
         <Paper
           elevation={0}
           className={styles.layoutContentContainer}
-          style={{ backgroundColor: `${darkMode ? '#121212' : '#F5F6F8'}` }}
+          style={{ backgroundColor: `${darkMode ? '#242526' : '#F5F6F8'}` }}
         >
           <Sidebar />
           <div className={styles.layoutContent}>
