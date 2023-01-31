@@ -3,8 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, FilterQuery, Model } from 'mongoose';
 
-import { safeJSONParse } from '../utils';
 import { FilialsService } from '../filials/filials.service';
+import { hasFilialIds, safeJSONParse } from '../utils';
 
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
@@ -89,64 +89,81 @@ export class UsersService {
     userFilterQuery: FilterQuery<User>,
     user: UpdateUserInput,
   ): Promise<User> {
-    const oldUser = await this.userModel.findOne({ id: user?.id });
-    if (!oldUser) {
-      throw new NotFoundException(`Filial #${oldUser.id} not found`);
-    }
-    const session = await this.connection.startSession();
-    session.startTransaction();
-    try {
-      await Promise.all(
-        // мы проходимся по старым или новым филиалам в зависимости от операции add/delete
-        (user?.filialIds?.length >= oldUser?.filialIds?.length
-          ? user?.filialIds
-          : oldUser?.filialIds
-        )?.map(async (id) => {
-          const filial = await this.filialsService.findOne({ id });
-          if (!filial) {
-            throw new NotFoundException(`Filial #${filial.id} not found`);
-          }
-          // ADD
-          if (user?.filialIds?.length > oldUser?.filialIds?.length) {
-            // если этого id еще нет в массиве. то добавляем его чтобы не дублировать
-            if (filial.userIds.indexOf(user.id) === -1) {
+    // чтобы зря не лезть в филиалы, проверяем нужно ли менять filialIds, если не нужно, просто меняем остальные поля в user
+    if (hasFilialIds<UpdateUserInput>(user)) {
+      const oldUser = await this.userModel.findOne({ id: user?.id });
+      if (!oldUser) {
+        throw new NotFoundException(`Filial #${oldUser.id} not found`);
+      }
+      const session = await this.connection.startSession();
+      session.startTransaction();
+      try {
+        await Promise.all(
+          // проходимся по старым или новым филиалам в зависимости от операции add/delete
+          (user?.filialIds?.length >= oldUser?.filialIds?.length
+            ? user?.filialIds
+            : oldUser?.filialIds
+          )?.map(async (id) => {
+            const filial = await this.filialsService.findOne({ id });
+            if (!filial) {
+              throw new NotFoundException(`Filial #${filial.id} not found`);
+            }
+            // ADD
+            if (user?.filialIds?.length > oldUser?.filialIds?.length) {
+              // если этого id еще нет в массиве. то добавляем его чтобы не дублировать
+              if (filial.userIds.indexOf(user.id) === -1) {
+                await this.filialsService.findOneAndUpdate(
+                  { id },
+                  {
+                    ...filial,
+                    userIds: filial.userIds.concat(user.id),
+                  },
+                  'userIds',
+                );
+              }
+            }
+            // DELETE
+            if (user?.filialIds?.length < oldUser?.filialIds?.length) {
+              // если у пользователя среди его филиалов нет этого филиала, то ничего не делаем
+              if (user.filialIds.indexOf(id) !== -1) return;
               await this.filialsService.findOneAndUpdate(
                 { id },
                 {
                   ...filial,
-                  userIds: filial.userIds.concat(user.id),
+                  userIds: filial.userIds.filter(
+                    (userId) => userId !== user.id,
+                  ),
                 },
                 'userIds',
               );
             }
-          }
-          // DELETE
-          if (user?.filialIds?.length < oldUser?.filialIds?.length) {
-            // если у пользователя среди его филиалов нет этого филиала, то ничего не делаем
-            if (user.filialIds.indexOf(id) !== -1) return;
-            await this.filialsService.findOneAndUpdate(
-              { id },
-              {
-                ...filial,
-                userIds: filial.userIds.filter((userId) => userId !== user.id),
-              },
-              'userIds',
-            );
-          }
-        }),
-      );
-      return await this.userModel.findOneAndUpdate(
+          }),
+        );
+        return await this.userModel.findOneAndUpdate(
+          { id: userFilterQuery.id },
+          user,
+          {
+            new: true,
+          },
+        );
+      } catch (err) {
+        await session.abortTransaction();
+        throw new Error(err);
+      } finally {
+        await session.endSession();
+      }
+    } else {
+      const updatedUser = await this.userModel.findOneAndUpdate(
         { id: userFilterQuery.id },
         user,
         {
           new: true,
         },
       );
-    } catch (err) {
-      await session.abortTransaction();
-      throw new Error(err);
-    } finally {
-      await session.endSession();
+      if (!updatedUser) {
+        throw new NotFoundException(`Filial #${updatedUser.id} not found`);
+      }
+      return updatedUser;
     }
   }
 

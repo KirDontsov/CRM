@@ -6,6 +6,7 @@ import { FormComboBox, ComboBoxOption } from '@components/FormComboBox';
 import { FormInput } from '@components/FormInput';
 import { toast } from 'react-toastify';
 import { GET_FILIALS } from '@shared';
+import { isEqual } from '@src/shared/utils';
 
 import { CREATE_ORDER, GET_ORDER, OPTIONS, SAVE_ORDER, STATUS_OPTIONS } from './constants';
 import styles from './styles.module.scss';
@@ -115,9 +116,12 @@ export const OrdersForm: FC<OrdersFormProps> = memo(({ selected, onClose }) => {
     }) => {
       try {
         if (selected && selected !== 'new') {
+          const filialDataIds = data?.getOrder?.filials.map(({ id: filialId }: { id: string }) => filialId);
+          const filialIds = filials?.map(({ value }) => value) ?? [];
           await saveOrder({
             variables: {
               input: {
+                ...(!isEqual(filialIds, filialDataIds) ? { filialIds } : {}),
                 id: selected,
                 orderName,
                 status: status?.id,
@@ -127,7 +131,6 @@ export const OrdersForm: FC<OrdersFormProps> = memo(({ selected, onClose }) => {
                 leftHeadlamp: leftHeadlamp?.map(({ value }) => value) ?? [],
                 rightHeadlamp: rightHeadlamp?.map(({ value }) => value) ?? [],
                 sparePartsCost: sparePartsCost || null,
-                filialIds: filials?.map(({ value }) => value) ?? [],
               },
             },
           });
@@ -155,7 +158,7 @@ export const OrdersForm: FC<OrdersFormProps> = memo(({ selected, onClose }) => {
         });
       }
     },
-    [createOrder, saveOrder, selected],
+    [createOrder, saveOrder, selected, data?.getOrder?.filials],
   );
 
   const handleReset = useCallback(() => {

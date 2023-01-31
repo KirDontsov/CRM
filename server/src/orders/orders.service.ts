@@ -3,8 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, FilterQuery, Model } from 'mongoose';
 
-import { safeJSONParse } from '../utils';
 import { FilialsService } from '../filials/filials.service';
+import { hasFilialIds, safeJSONParse } from '../utils';
 
 import { CreateOrderInput } from './dto/create-order.input';
 import { UpdateOrderInput } from './dto/update-order.input';
@@ -93,73 +93,87 @@ export class OrdersService {
     orderFilterQuery: FilterQuery<Order>,
     orderInput: UpdateOrderInput,
   ): Promise<Order> {
-    const oldOrder = await this.orderModel.findOne({ id: orderInput?.id });
-    if (!oldOrder) {
-      throw new NotFoundException(`Filial #${oldOrder.id} not found`);
-    }
-    const session = await this.connection.startSession();
-    session.startTransaction();
-    try {
-      await Promise.all(
-        // мы проходимся по старым или новым филиалам в зависимости от операции add/delete
-        (orderInput?.filialIds?.length >= oldOrder?.filialIds?.length
-          ? orderInput?.filialIds
-          : oldOrder?.filialIds
-        )?.map(async (id) => {
-          const filial = await this.filialsService.findOne({ id });
-          if (!filial) {
-            throw new NotFoundException(`Filial #${filial.id} not found`);
-          }
-          // ADD
-          if (orderInput?.filialIds?.length > oldOrder?.filialIds?.length) {
-            // если этого id еще нет в массиве. то добавляем его чтобы не дублировать
-            if (filial.orderIds.indexOf(orderInput.id) === -1) {
+    const order = {
+      ...orderInput,
+      releaseDate:
+        orderInput?.status === OrdersStatuses.Done ? new Date() : null,
+    };
+    // чтобы зря не лезть в филиалы, проверяем нужно ли менять filialIds, если не нужно, просто меняем остальные поля в order
+    if (hasFilialIds<UpdateOrderInput>(orderInput)) {
+      const oldOrder = await this.orderModel.findOne({ id: orderInput?.id });
+      if (!oldOrder) {
+        throw new NotFoundException(`Filial #${oldOrder.id} not found`);
+      }
+      const session = await this.connection.startSession();
+      session.startTransaction();
+      try {
+        await Promise.all(
+          // проходимся по старым или новым филиалам в зависимости от операции add/delete
+          (orderInput?.filialIds?.length >= oldOrder?.filialIds?.length
+            ? orderInput?.filialIds
+            : oldOrder?.filialIds
+          )?.map(async (id) => {
+            const filial = await this.filialsService.findOne({ id });
+            if (!filial) {
+              throw new NotFoundException(`Filial #${filial.id} not found`);
+            }
+            // ADD
+            if (orderInput?.filialIds?.length > oldOrder?.filialIds?.length) {
+              // если этого id еще нет в массиве. то добавляем его чтобы не дублировать
+              if (filial.orderIds.indexOf(orderInput.id) === -1) {
+                await this.filialsService.findOneAndUpdate(
+                  { id },
+                  {
+                    ...filial,
+                    orderIds: filial.orderIds.concat(orderInput.id),
+                  },
+                  'orderIds',
+                );
+              }
+            }
+            // DELETE
+            if (orderInput?.filialIds?.length < oldOrder?.filialIds?.length) {
+              // если у пользователя среди его филиалов нет этого филиала, то ничего не делаем
+              if (orderInput.filialIds.indexOf(id) !== -1) return;
               await this.filialsService.findOneAndUpdate(
                 { id },
                 {
                   ...filial,
-                  orderIds: filial.orderIds.concat(orderInput.id),
+                  orderIds: filial.orderIds.filter(
+                    (userId) => userId !== orderInput.id,
+                  ),
                 },
                 'orderIds',
               );
             }
-          }
-          // DELETE
-          if (orderInput?.filialIds?.length < oldOrder?.filialIds?.length) {
-            // если у пользователя среди его филиалов нет этого филиала, то ничего не делаем
-            if (orderInput.filialIds.indexOf(id) !== -1) return;
-            await this.filialsService.findOneAndUpdate(
-              { id },
-              {
-                ...filial,
-                orderIds: filial.orderIds.filter(
-                  (userId) => userId !== orderInput.id,
-                ),
-              },
-              'orderIds',
-            );
-          }
-        }),
-      );
+          }),
+        );
 
-      const order = {
-        ...orderInput,
-        releaseDate:
-          orderInput?.status === OrdersStatuses.Done ? new Date() : null,
-      };
-
-      return await this.orderModel.findOneAndUpdate(
+        return await this.orderModel.findOneAndUpdate(
+          { id: orderFilterQuery.id },
+          order,
+          {
+            new: true,
+          },
+        );
+      } catch (err) {
+        await session.abortTransaction();
+        throw new Error(err);
+      } finally {
+        await session.endSession();
+      }
+    } else {
+      const updatedOrder = await this.orderModel.findOneAndUpdate(
         { id: orderFilterQuery.id },
         order,
         {
           new: true,
         },
       );
-    } catch (err) {
-      await session.abortTransaction();
-      throw new Error(err);
-    } finally {
-      await session.endSession();
+      if (!updatedOrder) {
+        throw new NotFoundException(`Filial #${updatedOrder.id} not found`);
+      }
+      return updatedOrder;
     }
   }
 
