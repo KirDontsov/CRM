@@ -3,7 +3,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserRoles } from '../auth/dto/user-roles';
 
 import { UsersService } from './users.service';
-import { UsersRepository } from './mongo/users.repository';
 
 const mockNewUser = {
   id: '17f295e2-cda7-4e73-b02d-2af6b9237087',
@@ -31,9 +30,8 @@ describe('UsersService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        UsersService,
         {
-          provide: UsersRepository,
+          provide: UsersService,
           useFactory: () => ({
             findOne: jest.fn(() => mockUser),
             find: jest.fn(() => [mockUser]),

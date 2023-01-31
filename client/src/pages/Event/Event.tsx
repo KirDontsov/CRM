@@ -39,7 +39,7 @@ export const Event = () => {
       toast('Событие удалено успешно', { type: 'success' });
       navigate('/events');
     },
-    refetchQueries: ['getEvents', 'getEventById'],
+    refetchQueries: ['getEventsByUserId'],
   });
 
   const handleDeleteEvent = useCallback(async () => {

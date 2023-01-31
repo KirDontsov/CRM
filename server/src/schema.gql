@@ -135,14 +135,14 @@ type Permission {
 }
 
 type Query {
-  countEvents(userId: String!): Float!
+  countEvents: Float!
   countOrders: Float!
   countUsers: Float!
   functionalRole(id: String!): FunctionalRole!
   functionalRoles: [FunctionalRole!]!
   getEvent(id: String!): Event!
   getEvents(limit: Int! = 20, offset: Int! = 0): [Event!]!
-  getEventsByUserId(limit: Int! = 20, offset: Int! = 0, userId: String!): [Event!]!
+  getEventsByUserId(limit: Int! = 20, offset: Int! = 0): [Event!]!
   getFilial(id: String!): Filial!
   getFilials: [Filial!]!
   getOrder(id: String!): Order!

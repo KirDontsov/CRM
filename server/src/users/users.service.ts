@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import { Connection, FilterQuery, Model } from 'mongoose';
 
 import { safeJSONParse } from '../utils';
 import { FilialsService } from '../filials/filials.service';
@@ -17,6 +17,7 @@ export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     private readonly filialsService: FilialsService,
+    @InjectConnection() private readonly connection: Connection,
   ) {}
 
   async getCount(context): Promise<number> {
@@ -43,35 +44,45 @@ export class UsersService {
   }
 
   async createUser(createUserInput: CreateUserInput): Promise<User> {
-    const newUserId = uuidv4();
-    const user = {
-      ...createUserInput,
-      id: newUserId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    // добавляем новый id пользователя так же и в филиалы
-    await Promise.all(
-      createUserInput?.filialIds?.map(async (id) => {
-        const filial = await this.filialsService.findOne({ id });
-        if (!filial) {
-          throw new NotFoundException(`Filial #${filial.id} not found`);
-        }
-        // т.к. это новый id, то просто добавляем его к филиалам без проверок
-        await this.filialsService.findOneAndUpdate(
-          { id },
-          {
-            id,
-            userIds: filial?.userIds?.concat(newUserId),
-          },
-          'userIds',
-        );
-      }),
-    );
+    const session = await this.connection.startSession();
+    session.startTransaction();
 
-    // eslint-disable-next-line new-cap
-    const newUser = await new this.userModel(user);
-    return newUser.save();
+    try {
+      const newUserId = uuidv4();
+      const user = {
+        ...createUserInput,
+        id: newUserId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      // добавляем новый id пользователя так же и в филиалы
+      await Promise.all(
+        createUserInput?.filialIds?.map(async (id) => {
+          const filial = await this.filialsService.findOne({ id });
+          if (!filial) {
+            throw new NotFoundException(`Filial #${filial.id} not found`);
+          }
+          // т.к. это новый id, то просто добавляем его к филиалам без проверок
+          await this.filialsService.findOneAndUpdate(
+            { id },
+            {
+              id,
+              userIds: filial?.userIds?.concat(newUserId),
+            },
+            'userIds',
+          );
+        }),
+      );
+
+      // eslint-disable-next-line new-cap
+      const newUser = await new this.userModel(user);
+      return await newUser.save();
+    } catch (err) {
+      await session.abortTransaction();
+      throw new Error(err);
+    } finally {
+      await session.endSession();
+    }
   }
 
   async updateUser(
@@ -82,57 +93,61 @@ export class UsersService {
     if (!oldUser) {
       throw new NotFoundException(`Filial #${oldUser.id} not found`);
     }
-    await Promise.all(
-      // мы проходимся по старым или новым филиалам в зависимости от операции add/delete
-      (user?.filialIds?.length >= oldUser?.filialIds?.length
-        ? user?.filialIds
-        : oldUser?.filialIds
-      )?.map(async (id) => {
-        const filial = await this.filialsService.findOne({ id });
-        if (!filial) {
-          throw new NotFoundException(`Filial #${filial.id} not found`);
-        }
-        // ADD
-        if (user?.filialIds?.length > oldUser?.filialIds?.length) {
-          // если этого id еще нет в массиве. то добавляем его чтобы не дублировать
-          if (filial.userIds.indexOf(user.id) === -1) {
+    const session = await this.connection.startSession();
+    session.startTransaction();
+    try {
+      await Promise.all(
+        // мы проходимся по старым или новым филиалам в зависимости от операции add/delete
+        (user?.filialIds?.length >= oldUser?.filialIds?.length
+          ? user?.filialIds
+          : oldUser?.filialIds
+        )?.map(async (id) => {
+          const filial = await this.filialsService.findOne({ id });
+          if (!filial) {
+            throw new NotFoundException(`Filial #${filial.id} not found`);
+          }
+          // ADD
+          if (user?.filialIds?.length > oldUser?.filialIds?.length) {
+            // если этого id еще нет в массиве. то добавляем его чтобы не дублировать
+            if (filial.userIds.indexOf(user.id) === -1) {
+              await this.filialsService.findOneAndUpdate(
+                { id },
+                {
+                  ...filial,
+                  userIds: filial.userIds.concat(user.id),
+                },
+                'userIds',
+              );
+            }
+          }
+          // DELETE
+          if (user?.filialIds?.length < oldUser?.filialIds?.length) {
+            // если у пользователя среди его филиалов нет этого филиала, то ничего не делаем
+            if (user.filialIds.indexOf(id) !== -1) return;
             await this.filialsService.findOneAndUpdate(
               { id },
               {
                 ...filial,
-                userIds: filial.userIds.concat(user.id),
+                userIds: filial.userIds.filter((userId) => userId !== user.id),
               },
               'userIds',
             );
           }
-        }
-        // DELETE
-        if (user?.filialIds?.length < oldUser?.filialIds?.length) {
-          // если у пользователя среди его филиалов нет этого филиала, то ничего не делаем
-          if (user.filialIds.indexOf(id) !== -1) return;
-          await this.filialsService.findOneAndUpdate(
-            { id },
-            {
-              ...filial,
-              userIds: filial.userIds.filter((userId) => userId !== user.id),
-            },
-            'userIds',
-          );
-        }
-      }),
-    );
-    const updatedUser = await this.userModel.findOneAndUpdate(
-      { id: userFilterQuery.id },
-      user,
-      {
-        new: true,
-      },
-    );
-
-    if (!updatedUser) {
-      throw new NotFoundException(`User #${user.id} not found`);
+        }),
+      );
+      return await this.userModel.findOneAndUpdate(
+        { id: userFilterQuery.id },
+        user,
+        {
+          new: true,
+        },
+      );
+    } catch (err) {
+      await session.abortTransaction();
+      throw new Error(err);
+    } finally {
+      await session.endSession();
     }
-    return updatedUser;
   }
 
   async deleteUser(userFilterQuery: FilterQuery<User>): Promise<User> {
@@ -140,28 +155,37 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException(`User #${user.id} not found`);
     }
-    await Promise.all(
-      user?.filialIds?.map(async (id) => {
-        const filial = await this.filialsService.findOne({ id });
-        if (!filial) {
-          throw new NotFoundException(`Filial #${filial.id} not found`);
-        }
-        if (user.filialIds.indexOf(id) !== -1) {
-          await this.filialsService.findOneAndUpdate(
-            { id },
-            {
-              ...filial,
-              userIds: filial?.userIds?.filter(
-                (userId) => userId !== userFilterQuery.id,
-              ),
-            },
-            'userIds',
-          );
-        }
-      }),
-    );
-    await this.userModel.deleteOne(userFilterQuery);
-    return user;
+    const session = await this.connection.startSession();
+    session.startTransaction();
+    try {
+      await Promise.all(
+        user?.filialIds?.map(async (id) => {
+          const filial = await this.filialsService.findOne({ id });
+          if (!filial) {
+            throw new NotFoundException(`Filial #${filial.id} not found`);
+          }
+          if (user.filialIds.indexOf(id) !== -1) {
+            await this.filialsService.findOneAndUpdate(
+              { id },
+              {
+                ...filial,
+                userIds: filial?.userIds?.filter(
+                  (userId) => userId !== userFilterQuery.id,
+                ),
+              },
+              'userIds',
+            );
+          }
+        }),
+      );
+      await this.userModel.deleteOne(userFilterQuery);
+      return user;
+    } catch (err) {
+      await session.abortTransaction();
+      throw new Error(err);
+    } finally {
+      await session.endSession();
+    }
   }
 
   async deleteUsers(usersFilterQuery: FilterQuery<User>): Promise<User[]> {
@@ -171,27 +195,36 @@ export class UsersService {
     // сначала находим id всех филиалов и убираем дубли
     const filialIds = [...new Set(...users.map(({ filialIds: ids }) => ids))];
 
-    await Promise.all(
-      filialIds?.map(async (id) => {
-        const filial = await this.filialsService.findOne({ id });
-        if (!filial) {
-          throw new NotFoundException(`Filial #${filial.id} not found`);
-        }
-        // удаляем из массива userIds те id, которых нет в inpute
-        await this.filialsService.findOneAndUpdate(
-          { id },
-          {
-            ...filial,
-            userIds: filial?.userIds?.filter(
-              (userId) => usersFilterQuery.ids.indexOf(userId) === -1,
-            ),
-          },
-          'userIds',
-        );
-      }),
-    );
+    const session = await this.connection.startSession();
+    session.startTransaction();
+    try {
+      await Promise.all(
+        filialIds?.map(async (id) => {
+          const filial = await this.filialsService.findOne({ id });
+          if (!filial) {
+            throw new NotFoundException(`Filial #${filial.id} not found`);
+          }
+          // удаляем из массива userIds те id, которых нет в inpute
+          await this.filialsService.findOneAndUpdate(
+            { id },
+            {
+              ...filial,
+              userIds: filial?.userIds?.filter(
+                (userId) => usersFilterQuery.ids.indexOf(userId) === -1,
+              ),
+            },
+            'userIds',
+          );
+        }),
+      );
 
-    await this.userModel.deleteMany({ id: { $in: usersFilterQuery.ids } });
-    return users;
+      await this.userModel.deleteMany({ id: { $in: usersFilterQuery.ids } });
+      return users;
+    } catch (err) {
+      await session.abortTransaction();
+      throw new Error(err);
+    } finally {
+      await session.endSession();
+    }
   }
 }

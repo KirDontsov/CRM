@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import SquareIcon from '@mui/icons-material/Square';
 import { AppContext } from '@context';
 import { GET_ORDERS } from '@pages/Orders/OrdersTable/constants';
-import {OrdersStatuses, UserRoles} from '@apollo-client';
+import { OrdersStatuses, UserRoles } from '@apollo-client';
 import { OrdersData } from '@pages/Orders/OrdersTable/interfaces';
 import { PAGING } from '@shared';
 import produce from 'immer';
@@ -30,7 +30,6 @@ export const Dashboard = () => {
 
   const { data, fetchMore, loading } = useQuery(GET_EVENTS, {
     variables: {
-      userId,
       limit: PAGING.limit,
       offset: PAGING.offset,
     },
@@ -222,46 +221,47 @@ export const Dashboard = () => {
                 onMouseEnter={onPieEnter}
               >
                 {pieChartData.map((entry, index) => (
-                  <Cell key={`cell-${entry.name}`} fill={COLORS[index % COLORS.length]}/>
+                  <Cell key={`cell-${entry.name}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
             </PieChart>
             <div className={styles.pieStat}>
               {pieChartData.map((entry, index) => (
-                <div key={entry.name} style={{color: COLORS[index]}} className={styles.pieStatItem}>
-                  <SquareIcon/>
+                <div key={entry.name} style={{ color: COLORS[index] }} className={styles.pieStatItem}>
+                  <SquareIcon />
                   <Typography component="p" color={darkMode ? '#fff' : 'initial'}>{`${entry.name}`}</Typography>
                 </div>
               ))}
             </div>
           </div>
         </Paper>
-        {userRoles === UserRoles.Admin && (<Paper
-          // пока только моки
-          elevation={2}
-          className={styles.widget}
-        >
-          <Typography variant="h1">Выручка</Typography>
-          <AreaChart
-            width={500}
-            height={350}
-            data={CHART_DATA}
-            margin={{
-              top: 10,
-              right: 30,
-              left: 0,
-              bottom: 0,
-            }}
+        {userRoles === UserRoles.Admin && (
+          <Paper
+            // пока только моки
+            elevation={2}
+            className={styles.widget}
           >
-            <CartesianGrid strokeDasharray="3 3"/>
-            <XAxis dataKey="name"/>
-            <YAxis tick={false}/>
-            <Tooltip formatter={handleFormatLabel as unknown as Formatter<string, string>}/>
-            <Area type="monotone" dataKey="pv" label="Прибыль" stackId="1" stroke="#2ED47A" fill="#2ED47A"/>
-            <Area type="monotone" dataKey="uv" label="Выручка" stackId="1" stroke="#885AF8" fill="#885AF8"/>
-          </AreaChart>
-        </Paper>)}
-
+            <Typography variant="h1">Выручка</Typography>
+            <AreaChart
+              width={500}
+              height={350}
+              data={CHART_DATA}
+              margin={{
+                top: 10,
+                right: 30,
+                left: 0,
+                bottom: 0,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis tick={false} />
+              <Tooltip formatter={handleFormatLabel as unknown as Formatter<string, string>} />
+              <Area type="monotone" dataKey="pv" label="Прибыль" stackId="1" stroke="#2ED47A" fill="#2ED47A" />
+              <Area type="monotone" dataKey="uv" label="Выручка" stackId="1" stroke="#885AF8" fill="#885AF8" />
+            </AreaChart>
+          </Paper>
+        )}
       </div>
     </div>
   );
