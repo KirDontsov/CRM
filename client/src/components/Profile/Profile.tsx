@@ -3,22 +3,23 @@ import { useQuery } from '@apollo/client';
 import { useContextSelector } from 'use-context-selector';
 import { Typography } from '@mui/material';
 import { AppContext } from '@context';
+import { GET_USER } from '@shared';
 
-import { UserData } from './interfaces';
 import { Avatar } from './Avatar';
-import { GET_USER } from './constants';
+import { UserData } from './interfaces';
 import styles from './styles.module.scss';
 
 export interface ProfileProps {
-  collapsed: boolean;
+  collapsed?: boolean;
+  toUserId?: string;
 }
 
-export const Profile: FC<ProfileProps> = memo(({ collapsed }) => {
+export const Profile: FC<ProfileProps> = memo(({ collapsed, toUserId }) => {
   const userId = useContextSelector(AppContext, (ctx) => ctx.state.userId);
   const darkMode = useContextSelector(AppContext, (ctx) => ctx.state.darkMode);
 
   const { data } = useQuery(GET_USER, {
-    variables: { id: userId },
+    variables: { id: toUserId || userId },
     skip: !userId,
   });
 

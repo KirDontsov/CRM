@@ -49,7 +49,6 @@ export class FilialsService {
       id: uuidv4(),
       createdAt: new Date(),
     };
-    // eslint-disable-next-line new-cap
     const newPermission = new this.filialModel(filial);
     return newPermission.save();
   }

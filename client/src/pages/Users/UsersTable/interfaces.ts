@@ -4,4 +4,5 @@ export interface Data {
   email: string;
   roles: string;
   filials: string;
+  chat: string;
 }

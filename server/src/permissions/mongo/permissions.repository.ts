@@ -18,7 +18,6 @@ export class PermissionsRepository {
   }
 
   async create(permission: Permission): Promise<Permission> {
-    // eslint-disable-next-line new-cap
     const newPermission = new this.permissionModel(permission);
     return newPermission.save();
   }

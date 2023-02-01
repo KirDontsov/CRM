@@ -45,6 +45,7 @@ module.exports = {
       },
     ],
     'no-unused-vars': 'off',
+    'new-cap': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
     'import/prefer-default-export': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',

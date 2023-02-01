@@ -1,0 +1,13 @@
+@import '../../../styles/global.module';
+
+.nameLink {
+	cursor: pointer;
+	font-weight: 600 !important;
+	&:hover {
+		color: $active !important;
+	}
+}
+
+.chatLink {
+	cursor: pointer;
+}

@@ -78,7 +78,6 @@ export class OrdersService {
           );
         }),
       );
-      // eslint-disable-next-line new-cap
       const newOrder = new this.orderModel(order);
       return await newOrder.save();
     } catch (err) {

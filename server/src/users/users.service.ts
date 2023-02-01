@@ -73,8 +73,6 @@ export class UsersService {
           );
         }),
       );
-
-      // eslint-disable-next-line new-cap
       const newUser = await new this.userModel(user);
       return await newUser.save();
     } catch (err) {

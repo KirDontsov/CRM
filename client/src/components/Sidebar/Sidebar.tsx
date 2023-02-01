@@ -10,9 +10,9 @@ import { ContactsIcon } from '../Icons/ContactsIcon';
 import { SettingsIcon } from '../Icons/SettingsIcon';
 import { ToggleIcon } from '../Icons/ToggleIcon';
 import { EventsIcon } from '../Icons/EventsIcon';
+import { Profile } from '../Profile';
 
 import { SidebarLink } from './SidebarLink';
-import { Profile } from './Profile';
 import { ROUTES } from './constants';
 import { useHover } from './hooks';
 import styles from './styles.module.scss';

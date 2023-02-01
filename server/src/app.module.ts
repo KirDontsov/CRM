@@ -13,6 +13,7 @@ import { EventsModule } from './events/events.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { FilialsModule } from './filials/filials.module';
 import { FunctionalRolesModule } from './functional-roles/functional-roles.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { FunctionalRolesModule } from './functional-roles/functional-roles.modul
     PermissionsModule,
     FilialsModule,
     FunctionalRolesModule,
+    MessagesModule,
   ],
 })
 export class AppModule {}

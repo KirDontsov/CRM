@@ -38,7 +38,6 @@ export class FunctionalRolesRepository {
       id: uuidv4(),
       createdAt: new Date(),
     };
-    // eslint-disable-next-line new-cap
     const newPermission = new this.functionalRoleModel(filial);
     return newPermission.save();
   }
