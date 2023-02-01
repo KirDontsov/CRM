@@ -1,5 +1,5 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
+import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
+import { ExecutionContext, UseGuards } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -10,59 +10,64 @@ import { EventsService } from './events.service';
 import { Event } from './entities/event.entity';
 import { CreateEventInput } from './dto/create-event.input';
 import { UpdateEventInput } from './dto/update-event.input';
-import { FetchEventsByUserInput } from './dto/fetch-events-by-user.input';
 import { FetchEventsInput } from './dto/fetch-events.input';
 
 @Resolver(() => Event)
 export class EventsResolver {
   constructor(private readonly eventsService: EventsService) {}
 
-  @Query(() => Number, { name: 'countEvents' })
-  async getCount(@Args('userId') userId: string): Promise<number> {
-    return this.eventsService.getCount(userId);
+  @Query(() => Number)
+  async countEvents(@Context() context): Promise<number> {
+    return this.eventsService.getCount(context);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Query(() => Event, { name: 'getEvent' })
-  findOne(@Args('id') id: string) {
-    return this.eventsService.getEventById(id);
+  @Query(() => Event)
+  getEvent(@Args('id') id: string, @Context() context) {
+    return this.eventsService.getEventByContext({ id }, context);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Query(() => [Event], { name: 'getEvents' })
-  findAll(@Args() args: FetchEventsInput) {
+  @Query(() => [Event])
+  getEvents(@Args() args: FetchEventsInput) {
     return this.eventsService.getEvents(args);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Query(() => [Event], { name: 'getEventsByUserId' })
-  findAllByUser(@Args() args: FetchEventsByUserInput) {
-    return this.eventsService.getEventsByUserId(args);
+  @Query(() => [Event])
+  getEventsByUserId(
+    @Args() args: FetchEventsInput,
+    @Context() context: ExecutionContext,
+  ) {
+    return this.eventsService.getEventsByContext(args, context);
   }
 
   @UseGuards(JwtAuthGuard)
   @Mutation(() => Event)
   createEvent(@Args('createEventInput') createEventInput: CreateEventInput) {
-    return this.eventsService.create(createEventInput);
+    return this.eventsService.createEvent(createEventInput);
   }
 
   @UseGuards(JwtAuthGuard)
   @Mutation(() => Event, { name: 'saveEvent' })
   updateEvent(@Args('updateEventInput') updateEventInput: UpdateEventInput) {
-    return this.eventsService.update(updateEventInput.id, updateEventInput);
+    return this.eventsService.findOneAndUpdate(
+      { id: updateEventInput.id },
+      updateEventInput,
+    );
   }
 
   @Roles(UserRoles.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Mutation(() => Event)
   deleteEvent(@Args('id') id: string) {
-    return this.eventsService.remove(id);
+    return this.eventsService.deleteEvent({ id });
   }
 
   @Roles(UserRoles.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Mutation(() => [Event])
   deleteEvents(@Args({ name: 'ids', type: () => [String] }) ids: string[]) {
-    return this.eventsService.removeEvents(ids);
+    return this.eventsService.deleteEvents({ ids });
   }
 }

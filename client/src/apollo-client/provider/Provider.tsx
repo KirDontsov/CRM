@@ -16,6 +16,8 @@ const authLink = setContext((_, { headers }) => {
   return {
     headers: {
       ...headers,
+      filialIds: `${localStorage.getItem(`${localStorageAppPrefix}.filialIds`) ?? ''}`,
+      userId: `${localStorage.getItem(`${localStorageAppPrefix}.userId`) ?? ''}`,
       authorization: token ? `Bearer ${token}` : '',
     },
   };

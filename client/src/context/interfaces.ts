@@ -8,8 +8,9 @@ export interface AuthToken {
 }
 
 export type State = {
-  userId: string | null;
-  userRoles: string | null;
+  userId: Maybe<string>;
+  userRoles: Maybe<string>;
+  filialIds: Maybe<string>;
   exp?: number;
 };
 
@@ -17,6 +18,7 @@ export interface UserData {
   userId: string;
   userRoles: string;
   access_token: string;
+  filialIds: string[];
 }
 
 export interface Action {
@@ -33,12 +35,13 @@ export interface AppState {
   state: {
     userId: Maybe<string>;
     userRoles: Maybe<string>;
+    filialIds: Maybe<string>;
     darkMode: boolean;
     collapsed: boolean;
   };
   handlers: {
     login: (userData: UserData) => Promise<boolean>;
-    logout: () => void;
+    logout: () => Promise<void>;
     toggleDarkMode: () => void;
     toggleCollapsed: () => void;
   };

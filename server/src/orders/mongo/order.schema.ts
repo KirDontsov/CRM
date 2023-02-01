@@ -39,6 +39,9 @@ export class Order {
   totalCost: string;
 
   @Prop()
+  filialIds: string[];
+
+  @Prop()
   createdAt: Date;
 
   @Prop({ required: false, default: null })

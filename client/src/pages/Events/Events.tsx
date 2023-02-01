@@ -1,10 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Paper, Typography } from '@mui/material';
 import { useQuery } from '@apollo/client';
-import { useContextSelector } from 'use-context-selector';
 import { Calendar } from '@components/Calendar';
 import { Curtain } from '@components/Curtain';
-import { AppContext } from '@context';
 import { PAGING } from '@shared';
 
 import styles from './styles.module.scss';
@@ -19,16 +17,14 @@ export function isEvent(date: Date): date is Date {
 export const Events = () => {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | null>(null);
-  const userId = useContextSelector(AppContext, (ctx) => ctx.state.userId);
 
   const { data, loading } = useQuery(GET_EVENTS, {
     variables: {
-      userId,
-      limit: 100,
+      limit: 1000,
       offset: PAGING.offset,
     },
   });
-  const events: EventsData[] = useMemo(() => data?.getEventsByUserId ?? [], [data]);
+  const events: EventsData[] = data?.getEventsByUserId ?? [];
 
   const toggleDrawer = (newDate?: Date) => {
     if (newDate && isEvent(newDate)) {

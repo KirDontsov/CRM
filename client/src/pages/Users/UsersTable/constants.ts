@@ -1,6 +1,7 @@
 import { gql } from '@apollo/client';
+import { HeadCell } from '@src/shared/interfaces';
 
-import { HeadCell } from './interfaces';
+import { Data } from './interfaces';
 
 export const GET_USERS = gql`
   query getUsers($limit: Int!, $offset: Int!) {
@@ -10,6 +11,9 @@ export const GET_USERS = gql`
       username
       email
       roles
+      filials {
+        name
+      }
     }
   }
 `;
@@ -23,7 +27,7 @@ export const DELETE_USERS = gql`
   }
 `;
 
-export const HEAD_CELLS: HeadCell[] = [
+export const HEAD_CELLS: HeadCell<Data>[] = [
   {
     id: 'username',
     numeric: false,
@@ -41,5 +45,11 @@ export const HEAD_CELLS: HeadCell[] = [
     numeric: false,
     disablePadding: false,
     label: 'Роль',
+  },
+  {
+    id: 'filials',
+    numeric: false,
+    disablePadding: false,
+    label: 'Филиал',
   },
 ];

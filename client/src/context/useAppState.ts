@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useReducer, useState } from 'react';
 import jwtDecode from 'jwt-decode';
+import { client } from '@src/apollo-client/provider/Provider';
 
 import { initialState, localStorageAppPrefix } from './constants';
 import type { AppState, AuthToken, State, UserData, Action } from './interfaces';
@@ -16,6 +17,7 @@ const authReducer = (state: State, action: Action) => {
         ...state,
         userId: null,
         userRoles: null,
+        filialIds: null,
       };
     default:
       return state;
@@ -33,6 +35,7 @@ const checkAuthToken = () => {
     return {
       userId: localStorage.getItem(`${localStorageAppPrefix}.userId` ?? null),
       userRoles: localStorage.getItem(`${localStorageAppPrefix}.userRoles` ?? null),
+      filialIds: JSON.parse(localStorage.getItem(`${localStorageAppPrefix}.filialIds` ?? null) ?? ''),
       accessToken: token,
     };
   }
@@ -59,35 +62,38 @@ export function useAppState(): AppState {
 
   const login = async (userData: UserData) => {
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const { access_token, userId, userRoles } = userData;
+    const { access_token, userId, userRoles, filialIds } = userData;
     localStorage.setItem(`${localStorageAppPrefix}.token`, access_token);
     localStorage.setItem(`${localStorageAppPrefix}.userRoles`, userRoles);
     localStorage.setItem(`${localStorageAppPrefix}.userId`, userId);
+    localStorage.setItem(`${localStorageAppPrefix}.filialIds`, JSON.stringify(filialIds));
     dispatch({
       type: 'LOGIN',
-      payload: { userId, userRoles },
+      payload: { userId, userRoles, filialIds },
     });
     return !!state.userId;
   };
 
-  const logout = () => {
+  const logout = async () => {
     localStorage.removeItem(`${localStorageAppPrefix}.token`);
     localStorage.removeItem(`${localStorageAppPrefix}.userRoles`);
     localStorage.removeItem(`${localStorageAppPrefix}.userId`);
+    localStorage.removeItem(`${localStorageAppPrefix}.filialIds`);
+    await client.resetStore();
     dispatch({
       type: 'LOGOUT',
     });
   };
 
   useEffect(() => {
-    const { userId, userRoles, accessToken } = checkAuthToken();
+    const { userId, userRoles, accessToken, filialIds } = checkAuthToken();
     if (accessToken && userId) {
       dispatch({
         type: 'LOGIN',
-        payload: { userId, userRoles },
+        payload: { userId, userRoles, filialIds },
       });
     } else if ((!accessToken || !userId) && window.location.href !== `${window.location.origin}/login`) {
-      logout();
+      logout().then();
       window.location.href = `${window.location.origin}/login`;
     }
   }, []);

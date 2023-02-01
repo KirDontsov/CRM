@@ -19,8 +19,8 @@ export class AuthService {
     const valid = await compare(password, user.password);
 
     if (user && valid) {
-      const { id, username: userName, email, roles } = user;
-      return { id, username: userName, email, roles };
+      const { id, username: userName, email, roles, filialIds } = user;
+      return { id, username: userName, email, roles, filialIds };
     }
     return null;
   }

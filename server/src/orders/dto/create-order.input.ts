@@ -27,4 +27,7 @@ export class CreateOrderInput {
 
   @Field(() => [String], { nullable: true })
   rightHeadlamp: string[];
+
+  @Field(() => [String])
+  filialIds: string[];
 }

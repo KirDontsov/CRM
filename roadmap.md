@@ -7,7 +7,10 @@ Back:
 - Сущности statuses
 - Сущности events
 - role based access control
-- tests
+- tests 
+- permissions
+- связка пользователей и филиалов 
+-- у пользователя есть массив филиалов к которым он относится и он может видеть сущности только в рамках своего филиала (пока только для пользователей)
 
 Client:
 - Форма авторизации
@@ -23,3 +26,4 @@ Client:
 - calendar
 - toasts
 - tests
+- permissions

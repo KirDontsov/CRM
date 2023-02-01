@@ -1,5 +1,7 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 
+import { Filial } from '../../filials/entities/filial.entity';
+
 @ObjectType()
 export class Order {
   @Field()
@@ -31,6 +33,10 @@ export class Order {
 
   @Field()
   totalCost: string;
+
+  // ResolveField
+  @Field(() => [Filial])
+  filials: Filial[];
 
   @Field()
   createdAt: Date;

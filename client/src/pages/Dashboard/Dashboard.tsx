@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import SquareIcon from '@mui/icons-material/Square';
 import { AppContext } from '@context';
 import { GET_ORDERS } from '@pages/Orders/OrdersTable/constants';
-import { OrdersStatuses } from '@apollo-client';
+import { OrdersStatuses, UserRoles } from '@apollo-client';
 import { OrdersData } from '@pages/Orders/OrdersTable/interfaces';
 import { PAGING } from '@shared';
 import produce from 'immer';
@@ -26,10 +26,10 @@ export const Dashboard = () => {
   const navigate = useNavigate();
   const darkMode = useContextSelector(AppContext, (ctx) => ctx.state.darkMode);
   const userId = useContextSelector(AppContext, (ctx) => ctx.state.userId);
+  const userRoles = useContextSelector(AppContext, (ctx) => ctx.state.userRoles);
 
   const { data, fetchMore, loading } = useQuery(GET_EVENTS, {
     variables: {
-      userId,
       limit: PAGING.limit,
       offset: PAGING.offset,
     },
@@ -235,32 +235,33 @@ export const Dashboard = () => {
             </div>
           </div>
         </Paper>
-
-        <Paper
-          // пока только моки
-          elevation={2}
-          className={styles.widget}
-        >
-          <Typography variant="h1">Выручка</Typography>
-          <AreaChart
-            width={500}
-            height={350}
-            data={CHART_DATA}
-            margin={{
-              top: 10,
-              right: 30,
-              left: 0,
-              bottom: 0,
-            }}
+        {userRoles === UserRoles.Admin && (
+          <Paper
+            // пока только моки
+            elevation={2}
+            className={styles.widget}
           >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis tick={false} />
-            <Tooltip formatter={handleFormatLabel as unknown as Formatter<string, string>} />
-            <Area type="monotone" dataKey="pv" label="Прибыль" stackId="1" stroke="#2ED47A" fill="#2ED47A" />
-            <Area type="monotone" dataKey="uv" label="Выручка" stackId="1" stroke="#885AF8" fill="#885AF8" />
-          </AreaChart>
-        </Paper>
+            <Typography variant="h1">Выручка</Typography>
+            <AreaChart
+              width={500}
+              height={350}
+              data={CHART_DATA}
+              margin={{
+                top: 10,
+                right: 30,
+                left: 0,
+                bottom: 0,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis tick={false} />
+              <Tooltip formatter={handleFormatLabel as unknown as Formatter<string, string>} />
+              <Area type="monotone" dataKey="pv" label="Прибыль" stackId="1" stroke="#2ED47A" fill="#2ED47A" />
+              <Area type="monotone" dataKey="uv" label="Выручка" stackId="1" stroke="#885AF8" fill="#885AF8" />
+            </AreaChart>
+          </Paper>
+        )}
       </div>
     </div>
   );

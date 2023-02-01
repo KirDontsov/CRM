@@ -1,55 +1,101 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { Args } from '@nestjs/graphql';
+import { InjectModel } from '@nestjs/mongoose';
+import { FilterQuery, Model } from 'mongoose';
 
 import { CreateEventInput } from './dto/create-event.input';
 import { UpdateEventInput } from './dto/update-event.input';
-import { EventsRepository } from './mongo/events.repository';
-import { Event } from './mongo/event.schema';
-import { FetchEventsByUserInput } from './dto/fetch-events-by-user.input';
+import { Event, EventDocument } from './mongo/event.schema';
 import { FetchEventsInput } from './dto/fetch-events.input';
 
 @Injectable()
 export class EventsService {
-  constructor(private readonly eventsRepository: EventsRepository) {}
+  constructor(
+    @InjectModel(Event.name) private eventModel: Model<EventDocument>,
+  ) {}
 
-  async getCount(userId: string): Promise<number> {
-    return this.eventsRepository.getCount(userId);
+  async getCount(ctx): Promise<number> {
+    const userId = ctx?.req?.headers?.userid ?? '';
+    return this.eventModel.countDocuments({ userId });
   }
 
-  async getEventById(id: string): Promise<Event> {
-    return this.eventsRepository.findOne({ id });
+  async getEventById(eventFilterQuery: FilterQuery<Event>): Promise<Event> {
+    return this.eventModel.findOne(eventFilterQuery);
   }
 
-  async getEventsByUserId(
-    @Args() args: FetchEventsByUserInput,
+  async getEventByContext(
+    eventFilterQuery: FilterQuery<Event>,
+    ctx,
+  ): Promise<Event> {
+    // нужно ли шарить события между разными пользователями?
+    // если да, то нужно добавлять filialIds в сущность event и eventIds в сущность filial
+    const userId = ctx?.req?.headers?.userid ?? '';
+    return this.eventModel.findOne({ userId, id: eventFilterQuery.id });
+  }
+
+  async getEventsByContext(
+    { limit, offset }: FetchEventsInput,
+    ctx,
   ): Promise<Event[]> {
-    return this.eventsRepository.findAllByUserId(args);
+    const userId = ctx?.req?.headers?.userid ?? '';
+    return this.eventModel.find({ userId }, null, {
+      limit,
+      skip: offset,
+    });
   }
 
-  async getEvents(@Args() args: FetchEventsInput): Promise<Event[]> {
-    return this.eventsRepository.find(args);
+  async getEvents(
+    { limit, offset }: FetchEventsInput = { offset: 0, limit: 10 },
+  ): Promise<Event[]> {
+    return this.eventModel.find(null, null, {
+      limit,
+      offset,
+    });
   }
 
-  async create(createEventInput: CreateEventInput) {
+  async createEvent(createEventInput: CreateEventInput): Promise<Event> {
     const event = {
       ...createEventInput,
       id: uuidv4(),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    return this.eventsRepository.create(event);
+    // eslint-disable-next-line new-cap
+    const newEvent = new this.eventModel(event);
+    return newEvent.save();
   }
 
-  async update(id: string, eventUpdates: UpdateEventInput): Promise<Event> {
-    return this.eventsRepository.findOneAndUpdate({ id }, eventUpdates);
+  async findOneAndUpdate(
+    eventFilterQuery: FilterQuery<Event>,
+    eventInput: UpdateEventInput,
+  ): Promise<Event> {
+    const existingEvent = await this.eventModel.findOneAndUpdate(
+      { id: eventFilterQuery.id },
+      eventInput,
+      {
+        new: true,
+      },
+    );
+
+    if (!existingEvent) {
+      throw new NotFoundException(`Event #${eventInput.id} not found`);
+    }
+    return existingEvent;
   }
 
-  async remove(id: string): Promise<Event> {
-    return this.eventsRepository.findOneAndRemove({ id });
+  async deleteEvent(eventFilterQuery: FilterQuery<Event>): Promise<Event> {
+    const event = await this.eventModel.findOne(eventFilterQuery);
+    await this.eventModel.deleteOne(eventFilterQuery);
+    return event;
   }
 
-  async removeEvents(ids: string[]): Promise<Event[]> {
-    return this.eventsRepository.findAndRemove({ ids });
+  async deleteEvents(eventsFilterQuery: FilterQuery<Event>): Promise<Event[]> {
+    const events = await this.eventModel.find({
+      id: { $in: eventsFilterQuery.ids },
+    });
+
+    const ids = events.map(({ id }) => id);
+    await this.eventModel.deleteMany({ id: { $in: ids } });
+    return events;
   }
 }

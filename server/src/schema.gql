@@ -10,7 +10,21 @@ input CreateEventInput {
   userId: String!
 }
 
+input CreateFilialInput {
+  name: String!
+  orderIds: [String!]!
+  userIds: [String!]!
+}
+
+input CreateFunctionalRoleInput {
+  code: String!
+  filialIds: [String!]!
+  name: String!
+  permissionIds: [String!]!
+}
+
 input CreateOrderInput {
+  filialIds: [String!]!
   initialComment: String
   initialCost: String!
   initialPhotos: String
@@ -21,8 +35,13 @@ input CreateOrderInput {
   status: String
 }
 
+input CreatePermissionInput {
+  value: String!
+}
+
 input CreateUserInput {
   email: String!
+  filialIds: [String!]!
   password: String!
   roles: String!
   username: String!
@@ -44,6 +63,22 @@ type Event {
   userId: String!
 }
 
+type Filial {
+  id: String!
+  name: String!
+  orderIds: [String!]!
+  userIds: [String!]!
+}
+
+type FunctionalRole {
+  code: String!
+  filialIds: [String!]!
+  id: String!
+  name: String!
+  permissionIds: [String!]!
+  userIds: [String!]!
+}
+
 type LoginResponse {
   access_token: String!
   user: User!
@@ -56,22 +91,30 @@ input LoginUserInput {
 
 type Mutation {
   createEvent(createEventInput: CreateEventInput!): Event!
+  createFilial(createFilialInput: CreateFilialInput!): Filial!
+  createFunctionalRole(createFunctionalRoleInput: CreateFunctionalRoleInput!): FunctionalRole!
   createOrder(createOrderInput: CreateOrderInput!): Order!
+  createPermission(createPermissionInput: CreatePermissionInput!): Permission!
   createUser(createUserInput: CreateUserInput!): User!
   deleteEvent(id: String!): Event!
   deleteEvents(ids: [String!]!): [Event!]!
+  deleteFilial(id: String!): Filial!
   deleteOrder(id: String!): Order!
   deleteOrders(ids: [String!]!): [Order!]!
   deleteUser(id: String!): User!
   deleteUsers(ids: [String!]!): [User!]!
   login(loginUserInput: LoginUserInput!): LoginResponse!
+  removeFunctionalRole(id: Int!): FunctionalRole!
   saveEvent(updateEventInput: UpdateEventInput!): Event!
   saveOrder(updateOrderInput: UpdateOrderInput!): Order!
   saveUser(updateUserInput: UpdateUserInput!): User!
+  updateFilial(updateFilialInput: UpdateFilialInput!): Filial!
+  updateFunctionalRole(updateFunctionalRoleInput: UpdateFunctionalRoleInput!): FunctionalRole!
 }
 
 type Order {
   createdAt: DateTime!
+  filials: [Filial!]!
   id: String!
   initialComment: String
   initialCost: String!
@@ -86,15 +129,25 @@ type Order {
   updatedAt: DateTime!
 }
 
+type Permission {
+  id: String!
+  value: String!
+}
+
 type Query {
-  countEvents(userId: String!): Float!
+  countEvents: Float!
   countOrders: Float!
   countUsers: Float!
+  functionalRole(id: String!): FunctionalRole!
+  functionalRoles: [FunctionalRole!]!
   getEvent(id: String!): Event!
   getEvents(limit: Int! = 20, offset: Int! = 0): [Event!]!
-  getEventsByUserId(limit: Int! = 20, offset: Int! = 0, userId: String!): [Event!]!
+  getEventsByUserId(limit: Int! = 20, offset: Int! = 0): [Event!]!
+  getFilial(id: String!): Filial!
+  getFilials: [Filial!]!
   getOrder(id: String!): Order!
   getOrders(limit: Int! = 20, offset: Int! = 0): [Order!]!
+  getPermissions(userId: String!): [Permission!]!
   getUser(id: String!): User!
   getUsers(limit: Int! = 20, offset: Int! = 0): [User!]!
 }
@@ -108,7 +161,23 @@ input UpdateEventInput {
   userId: String
 }
 
+input UpdateFilialInput {
+  id: String!
+  name: String
+  orderIds: [String!]
+  userIds: [String!]
+}
+
+input UpdateFunctionalRoleInput {
+  code: String
+  filialIds: [String!]
+  id: String!
+  name: String
+  permissionIds: [String!]
+}
+
 input UpdateOrderInput {
+  filialIds: [String!]
   id: String!
   initialComment: String
   initialCost: String
@@ -122,6 +191,7 @@ input UpdateOrderInput {
 
 input UpdateUserInput {
   email: String
+  filialIds: [String!]
   id: String!
   password: String
   roles: String
@@ -130,6 +200,9 @@ input UpdateUserInput {
 
 type User {
   email: String!
+  filialIds: [String!]!
+  filials: [Filial!]!
+  functionalRoles: [FunctionalRole!]!
   id: String!
   roles: String!
   username: String!
