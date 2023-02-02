@@ -28,19 +28,19 @@ export class FilialsService {
   async findAllByUserId({
     userId,
   }: FetchFilialsByUserInput): Promise<Filial[]> {
-    const filials = await this.filialModel.find();
-    return (
-      filials.filter(({ userIds }) => userIds.indexOf(userId) !== -1) ?? []
-    );
+    const filials = await this.filialModel.find({
+      userIds: userId,
+    });
+    return filials;
   }
 
   async findAllByOrderId({
     orderId,
   }: FetchFilialsByOrderInput): Promise<Filial[]> {
-    const filials = await this.filialModel.find();
-    return (
-      filials.filter(({ orderIds }) => orderIds.indexOf(orderId) !== -1) ?? []
-    );
+    const filials = await this.filialModel.find({
+      orderIds: orderId,
+    });
+    return filials;
   }
 
   async create(createFilialInput: CreateFilialInput): Promise<Filial> {

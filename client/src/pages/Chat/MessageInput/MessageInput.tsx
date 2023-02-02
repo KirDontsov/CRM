@@ -1,7 +1,9 @@
 import { FC, memo, useCallback } from 'react';
 import { FormInput } from '@components/FormInput';
 import { SubmitHandler, useForm, FormProvider } from 'react-hook-form';
-import { Button } from '@mui/material';
+import { IconButton, Paper } from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
+import { useKeyPress } from '@src/shared/useKeyPress';
 
 import styles from './messageInput.module.scss';
 
@@ -26,16 +28,18 @@ export const MessageInput: FC<MessageInputProps> = memo(({ send }) => {
     [send, reset],
   );
 
+  useKeyPress('enter', onSubmit);
+
   return (
-    <FormProvider {...form}>
-      <form onSubmit={handleSubmit(onSubmit)} className={styles.formContainer}>
-        <FormInput name="message" label="message" className={styles.input} />
-        <div className={styles.bottom}>
-          <Button type="submit" variant="contained" disabled={!isDirty}>
-            Отправить
-          </Button>
-        </div>
-      </form>
-    </FormProvider>
+    <Paper elevation={2}>
+      <FormProvider {...form}>
+        <form onSubmit={handleSubmit(onSubmit)} className={styles.formContainer}>
+          <FormInput name="message" label="Сообщение..." className={styles.input} />
+          <IconButton type="submit" disabled={!isDirty} color="primary" size="large" aria-label="Отправить">
+            <SendIcon />
+          </IconButton>
+        </form>
+      </FormProvider>
+    </Paper>
   );
 });

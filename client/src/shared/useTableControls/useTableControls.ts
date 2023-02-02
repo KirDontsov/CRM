@@ -13,11 +13,13 @@ export function useTableControls<V extends { id: string }>(
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<keyof V>(initialOrderBy);
   const [selected, setSelected] = useState<string[]>([]);
+  const [openConfirmation, setOpenConfirmation] = useState(false);
 
   const [deleteItems] = useMutation(mutation, {
     onCompleted: () => {
       toast('Данные удалены успешно', { type: 'success' });
       setSelected([]);
+      setOpenConfirmation(false);
     },
     refetchQueries: [queryToRefetch],
   });
@@ -70,11 +72,22 @@ export function useTableControls<V extends { id: string }>(
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
+  const handleOpenCurtain = () => {
+    setOpenConfirmation(true);
+  };
+
+  const handleCloseCurtain = () => {
+    setOpenConfirmation(false);
+  };
+
   return {
     selected,
     order,
     orderBy,
     isSelected,
+    isDeleteCurtainOpen: openConfirmation,
+    handleOpenDeleteCurtain: handleOpenCurtain,
+    handleCloseDeleteCurtain: handleCloseCurtain,
     handleRequestSort,
     handleSelectAllClick,
     handleClick,

@@ -1,4 +1,4 @@
-import { Box, Paper } from '@mui/material';
+import { Box } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import io, { Socket } from 'socket.io-client';
 import { useContextSelector } from 'use-context-selector';
@@ -63,10 +63,10 @@ export const Chat = () => {
 
   return (
     <Box className={styles.chatContainer}>
-      <Paper elevation={2} className={styles.chatContentContainer}>
+      <div className={styles.chatContentContainer}>
         <Messages messages={messages} toUserId={toUserId ?? ''} />
         <MessageInput send={send} />
-      </Paper>
+      </div>
     </Box>
   );
 };

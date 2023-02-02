@@ -28,3 +28,8 @@ export const isEqual = (a: any, b: any): boolean => {
   if (keys.length !== Object.keys(b).length) return false;
   return keys.every((k) => isEqual(a[k], b[k]));
 };
+
+/** Конвертирует rem в pixels в соответствии с текущим корневым размером шрифта */
+export function remToPixels(rem: number): number {
+  return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+}

@@ -1,0 +1,8 @@
+.floatingScrollbar {
+	position: fixed;
+	bottom: 10px;
+	height: 6px;
+	overflow-x: auto;
+	overflow-y: hidden;
+	z-index: 10;
+}

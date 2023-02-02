@@ -14,6 +14,7 @@ import { useCallback, useMemo } from 'react';
 import produce from 'immer';
 import { useNavigate } from 'react-router-dom';
 import ChatIcon from '@mui/icons-material/Chat';
+import { DeleteConfirmation } from '@components/DeleteConfirmation';
 
 import styles from './styles.module.scss';
 import { DELETE_USERS, GET_USERS, HEAD_CELLS } from './constants';
@@ -43,6 +44,9 @@ export const UsersTable = () => {
     order,
     orderBy,
     isSelected,
+    isDeleteCurtainOpen,
+    handleOpenDeleteCurtain,
+    handleCloseDeleteCurtain,
     handleClick,
     handleSelectAllClick,
     handleRequestSort,
@@ -70,7 +74,7 @@ export const UsersTable = () => {
 
   return (
     <>
-      <TableToolbar numSelected={selected.length} title="Пользователи" deleteItems={handleDeleteItems} />
+      <TableToolbar numSelected={selected.length} title="Пользователи" deleteItems={handleOpenDeleteCurtain} />
       <TableContainer>
         <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
           <SharedTableHead<Data>
@@ -150,6 +154,7 @@ export const UsersTable = () => {
           totalCount={usersCount}
         />
       )}
+      {isDeleteCurtainOpen && <DeleteConfirmation onClose={handleCloseDeleteCurtain} onSubmit={handleDeleteItems} />}
     </>
   );
 };

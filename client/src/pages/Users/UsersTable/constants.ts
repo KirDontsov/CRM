@@ -57,5 +57,6 @@ export const HEAD_CELLS: HeadCell<Data>[] = [
     numeric: false,
     disablePadding: false,
     label: 'Написать',
+    icon: 'pencil',
   },
 ];

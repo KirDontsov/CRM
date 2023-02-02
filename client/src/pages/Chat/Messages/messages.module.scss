@@ -1,15 +1,25 @@
+@import '../../../styles/global.module';
+
 .messagesContainer {
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
-	padding: 24px;
-	height: calc(100vh - 280px);
+	height: calc(100vh - 240px);
+
+	.messages {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		height: 100%;
+		padding: 24px;
+	}
 
 	.message {
 		display: flex;
 		flex-direction: column;
 		gap: 12px;
-		padding: 24px;
+		padding: 12px;
 		width: fit-content;
+		color: $white;
 	}
 }

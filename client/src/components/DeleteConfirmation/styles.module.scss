@@ -1,0 +1,14 @@
+.deleteConfirmationContent {
+	padding: 40px;
+	position: relative;
+	height: calc(100vh - 80px);
+	display: flex;
+	flex-direction: column;
+	gap: calc(100vh - 162px);
+	.bottons {
+		display: flex;
+		justify-content: flex-end;
+		align-self: flex-end;
+		gap: 24px;
+	}
+}
