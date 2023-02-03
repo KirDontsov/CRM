@@ -38,6 +38,9 @@ export class Order {
   @Field(() => [Filial])
   filials: Filial[];
 
+  @Field(() => [String])
+  masterIds: string[];
+
   @Field()
   createdAt: Date;
 

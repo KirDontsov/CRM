@@ -54,6 +54,7 @@ export const SAVE_ORDER = gql`
       initialCost
       leftHeadlamp
       rightHeadlamp
+      masterIds
     }
   }
 `;
@@ -73,6 +74,7 @@ export const GET_ORDER = gql`
       initialCost
       leftHeadlamp
       rightHeadlamp
+      masterIds
       filials {
         id
         name

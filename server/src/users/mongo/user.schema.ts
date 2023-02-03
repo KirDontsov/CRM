@@ -23,7 +23,7 @@ export class User {
   @Prop()
   password: string;
 
-  @Prop()
+  @Prop(() => [String])
   filialIds: string[];
 
   @Prop({ required: true, default: () => new Date() })

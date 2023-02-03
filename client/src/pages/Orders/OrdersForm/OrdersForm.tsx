@@ -7,6 +7,8 @@ import { FormInput } from '@components/FormInput';
 import { toast } from 'react-toastify';
 import { GET_FILIALS } from '@shared';
 import { isEqual } from '@src/shared/utils';
+import { useContextSelector } from 'use-context-selector';
+import { AppContext } from '@context';
 
 import { CREATE_ORDER, GET_ORDER, OPTIONS, SAVE_ORDER, STATUS_OPTIONS } from './constants';
 import styles from './styles.module.scss';
@@ -42,6 +44,7 @@ export const DEFAULT_VALUES = {
 };
 
 export const OrdersForm: FC<OrdersFormProps> = memo(({ selected, onClose }) => {
+  const userId = useContextSelector(AppContext, (ctx) => ctx.state.userId);
   const { data: filialsData } = useQuery(GET_FILIALS);
 
   const filialOptions = useMemo(
@@ -122,6 +125,7 @@ export const OrdersForm: FC<OrdersFormProps> = memo(({ selected, onClose }) => {
             variables: {
               input: {
                 ...(!isEqual(filialIds, filialDataIds) ? { filialIds } : {}),
+                ...(!isEqual(status?.id, data?.getOrder?.status) ? { masterIds: [userId] } : {}),
                 id: selected,
                 orderName,
                 status: status?.id,
@@ -158,7 +162,7 @@ export const OrdersForm: FC<OrdersFormProps> = memo(({ selected, onClose }) => {
         });
       }
     },
-    [createOrder, saveOrder, selected, data?.getOrder?.filials],
+    [createOrder, saveOrder, selected, data?.getOrder?.filials, data?.getOrder?.status, userId],
   );
 
   const handleReset = useCallback(() => {
