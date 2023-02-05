@@ -139,6 +139,7 @@ type Permission {
 type Query {
   countEvents: Float!
   countOrders: Float!
+  countOrdersByMasterId(masterId: String!): Float!
   countUsers: Float!
   functionalRole(id: String!): FunctionalRole!
   functionalRoles: [FunctionalRole!]!

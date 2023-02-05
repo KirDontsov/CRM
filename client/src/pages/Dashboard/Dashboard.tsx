@@ -8,15 +8,15 @@ import { useQuery } from '@apollo/client';
 import dayjs from 'dayjs';
 import SquareIcon from '@mui/icons-material/Square';
 import { AppContext } from '@context';
-import { GET_ORDERS } from '@pages/Orders/OrdersTable/constants';
 import { OrdersStatuses, UserRoles } from '@apollo-client';
 import { OrdersData } from '@pages/Orders/OrdersTable/interfaces';
 import { PAGING } from '@shared';
 import produce from 'immer';
 import { FetchMoreObserver } from '@components/FetchMoreObserver';
+import { GET_ORDERS } from '@src/shared/constants';
 
 import styles from './styles.module.scss';
-import { CHART_DATA, GET_EVENTS } from './constants';
+import { CHART_DATA, COUNT_ORDERS_BY_MASTER, GET_EVENTS } from './constants';
 import { EventsData } from './interfaces';
 
 const COLORS = ['#109CF1', '#2ED47A', '#F7685B', '#C2CFE0'];
@@ -58,6 +58,14 @@ export const Dashboard = () => {
       limit: 100,
     },
   });
+
+  // TODO: добавить фильтр для аналитики по конкретному пользователю
+  const { data: ordersByMasterData } = useQuery(COUNT_ORDERS_BY_MASTER, {
+    variables: {
+      masterId: userId,
+    },
+  });
+  const countOrdersByMaster = ordersByMasterData?.countOrdersByMasterId ?? 0;
 
   const pieChartData = useMemo(
     () => [
@@ -226,6 +234,7 @@ export const Dashboard = () => {
               </Pie>
             </PieChart>
             <div className={styles.pieStat}>
+              <div>{`Заказов у текущего пользователя: ${countOrdersByMaster}`}</div>
               {pieChartData.map((entry, index) => (
                 <div key={entry.name} style={{ color: COLORS[index] }} className={styles.pieStatItem}>
                   <SquareIcon />

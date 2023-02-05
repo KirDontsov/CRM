@@ -14,10 +14,11 @@ import { OrdersStatuses } from '@src/apollo-client';
 import produce from 'immer';
 import { FetchMoreObserver } from '@components/FetchMoreObserver';
 import { DeleteConfirmation } from '@components/DeleteConfirmation';
+import { GET_ORDERS } from '@src/shared/constants';
 
 import { STATUS_OPTIONS } from '../OrdersForm/constants';
 
-import { DELETE_ORDERS, GET_ORDERS, HEAD_CELLS } from './constants';
+import { DELETE_ORDERS, HEAD_CELLS } from './constants';
 import { OrdersData } from './interfaces';
 import styles from './styles.module.scss';
 import { mapWorkTypes } from './utils';

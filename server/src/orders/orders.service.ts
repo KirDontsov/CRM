@@ -58,6 +58,15 @@ export class OrdersService {
     );
   }
 
+  async countOrdersByMasterId(masterId: string, ctx): Promise<number> {
+    const filialIds = safeJSONParse(ctx?.req?.headers?.filialids ?? '') ?? [];
+
+    return this.orderModel.countDocuments({
+      filialIds: { $in: filialIds },
+      masterIds: masterId,
+    });
+  }
+
   async createOrder(createOrderInput: CreateOrderInput): Promise<Order> {
     const session = await this.connection.startSession();
     session.startTransaction();

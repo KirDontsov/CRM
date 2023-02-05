@@ -13,6 +13,12 @@ export const GET_EVENTS = gql`
   }
 `;
 
+export const COUNT_ORDERS_BY_MASTER = gql`
+  query countOrdersByMasterId($masterId: String!) {
+    countOrdersByMasterId(masterId: $masterId)
+  }
+`;
+
 export const CHART_DATA = [
   {
     name: 'Янв.',

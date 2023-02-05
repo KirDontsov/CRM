@@ -62,6 +62,15 @@ export class OrdersResolver {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Query(() => Number)
+  countOrdersByMasterId(
+    @Args('masterId') masterId: string,
+    @Context() context,
+  ) {
+    return this.ordersService.countOrdersByMasterId(masterId, context);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Mutation(() => Order, { name: 'createOrder' })
   createOrder(@Args('createOrderInput') createOrderInput: CreateOrderInput) {
     return this.ordersService.createOrder(createOrderInput);
