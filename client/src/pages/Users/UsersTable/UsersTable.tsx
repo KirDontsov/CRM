@@ -12,11 +12,16 @@ import { UserRoles } from '@src/apollo-client';
 import { FetchMoreObserver } from '@components/FetchMoreObserver/FetchMoreObserver';
 import { useCallback, useMemo } from 'react';
 import produce from 'immer';
+import { useNavigate } from 'react-router-dom';
+import ChatIcon from '@mui/icons-material/Chat';
+import { DeleteConfirmation } from '@components/DeleteConfirmation';
 
+import styles from './styles.module.scss';
 import { DELETE_USERS, GET_USERS, HEAD_CELLS } from './constants';
 import { Data } from './interfaces';
 
 export const UsersTable = () => {
+  const navigate = useNavigate();
   const { data, fetchMore, loading } = useQuery(GET_USERS, {
     variables: {
       limit: PAGING.limit,
@@ -39,6 +44,9 @@ export const UsersTable = () => {
     order,
     orderBy,
     isSelected,
+    isDeleteCurtainOpen,
+    handleOpenDeleteCurtain,
+    handleCloseDeleteCurtain,
     handleClick,
     handleSelectAllClick,
     handleRequestSort,
@@ -57,9 +65,16 @@ export const UsersTable = () => {
     return users.length >= usersCount;
   }, [loading, fetchMore, users, usersCount]);
 
+  const handleNavigate = useCallback(
+    (id: string) => {
+      navigate(`/users/${id}`);
+    },
+    [navigate],
+  );
+
   return (
     <>
-      <TableToolbar numSelected={selected.length} title="Пользователи" deleteItems={handleDeleteItems} />
+      <TableToolbar numSelected={selected.length} title="Пользователи" deleteItems={handleOpenDeleteCurtain} />
       <TableContainer>
         <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
           <SharedTableHead<Data>
@@ -102,12 +117,29 @@ export const UsersTable = () => {
                           }}
                         />
                       </TableCell>
-                      <TableCell component="th" id={labelId} scope="row" padding="none">
+                      <TableCell
+                        sx={{
+                          color: (theme) => theme.palette.secondary.main,
+                        }}
+                        className={styles.nameLink}
+                        component="th"
+                        id={labelId}
+                      >
                         {row.username}
                       </TableCell>
                       <TableCell>{row.email}</TableCell>
                       <TableCell>{row.roles === UserRoles.Admin ? 'Админ' : 'Менеджер'}</TableCell>
                       <TableCell>{row.filials}</TableCell>
+                      <TableCell
+                        className={styles.chatLink}
+                        padding="none"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleNavigate(row.id);
+                        }}
+                      >
+                        <ChatIcon sx={{ color: (theme) => theme.palette.secondary.main }} />
+                      </TableCell>
                     </TableRow>
                   );
                 })}
@@ -122,6 +154,7 @@ export const UsersTable = () => {
           totalCount={usersCount}
         />
       )}
+      {isDeleteCurtainOpen && <DeleteConfirmation onClose={handleCloseDeleteCurtain} onSubmit={handleDeleteItems} />}
     </>
   );
 };

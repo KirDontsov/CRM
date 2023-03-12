@@ -30,4 +30,7 @@ export class CreateOrderInput {
 
   @Field(() => [String])
   filialIds: string[];
+
+  @Field(() => [String], { nullable: true })
+  masterIds: string[];
 }

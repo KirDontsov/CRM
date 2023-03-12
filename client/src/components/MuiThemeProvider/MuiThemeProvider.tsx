@@ -42,8 +42,8 @@ export const MuiThemeProvider: FC<MuiThemeProviderProps> = ({ children }) => {
             main: darkMode ? '#885AF8' : '#334D6E',
           },
           background: {
-            default: '#242526',
-            paper: '#242526',
+            default: darkMode ? '#242526' : '#fff',
+            paper: darkMode ? '#242526' : '#fff',
           },
         },
         components: {

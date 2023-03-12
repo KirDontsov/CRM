@@ -1,31 +1,24 @@
-import { useCallback, useState, MouseEvent, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, CardActionArea, CardContent, Paper, Typography } from '@mui/material';
-import { Area, AreaChart, CartesianGrid, Cell, Pie, Tooltip, XAxis, YAxis, PieChart, Sector } from 'recharts';
+import { Area, AreaChart, CartesianGrid, Tooltip, XAxis, YAxis } from 'recharts';
 import { Formatter } from 'recharts/types/component/DefaultTooltipContent';
 import { useContextSelector } from 'use-context-selector';
 import { useQuery } from '@apollo/client';
 import dayjs from 'dayjs';
-import SquareIcon from '@mui/icons-material/Square';
 import { AppContext } from '@context';
-import { GET_ORDERS } from '@pages/Orders/OrdersTable/constants';
-import { OrdersStatuses, UserRoles } from '@apollo-client';
-import { OrdersData } from '@pages/Orders/OrdersTable/interfaces';
+import { UserRoles } from '@apollo-client';
 import { PAGING } from '@shared';
 import produce from 'immer';
 import { FetchMoreObserver } from '@components/FetchMoreObserver';
+import { OrdersAnalytics } from '@pages/Dashboard/OrdersAnalytics';
 
 import styles from './styles.module.scss';
 import { CHART_DATA, GET_EVENTS } from './constants';
 import { EventsData } from './interfaces';
 
-const COLORS = ['#109CF1', '#2ED47A', '#F7685B', '#C2CFE0'];
-const RADIAN = Math.PI / 180;
-
 export const Dashboard = () => {
   const navigate = useNavigate();
-  const darkMode = useContextSelector(AppContext, (ctx) => ctx.state.darkMode);
-  const userId = useContextSelector(AppContext, (ctx) => ctx.state.userId);
   const userRoles = useContextSelector(AppContext, (ctx) => ctx.state.userRoles);
 
   const { data, fetchMore, loading } = useQuery(GET_EVENTS, {
@@ -51,40 +44,6 @@ export const Dashboard = () => {
     return events.length >= eventsCount;
   }, [loading, fetchMore, events, eventsCount]);
 
-  const { data: ordersData } = useQuery(GET_ORDERS, {
-    variables: {
-      userId,
-      offset: 0,
-      limit: 100,
-    },
-  });
-
-  const pieChartData = useMemo(
-    () => [
-      {
-        name: 'В работе',
-        value: (ordersData?.getOrders?.filter(({ status }: OrdersData) => status === OrdersStatuses.InProgress) ?? [])
-          ?.length,
-      },
-      {
-        name: 'Закрытые',
-        value: (ordersData?.getOrders?.filter(({ status }: OrdersData) => status === OrdersStatuses.Done) ?? [])
-          ?.length,
-      },
-      {
-        name: 'Отмененые',
-        value: (ordersData?.getOrders?.filter(({ status }: OrdersData) => status === OrdersStatuses.Cancelled) ?? [])
-          ?.length,
-      },
-      {
-        name: 'Новые',
-        value: (ordersData?.getOrders?.filter(({ status }: OrdersData) => status === OrdersStatuses.Open) ?? [])
-          ?.length,
-      },
-    ],
-    [ordersData],
-  );
-
   const handleFormatLabel = (value: string, name: string) => {
     if (name === 'pv') {
       return [value, 'Прибыль'];
@@ -101,60 +60,6 @@ export const Dashboard = () => {
     },
     [navigate],
   );
-
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  const onPieEnter = (_: MouseEvent, index: number) => {
-    setActiveIndex(index);
-  };
-
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  const renderActiveShape = (props: any) => {
-    const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent, value } = props;
-    const sin = Math.sin(-RADIAN * midAngle);
-    const cos = Math.cos(-RADIAN * midAngle);
-    const sx = cx + (outerRadius + 10) * cos;
-    const sy = cy + (outerRadius + 10) * sin;
-    const mx = cx + (outerRadius + 30) * cos;
-    const my = cy + (outerRadius + 30) * sin;
-    const ex = mx + (cos >= 0 ? 1 : -1) * 22;
-    const ey = my;
-    const textAnchor = cos >= 0 ? 'start' : 'end';
-
-    return (
-      <g>
-        <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>
-          {payload.name}
-        </text>
-        <Sector
-          cx={cx}
-          cy={cy}
-          innerRadius={innerRadius}
-          outerRadius={outerRadius}
-          startAngle={startAngle}
-          endAngle={endAngle}
-          fill={fill}
-        />
-        <Sector
-          cx={cx}
-          cy={cy}
-          startAngle={startAngle}
-          endAngle={endAngle}
-          innerRadius={outerRadius + 6}
-          outerRadius={outerRadius + 10}
-          fill={fill}
-        />
-        <path d={`M${sx},${sy}L${mx},${my}L${ex},${ey}`} stroke={fill} fill="none" />
-        <circle cx={ex} cy={ey} r={2} fill={fill} stroke="none" />
-        <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill={darkMode ? '#fff' : '#333'}>
-          {`${value}`}
-        </text>
-        <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
-          {`${(percent * 100).toFixed(2)}%`}
-        </text>
-      </g>
-    );
-  };
 
   return (
     <div className={styles.dashboardContainer}>
@@ -206,34 +111,7 @@ export const Dashboard = () => {
       <div className={styles.dashboardRightPart}>
         <Paper elevation={2} className={styles.widget}>
           <Typography variant="h1">Заказы</Typography>
-          <div className={styles.pieContainer}>
-            <PieChart width={400} height={400}>
-              <Pie
-                activeIndex={activeIndex}
-                activeShape={renderActiveShape}
-                data={pieChartData}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-                onMouseEnter={onPieEnter}
-              >
-                {pieChartData.map((entry, index) => (
-                  <Cell key={`cell-${entry.name}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-            </PieChart>
-            <div className={styles.pieStat}>
-              {pieChartData.map((entry, index) => (
-                <div key={entry.name} style={{ color: COLORS[index] }} className={styles.pieStatItem}>
-                  <SquareIcon />
-                  <Typography component="p" color={darkMode ? '#fff' : 'initial'}>{`${entry.name}`}</Typography>
-                </div>
-              ))}
-            </div>
-          </div>
+          <OrdersAnalytics />
         </Paper>
         {userRoles === UserRoles.Admin && (
           <Paper

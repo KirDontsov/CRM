@@ -1,0 +1,15 @@
+.chatContainer {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 40px;
+	.chatContentContainer {
+		width: 100%;
+		display: flex;
+		gap: 12px;
+		flex-direction: column;
+		.toUserInput {
+			padding: 24px;
+		}
+	}
+}

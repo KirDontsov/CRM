@@ -42,6 +42,9 @@ export class Order {
   filialIds: string[];
 
   @Prop()
+  masterIds: string[];
+
+  @Prop()
   createdAt: Date;
 
   @Prop({ required: false, default: null })

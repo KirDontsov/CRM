@@ -60,7 +60,6 @@ export class EventsService {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    // eslint-disable-next-line new-cap
     const newEvent = new this.eventModel(event);
     return newEvent.save();
   }

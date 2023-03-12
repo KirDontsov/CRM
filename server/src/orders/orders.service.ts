@@ -5,18 +5,21 @@ import { Connection, FilterQuery, Model } from 'mongoose';
 
 import { FilialsService } from '../filials/filials.service';
 import { hasFilialIds, safeJSONParse } from '../utils';
+import { UsersService } from '../users/users.service';
 
 import { CreateOrderInput } from './dto/create-order.input';
 import { UpdateOrderInput } from './dto/update-order.input';
 import { Order, OrderDocument } from './mongo/order.schema';
 import { OrdersStatuses } from './dto/orders-statuses';
 import { FetchOrdersInput } from './dto/fetch-orders.input';
+import { FetchOrdersByMasterInput } from './dto/fetch-data-by-master.input';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
     private readonly filialsService: FilialsService,
+    private readonly usersService: UsersService,
     @InjectConnection() private readonly connection: Connection,
   ) {}
 
@@ -39,6 +42,34 @@ export class OrdersService {
     });
   }
 
+  async getOrdersByMasterId(
+    { limit, offset, masterIds }: FetchOrdersByMasterInput,
+    ctx,
+  ): Promise<Order[]> {
+    const filialIds = safeJSONParse(ctx?.req?.headers?.filialids ?? '') ?? [];
+
+    return this.orderModel.find(
+      {
+        ...(masterIds.length ? { masterIds: { $in: masterIds } } : {}),
+        filialIds: { $in: filialIds },
+      },
+      null,
+      {
+        limit,
+        skip: offset,
+      },
+    );
+  }
+
+  async countOrdersByMasterId(masterIds: string[], ctx): Promise<number> {
+    const filialIds = safeJSONParse(ctx?.req?.headers?.filialids ?? '') ?? [];
+
+    return this.orderModel.countDocuments({
+      ...(masterIds.length ? { masterIds: { $in: masterIds } } : {}),
+      filialIds: { $in: filialIds },
+    });
+  }
+
   async createOrder(createOrderInput: CreateOrderInput): Promise<Order> {
     const session = await this.connection.startSession();
     session.startTransaction();
@@ -58,6 +89,7 @@ export class OrdersService {
           Number(createOrderInput.initialCost) -
           Number(createOrderInput.sparePartsCost)
         }`,
+        masterIds: [],
       };
 
       // добавляем новый id пользователя так же и в филиалы
@@ -78,7 +110,6 @@ export class OrdersService {
           );
         }),
       );
-      // eslint-disable-next-line new-cap
       const newOrder = new this.orderModel(order);
       return await newOrder.save();
     } catch (err) {

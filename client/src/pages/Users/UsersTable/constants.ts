@@ -52,4 +52,11 @@ export const HEAD_CELLS: HeadCell<Data>[] = [
     disablePadding: false,
     label: 'Филиал',
   },
+  {
+    id: 'chat',
+    numeric: false,
+    disablePadding: false,
+    label: 'Написать',
+    icon: 'pencil',
+  },
 ];

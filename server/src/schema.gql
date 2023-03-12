@@ -29,6 +29,7 @@ input CreateOrderInput {
   initialCost: String!
   initialPhotos: String
   leftHeadlamp: [String!]
+  masterIds: [String!]
   orderName: String!
   rightHeadlamp: [String!]
   sparePartsCost: String
@@ -120,6 +121,7 @@ type Order {
   initialCost: String!
   initialPhotos: String
   leftHeadlamp: [String!]!
+  masterIds: [String!]!
   orderName: String!
   releaseDate: DateTime
   rightHeadlamp: [String!]!
@@ -137,6 +139,7 @@ type Permission {
 type Query {
   countEvents: Float!
   countOrders: Float!
+  countOrdersByMasterId(masterIds: [String!]!): Float!
   countUsers: Float!
   functionalRole(id: String!): FunctionalRole!
   functionalRoles: [FunctionalRole!]!
@@ -147,6 +150,7 @@ type Query {
   getFilials: [Filial!]!
   getOrder(id: String!): Order!
   getOrders(limit: Int! = 20, offset: Int! = 0): [Order!]!
+  getOrdersByMasterId(limit: Int! = 20, masterIds: [String!]!, offset: Int! = 0): [Order!]!
   getPermissions(userId: String!): [Permission!]!
   getUser(id: String!): User!
   getUsers(limit: Int! = 20, offset: Int! = 0): [User!]!
@@ -183,6 +187,7 @@ input UpdateOrderInput {
   initialCost: String
   initialPhotos: String
   leftHeadlamp: [String!]
+  masterIds: [String!]
   orderName: String
   rightHeadlamp: [String!]
   sparePartsCost: String

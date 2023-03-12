@@ -1,7 +1,7 @@
 import { FC, useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useContextSelector } from 'use-context-selector';
-import { Paper } from '@mui/material';
+import { Box, Paper } from '@mui/material';
 import { AppContext } from '@context';
 
 import { Nav } from '../Nav';
@@ -39,9 +39,23 @@ export const Layout: FC = () => {
           style={{ backgroundColor: `${darkMode ? '#242526' : '#F5F6F8'}` }}
         >
           <Sidebar />
-          <div className={styles.layoutContent}>
+          <Box
+            className={styles.layoutContent}
+            sx={{
+              '&::-webkit-scrollbar': {
+                width: 6,
+              },
+              '&::-webkit-scrollbar-track': {
+                backgroundColor: `${darkMode ? '#242526' : '#F5F6F8'}`,
+              },
+              '&::-webkit-scrollbar-thumb': {
+                backgroundColor: `${darkMode ? '#885AF8' : '#242526'}`,
+                borderRadius: 2,
+              },
+            }}
+          >
             <Outlet />
-          </div>
+          </Box>
         </Paper>
       )}
     </div>

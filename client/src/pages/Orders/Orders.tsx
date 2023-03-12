@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Box, Button, Paper } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { Curtain } from '@components/Curtain';
+import { FloatingScrollbar } from '@components/FloatingScrollbar';
 
 import { OrdersTable } from './OrdersTable';
 import { OrdersForm } from './OrdersForm';
@@ -29,7 +30,7 @@ export const Orders = () => {
           Новый заказ
         </Button>
       </div>
-
+      <FloatingScrollbar containerElementId="container" innerElementId="table" />
       <Paper elevation={2} className={styles.ordersContentContainer}>
         <OrdersTable onSelect={handleSelect} />
       </Paper>

@@ -50,6 +50,7 @@ export class UsersResolver {
     return this.usersService.getUsers(args, context);
   }
 
+  // из контекста не берется userId
   @ResolveField()
   async filials(@Parent() user: User) {
     const { id } = user;

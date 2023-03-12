@@ -16,6 +16,7 @@ import { Orders } from '@pages/Orders';
 import { Events } from '@pages/Events';
 import { Event } from '@pages/Event';
 import { Permissions } from '@pages/Permissions';
+import { Chat } from '@pages/Chat';
 
 import 'react-toastify/dist/ReactToastify.css';
 import './styles/styles.module.scss';
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
             <Users />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: 'users/:userId',
+        element: <Chat />,
       },
       {
         path: '/settings',

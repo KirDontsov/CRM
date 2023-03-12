@@ -20,6 +20,7 @@ import { Order } from './entities/order.entity';
 import { CreateOrderInput } from './dto/create-order.input';
 import { UpdateOrderInput } from './dto/update-order.input';
 import { FetchOrdersInput } from './dto/fetch-orders.input';
+import { FetchOrdersByMasterInput } from './dto/fetch-data-by-master.input';
 
 @Resolver(() => Order)
 export class OrdersResolver {
@@ -49,6 +50,24 @@ export class OrdersResolver {
   @Query(() => [Order])
   getOrders(@Args() args: FetchOrdersInput, @Context() context) {
     return this.ordersService.getOrders(args, context);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Query(() => [Order])
+  getOrdersByMasterId(
+    @Args() args: FetchOrdersByMasterInput,
+    @Context() context,
+  ) {
+    return this.ordersService.getOrdersByMasterId(args, context);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Query(() => Number)
+  countOrdersByMasterId(
+    @Args('masterIds', { type: () => [String] }) masterIds: string[],
+    @Context() context,
+  ) {
+    return this.ordersService.countOrdersByMasterId(masterIds, context);
   }
 
   @UseGuards(JwtAuthGuard)

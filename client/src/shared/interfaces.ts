@@ -3,4 +3,5 @@ export interface HeadCell<V> {
   id: keyof V;
   label: string;
   numeric: boolean;
+  icon?: string;
 }
