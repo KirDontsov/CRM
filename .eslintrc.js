@@ -20,7 +20,7 @@ module.exports = {
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: [path.join(process.cwd(), './client/tsconfig.json'), path.join(process.cwd(), './server/tsconfig.json')],
+    project: [path.join(process.cwd(), './client/tsconfig.json'), path.join(process.cwd(), './server/tsconfig.json'), path.join(process.cwd(), './mobile/tsconfig.json')],
     tsconfigRootDir: process.cwd(),
     ecmaFeatures: {
       jsx: true,
