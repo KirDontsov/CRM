@@ -4,6 +4,6 @@ import { FetchOrdersInput } from './fetch-orders.input';
 
 @ArgsType()
 export class FetchOrdersByMasterInput extends FetchOrdersInput {
-  @Field()
-  masterId: string;
+  @Field(() => [String])
+  masterIds: string[];
 }

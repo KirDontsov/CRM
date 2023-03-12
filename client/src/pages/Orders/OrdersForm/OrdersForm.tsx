@@ -70,7 +70,7 @@ export const OrdersForm: FC<OrdersFormProps> = memo(({ selected, onClose }) => {
       toast('Заказ изменен успешно', { type: 'success' });
       onClose();
     },
-    refetchQueries: ['getOrders', 'getOrderById'],
+    refetchQueries: ['getOrders', 'getOrderById', 'getOrdersByMasterId'],
   });
 
   const { data, loading } = useQuery(GET_ORDER, {

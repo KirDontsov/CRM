@@ -64,10 +64,10 @@ export class OrdersResolver {
   @UseGuards(JwtAuthGuard)
   @Query(() => Number)
   countOrdersByMasterId(
-    @Args('masterId') masterId: string,
+    @Args('masterIds', { type: () => [String] }) masterIds: string[],
     @Context() context,
   ) {
-    return this.ordersService.countOrdersByMasterId(masterId, context);
+    return this.ordersService.countOrdersByMasterId(masterIds, context);
   }
 
   @UseGuards(JwtAuthGuard)

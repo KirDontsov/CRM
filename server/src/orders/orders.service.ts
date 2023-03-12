@@ -43,13 +43,16 @@ export class OrdersService {
   }
 
   async getOrdersByMasterId(
-    { limit, offset, masterId }: FetchOrdersByMasterInput,
+    { limit, offset, masterIds }: FetchOrdersByMasterInput,
     ctx,
   ): Promise<Order[]> {
     const filialIds = safeJSONParse(ctx?.req?.headers?.filialids ?? '') ?? [];
 
     return this.orderModel.find(
-      { filialIds: { $in: filialIds }, masterIds: masterId },
+      {
+        ...(masterIds.length ? { masterIds: { $in: masterIds } } : {}),
+        filialIds: { $in: filialIds },
+      },
       null,
       {
         limit,
@@ -58,12 +61,12 @@ export class OrdersService {
     );
   }
 
-  async countOrdersByMasterId(masterId: string, ctx): Promise<number> {
+  async countOrdersByMasterId(masterIds: string[], ctx): Promise<number> {
     const filialIds = safeJSONParse(ctx?.req?.headers?.filialids ?? '') ?? [];
 
     return this.orderModel.countDocuments({
+      ...(masterIds.length ? { masterIds: { $in: masterIds } } : {}),
       filialIds: { $in: filialIds },
-      masterIds: masterId,
     });
   }
 
