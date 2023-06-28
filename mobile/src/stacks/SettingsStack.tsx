@@ -1,7 +1,8 @@
 import type { FC } from 'react';
 import { View, Text, Button } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import type { ShatedStackProps } from '@shared/Interfaces';
+
+import type { ShatedStackProps } from '../shared/Interfaces';
 
 const SettingsScreen: FC<ShatedStackProps> = ({ navigation }) => {
   return (
